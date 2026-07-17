@@ -13,7 +13,7 @@ import { VerificacionService } from '../../application/services/verificacion.ser
 
 import { UsuarioRepository } from '../../infrastructure/repositories/usuario.repository';
 import { CodigoVerificacionRepository } from '../../infrastructure/repositories/codigo-verificacion.repository';
-import { MailerService } from '../../../notificaciones/application/services/mailer.service';
+import { MailerService } from '../../../../notificaciones/application/services/mailer.service';
 
 export class AuthController {
     private registroService: RegistroService;

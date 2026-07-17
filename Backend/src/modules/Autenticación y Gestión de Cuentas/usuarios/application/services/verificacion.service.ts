@@ -7,8 +7,8 @@ import bcrypt from 'bcrypt';
 import { CodigoVerificacion } from '../../domain/entities/CodigoVerificacion';
 import { ICodigoVerificacionRepository } from '../../domain/repositories/ICodigoVerificacionRepository';
 import { IUsuarioRepository } from '../../domain/repositories/IUsuarioRepository';
-import { MailerService } from '../../../notificaciones/application/services/mailer.service';
-import { correoCodigoVerificacion } from '../../../notificaciones/application/services/mailer.template';
+import { MailerService } from '../../../../notificaciones/application/services/mailer.service';
+import { correoCodigoVerificacion } from '../../../../notificaciones/application/services/mailer.template';
 
 const MINUTOS_EXPIRACION = 10;
 const MAX_INTENTOS = 5;

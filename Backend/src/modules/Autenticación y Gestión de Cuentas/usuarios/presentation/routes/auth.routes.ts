@@ -12,7 +12,7 @@ import { AuthController } from '../controllers/auth.controller';
 import { RegistroDTO } from '../../application/dtos/registro.dto';
 import { VerificarCodigoDTO } from '../../application/dtos/verificar-codigo.dto';
 import { ReenviarCodigoDTO } from '../../application/dtos/reenviar-codigo.dto';
-import { validateBody } from '../../../../shared/middlewares/validate-body.middleware';
+import { validateBody } from '../../../../../shared/middlewares/validate-body.middleware';
 
 const router = Router();
 const controller = new AuthController();
