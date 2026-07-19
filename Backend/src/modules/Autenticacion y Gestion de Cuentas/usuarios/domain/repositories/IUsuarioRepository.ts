@@ -28,4 +28,5 @@ export interface IUsuarioRepository {
         usuario: Usuario,
         perfil: PerfilVoluntario,
     ): Promise<{ usuario: Usuario; perfil: PerfilVoluntario }>;
+    buscarPerfilPorUsuarioId(usuarioId: number): Promise<PerfilVoluntario | null>;
 }

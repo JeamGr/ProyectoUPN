@@ -7,6 +7,7 @@ import { ReenviarCodigoDTO } from '../../application/dtos/reenviar-codigo.dto';
 import { RegistroVoluntarioService } from '../../application/services/registro-voluntario.service';
 import { VerificacionService } from '../../application/services/verificacion.service';
 
+import { IUsuarioRepository } from '../../domain/repositories/IUsuarioRepository';
 import { UsuarioRepository } from '../../infrastructure/repositories/usuario.repository';
 import { RolRepository } from '../../infrastructure/repositories/rol.repository';
 import { CodigoVerificacionRepository } from '../../infrastructure/repositories/codigo-verificacion.repository';
@@ -15,15 +16,16 @@ import { MailerService } from '../../../../notificaciones/application/services/m
 export class AuthController {
     private registroService: RegistroVoluntarioService;
     private verificacionService: VerificacionService;
+    private usuarioRepository: IUsuarioRepository;
 
     constructor() {
-        const usuarioRepository = new UsuarioRepository();
+        this.usuarioRepository = new UsuarioRepository();
         const rolRepository = new RolRepository();
         const codigoRepository = new CodigoVerificacionRepository();
         const mailerService = new MailerService();
 
-        this.verificacionService = new VerificacionService(codigoRepository, usuarioRepository, mailerService);
-        this.registroService = new RegistroVoluntarioService(usuarioRepository, rolRepository, this.verificacionService);
+        this.verificacionService = new VerificacionService(codigoRepository, this.usuarioRepository, mailerService);
+        this.registroService = new RegistroVoluntarioService(this.usuarioRepository, rolRepository, this.verificacionService);
     }
 
     registrar = async (req: Request, res: Response) => {
@@ -49,8 +51,18 @@ export class AuthController {
 
     reenviarCodigo = async (req: Request, res: Response) => {
         const dto = req.dto as ReenviarCodigoDTO;
-        // TODO (igual que antes): resolver correo/nombre real con usuarioRepository.buscarPorId + buscarPerfilPorCodigoEstudiante
-        await this.verificacionService.generarYEnviar(dto.usuarioId, '', '');
+
+        const usuario = await this.usuarioRepository.buscarPorId(dto.usuarioId);
+        if (!usuario) {
+            return res.status(404).json({ ok: false, mensaje: 'Usuario no encontrado' });
+        }
+        if (usuario.estado === 'activo') {
+            return res.status(400).json({ ok: false, mensaje: 'Esta cuenta ya está verificada' });
+        }
+
+        const perfil = await this.usuarioRepository.buscarPerfilPorUsuarioId(dto.usuarioId);
+        await this.verificacionService.generarYEnviar(usuario.id!, usuario.correo, perfil?.nombres || '');
+
         return res.status(200).json({ ok: true, mensaje: 'Código reenviado. Revisa tu correo.' });
     };
 }

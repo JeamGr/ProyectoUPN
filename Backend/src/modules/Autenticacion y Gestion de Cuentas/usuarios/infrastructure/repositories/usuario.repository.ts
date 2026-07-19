@@ -102,4 +102,10 @@ export class UsuarioRepository implements IUsuarioRepository {
         };
     });
 }
+async buscarPerfilPorUsuarioId(usuarioId: number): Promise<PerfilVoluntario | null> {
+    const model = await this.perfilRepo.findOne({ where: { usuario_id: usuarioId } });
+    if (!model) return null;
+    const intereses = await this.interesRepo.find({ where: { usuario_id: usuarioId } });
+    return PerfilVoluntarioMapping.toDomain(model, intereses.map((i) => i.linea_intervencion_id));
+}
 }
