@@ -13,10 +13,15 @@ import { RolRepository } from '../../infrastructure/repositories/rol.repository'
 import { CodigoVerificacionRepository } from '../../infrastructure/repositories/codigo-verificacion.repository';
 import { MailerService } from '../../../../notificaciones/application/services/mailer.service';
 
+
+import { LoginDTO } from '../../application/dtos/login.dto';
+import { LoginService } from '../../application/services/login.service';
+
 export class AuthController {
     private registroService: RegistroVoluntarioService;
     private verificacionService: VerificacionService;
     private usuarioRepository: IUsuarioRepository;
+    private loginService: LoginService;
 
     constructor() {
         this.usuarioRepository = new UsuarioRepository();
@@ -26,6 +31,7 @@ export class AuthController {
 
         this.verificacionService = new VerificacionService(codigoRepository, this.usuarioRepository, mailerService);
         this.registroService = new RegistroVoluntarioService(this.usuarioRepository, rolRepository, this.verificacionService);
+        this.loginService = new LoginService(this.usuarioRepository, rolRepository);
     }
 
     registrar = async (req: Request, res: Response) => {
@@ -65,4 +71,11 @@ export class AuthController {
 
         return res.status(200).json({ ok: true, mensaje: 'Código reenviado. Revisa tu correo.' });
     };
+
+    login = async (req: Request, res: Response) => {
+    const dto = req.dto as LoginDTO;
+    const resultado = await this.loginService.login(dto);
+    return res.status(resultado.ok ? 200 : 401).json(resultado);
+};
+
 }

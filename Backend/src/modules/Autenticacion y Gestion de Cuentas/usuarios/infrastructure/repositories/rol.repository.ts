@@ -15,4 +15,9 @@ export class RolRepository implements IRolRepository {
         if (!model) return null;
         return { id: model.id, nombre: model.nombre };
     }
+    async buscarPorId(id: number): Promise<{ id: number; nombre: string } | null> {
+        const model = await this.repo.findOne({ where: { id } });
+        if (!model) return null;
+        return { id: model.id, nombre: model.nombre };
+    }
 }

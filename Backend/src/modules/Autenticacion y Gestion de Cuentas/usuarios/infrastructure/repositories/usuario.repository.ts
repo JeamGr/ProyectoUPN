@@ -108,4 +108,22 @@ async buscarPerfilPorUsuarioId(usuarioId: number): Promise<PerfilVoluntario | nu
     const intereses = await this.interesRepo.find({ where: { usuario_id: usuarioId } });
     return PerfilVoluntarioMapping.toDomain(model, intereses.map((i) => i.linea_intervencion_id));
 }
+async incrementarIntentosFallidos(usuarioId: number): Promise<void> {
+        await this.usuarioRepo.increment({ id: usuarioId }, 'intentos_fallidos', 1);
+    }
+
+    async resetearIntentosFallidos(usuarioId: number): Promise<void> {
+        await this.usuarioRepo.update({ id: usuarioId }, { intentos_fallidos: 0 });
+    }
+
+    async bloquearCuenta(usuarioId: number): Promise<void> {
+        await this.usuarioRepo.update({ id: usuarioId }, { estado: 'bloqueado', fecha_bloqueo: new Date() });
+    }
+
+    async desbloquearCuenta(usuarioId: number): Promise<void> {
+        await this.usuarioRepo.update(
+            { id: usuarioId },
+            { estado: 'activo', intentos_fallidos: 0, fecha_bloqueo: null },
+        );
+    }
 }
