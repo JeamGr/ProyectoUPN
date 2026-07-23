@@ -21,4 +21,13 @@ export class Usuario {
     puedeIniciarSesion(): boolean {
         return this.estado === 'activo';
     }
+    puedeIntentarLogin(maxIntentos: number): boolean {
+        return this.intentosFallidos < maxIntentos;
+    }
+
+    estaBloqueadoTemporalmente(minutosBloqueo: number): boolean {
+        if (this.estado !== 'bloqueado' || !this.fechaBloqueo) return false;
+        const transcurrido = Date.now() - this.fechaBloqueo.getTime();
+        return transcurrido < minutosBloqueo * 60000;
+    }
 }

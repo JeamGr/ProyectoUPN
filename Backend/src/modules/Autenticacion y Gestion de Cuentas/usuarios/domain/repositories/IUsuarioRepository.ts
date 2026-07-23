@@ -29,4 +29,8 @@ export interface IUsuarioRepository {
         perfil: PerfilVoluntario,
     ): Promise<{ usuario: Usuario; perfil: PerfilVoluntario }>;
     buscarPerfilPorUsuarioId(usuarioId: number): Promise<PerfilVoluntario | null>;
+    incrementarIntentosFallidos(usuarioId: number): Promise<void>;
+    resetearIntentosFallidos(usuarioId: number): Promise<void>;
+    bloquearCuenta(usuarioId: number): Promise<void>;
+    desbloquearCuenta(usuarioId: number): Promise<void>;
 }

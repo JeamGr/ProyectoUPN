@@ -6,4 +6,5 @@
 
 export interface IRolRepository {
     buscarPorNombre(nombre: string): Promise<{ id: number; nombre: string } | null>;
+    buscarPorId(id: number): Promise<{ id: number; nombre: string } | null>;
 }
