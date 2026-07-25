@@ -7,7 +7,7 @@ dotenv.config();
 import { AppDataSource } from './config/datasource';
 import { errorHandler } from './shared/middlewares/error.handler';
 import authRoutes from './modules/Autenticacion y Gestion de Cuentas/usuarios/presentation/routes/auth.routes';
-
+import organizacionRoutes from './modules/Autenticacion y Gestion de Cuentas/Organizaciones/presentation/routes/organizacion.routes';
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -18,7 +18,7 @@ app.use('/auth', authRoutes);
 
 // SIEMPRE al final, después de todas las rutas
 app.use(errorHandler);
-
+app.use('/organizacion', organizacionRoutes);
 AppDataSource.initialize()
     .then(() => {
         console.log('Conectado a la base de datos MySQL');

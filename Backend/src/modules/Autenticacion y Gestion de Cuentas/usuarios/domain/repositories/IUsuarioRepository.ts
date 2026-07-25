@@ -33,4 +33,5 @@ export interface IUsuarioRepository {
     resetearIntentosFallidos(usuarioId: number): Promise<void>;
     bloquearCuenta(usuarioId: number): Promise<void>;
     desbloquearCuenta(usuarioId: number): Promise<void>;
+    actualizarPassword(usuarioId: number, passwordHash: string): Promise<void>;
 }

@@ -13,6 +13,10 @@ import { RolRepository } from '../../infrastructure/repositories/rol.repository'
 import { CodigoVerificacionRepository } from '../../infrastructure/repositories/codigo-verificacion.repository';
 import { MailerService } from '../../../../notificaciones/application/services/mailer.service';
 
+import { SolicitarRecuperacionDTO } from '../../application/dtos/solicitar-recuperacion.dto';
+import { ConfirmarRecuperacionDTO } from '../../application/dtos/confirmar-recuperacion.dto';
+import { RecuperacionPasswordService } from '../../application/services/recuperacion-password.service';
+import { TokenRecuperacionRepository } from '../../infrastructure/repositories/token-recuperacion.repository';
 
 import { LoginDTO } from '../../application/dtos/login.dto';
 import { LoginService } from '../../application/services/login.service';
@@ -22,16 +26,18 @@ export class AuthController {
     private verificacionService: VerificacionService;
     private usuarioRepository: IUsuarioRepository;
     private loginService: LoginService;
-
+    private recuperacionService: RecuperacionPasswordService;
     constructor() {
         this.usuarioRepository = new UsuarioRepository();
         const rolRepository = new RolRepository();
         const codigoRepository = new CodigoVerificacionRepository();
         const mailerService = new MailerService();
+        const tokenRecuperacionRepository = new TokenRecuperacionRepository();
 
         this.verificacionService = new VerificacionService(codigoRepository, this.usuarioRepository, mailerService);
         this.registroService = new RegistroVoluntarioService(this.usuarioRepository, rolRepository, this.verificacionService);
         this.loginService = new LoginService(this.usuarioRepository, rolRepository);
+        this.recuperacionService = new RecuperacionPasswordService(tokenRecuperacionRepository, this.usuarioRepository, mailerService);
     }
 
     registrar = async (req: Request, res: Response) => {
@@ -77,5 +83,15 @@ export class AuthController {
     const resultado = await this.loginService.login(dto);
     return res.status(resultado.ok ? 200 : 401).json(resultado);
 };
+solicitarRecuperacion = async (req: Request, res: Response) => {
+    const dto = req.dto as SolicitarRecuperacionDTO;
+    const resultado = await this.recuperacionService.solicitar(dto.correo);
+    return res.status(200).json(resultado);
+};
 
+confirmarRecuperacion = async (req: Request, res: Response) => {
+    const dto = req.dto as ConfirmarRecuperacionDTO;
+    const resultado = await this.recuperacionService.confirmar(dto.usuarioId, dto.token, dto.passwordNueva);
+    return res.status(resultado.ok ? 200 : 400).json(resultado);
+};
 }

@@ -126,4 +126,7 @@ async incrementarIntentosFallidos(usuarioId: number): Promise<void> {
             { estado: 'activo', intentos_fallidos: 0, fecha_bloqueo: null },
         );
     }
+    async actualizarPassword(usuarioId: number, passwordHash: string): Promise<void> {
+        await this.usuarioRepo.update({ id: usuarioId }, { password_hash: passwordHash });
+    }
 }
