@@ -65,4 +65,11 @@ export function construirCorreoHTML(nombreUsuario: string, mensaje: string): str
 export function correoCodigoVerificacion(nombreUsuario: string, codigo: string, minutos: number): string {
     const mensaje = `Tu código de verificación es <strong style="font-size:22px;letter-spacing:3px;color:${MORADO_ACENTO};">${codigo}</strong>.<br/>Vence en ${minutos} minutos. Si no fuiste tú, ignora este correo.`;
     return construirCorreoHTML(nombreUsuario, mensaje);
+    
+}
+export function correoRecuperacionPassword(enlace: string, horas: number): string {
+    const mensaje = `Recibimos una solicitud para restablecer tu contraseña.<br/><br/>
+        <a href="${enlace}" style="background:#F5A623;color:#1a1a1a;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;">Restablecer contraseña</a>
+        <br/><br/>Este enlace vence en ${horas} hora(s). Si no fuiste tú, ignora este correo.`;
+    return construirCorreoHTML('', mensaje);
 }
