@@ -23,6 +23,16 @@ export class UsuarioRepository implements IUsuarioRepository {
         this.interesRepo = AppDataSource.getRepository(UsuarioInteresModel);
     }
 
+    async crearUsuarioOAuth(correo: string, rolId: number): Promise<Usuario> {
+        const model = new UsuarioModel();
+        model.correo = correo;
+        model.password_hash = null as any;
+        model.rol_id = rolId;
+        model.estado = 'activo';
+        const guardado = await this.usuarioRepo.save(model);
+        return UsuarioMapping.toDomain(guardado);
+    }
+    
     async buscarPorEmail(correo: string): Promise<Usuario | null> {
         const model = await this.usuarioRepo.findOne({ where: { correo } });
         return model ? UsuarioMapping.toDomain(model) : null;

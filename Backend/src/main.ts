@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 dotenv.config();
-
+import oportunidadRoutes from './modules/oportunidades/presentation/routes/oportunidad.routes';
 import { AppDataSource } from './config/datasource';
 import { errorHandler } from './shared/middlewares/error.handler';
 import authRoutes from './modules/Autenticacion y Gestion de Cuentas/usuarios/presentation/routes/auth.routes';
@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
-
+app.use('/oportunidades', oportunidadRoutes);
 app.use('/auth', authRoutes);
 
 // SIEMPRE al final, después de todas las rutas
