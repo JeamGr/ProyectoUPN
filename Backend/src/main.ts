@@ -6,8 +6,11 @@ dotenv.config();
 
 import { AppDataSource } from './config/datasource';
 import { errorHandler } from './shared/middlewares/error.handler';
+import { authHandler } from './shared/middlewares/auth.handler';
 import authRoutes from './modules/Autenticacion y Gestion de Cuentas/usuarios/presentation/routes/auth.routes';
 import organizacionRoutes from './modules/Autenticacion y Gestion de Cuentas/Organizaciones/presentation/routes/organizacion.routes';
+import { createPerfilRouter } from './modules/gestion de perfiles/presentation/PerfilRoutes';
+import { createInscripcionRouter } from './modules/inscripciones y gestion de cupos/presentation/InscripcionRoutes';
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -15,10 +18,13 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/auth', authRoutes);
+app.use('/organizacion', organizacionRoutes);
+app.use('/perfiles', createPerfilRouter(AppDataSource, authHandler()));
+app.use('/inscripciones', createInscripcionRouter(AppDataSource, authHandler));
 
 // SIEMPRE al final, después de todas las rutas
 app.use(errorHandler);
-app.use('/organizacion', organizacionRoutes);
+
 AppDataSource.initialize()
     .then(() => {
         console.log('Conectado a la base de datos MySQL');

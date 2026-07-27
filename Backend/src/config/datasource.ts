@@ -21,5 +21,8 @@ export const AppDataSource = new DataSource({
     // Recoge TODOS los *.model.ts de cualquier módulo, sin importar
     // cuántas carpetas de profundidad tenga (funciona con tu carpeta
     // "Autenticación y Gestión de Cuentas" igual que con las demás).
-    entities: [__dirname + '/../modules/**/infrastructure/models/*.model.ts'],
+    entities: [
+        __dirname + '/../modules/**/infrastructure/models/*.model.ts',
+        __dirname + '/../modules/**/infrastructure/*Model.ts',
+    ],
 });
