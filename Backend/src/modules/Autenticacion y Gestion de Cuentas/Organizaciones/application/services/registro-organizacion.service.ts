@@ -42,7 +42,7 @@ export class RegistroOrganizacionService {
             0, dto.nombreOng, dto.direccion, dto.personaContacto, dto.tipoDocumentoContacto,
             dto.numeroDocumentoContacto, dto.celularContacto, dto.linkRedesSociales,
             dto.constituidaLegalmente, dto.ruc, dto.razonSocial, dto.tieneCertificadoDonacion,
-            dto.descripcionActividad, dto.lineaIntervencionId, dto.pais ?? 'Perú', dto.linkWeb,
+            dto.descripcionActividad, dto.lineaIntervencionId, dto.categoriaId ?? null, dto.pais ?? 'Perú', dto.linkWeb,
             dto.numeroBeneficiariosAnual, dto.tieneProgramaVoluntariadoCorporativo,
         );
 

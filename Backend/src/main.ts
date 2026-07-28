@@ -11,6 +11,9 @@ import authRoutes from './modules/Autenticacion y Gestion de Cuentas/usuarios/pr
 import organizacionRoutes from './modules/Autenticacion y Gestion de Cuentas/Organizaciones/presentation/routes/organizacion.routes';
 import { createPerfilRouter } from './modules/gestion de perfiles/presentation/PerfilRoutes';
 import { createInscripcionRouter } from './modules/inscripciones y gestion de cupos/presentation/InscripcionRoutes';
+import { crearCatalogoRouter } from './modules/administrador/presentation/routes/catalogo.routes';
+import { crearParametroRouter } from './modules/administrador/presentation/routes/parametro.routes';
+import { crearRolPermisoRouter } from './modules/administrador/presentation/routes/rol-permiso.routes';
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -21,6 +24,17 @@ app.use('/auth', authRoutes);
 app.use('/organizacion', organizacionRoutes);
 app.use('/perfiles', createPerfilRouter(AppDataSource, authHandler()));
 app.use('/inscripciones', createInscripcionRouter(AppDataSource, authHandler));
+
+// M12 — RF-057: catálogos administrables
+app.use('/administrador/catalogos/lineas-intervencion', crearCatalogoRouter('linea_intervencion'));
+app.use('/administrador/catalogos/categorias-organizacion', crearCatalogoRouter('categoria_organizacion'));
+app.use('/administrador/catalogos/ubicaciones', crearCatalogoRouter('ubicacion'));
+
+// M12 — RF-058: parámetros generales del sistema
+app.use('/administrador/parametros', crearParametroRouter());
+
+// M12 — RF-059: gestión de roles y permisos granular (exclusivo Super Admin)
+app.use('/administrador/roles', crearRolPermisoRouter());
 
 // SIEMPRE al final, después de todas las rutas
 app.use(errorHandler);

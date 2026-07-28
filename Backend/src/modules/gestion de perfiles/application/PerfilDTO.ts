@@ -38,6 +38,7 @@ export interface ActualizarPerfilOrganizacionDTO {
     nombre_ong?: string;
     descripcion_actividad?: string;
     linea_intervencion_id?: number;
+    categoria_id?: number;
     pais?: string;
     direccion?: string;
     persona_contacto?: string;
@@ -55,6 +56,8 @@ export interface PerfilOrganizacionResponseDTO {
     descripcion_actividad: string | null;
     linea_intervencion_id: number | null;
     linea_intervencion_nombre?: string;
+    categoria_id: number | null;
+    categoria_nombre?: string;
     pais: string;
     direccion: string;
     persona_contacto: string;

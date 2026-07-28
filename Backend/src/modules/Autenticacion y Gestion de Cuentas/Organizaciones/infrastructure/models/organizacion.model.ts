@@ -14,6 +14,9 @@ export class OrganizacionModel {
     @Column({ type: 'int', unsigned: true, nullable: true })
     linea_intervencion_id!: number | null;
 
+    @Column({ type: 'int', unsigned: true, nullable: true })
+    categoria_id!: number | null;
+
     @Column({ type: 'varchar', length: 100, default: 'Perú' })
     pais!: string;
 

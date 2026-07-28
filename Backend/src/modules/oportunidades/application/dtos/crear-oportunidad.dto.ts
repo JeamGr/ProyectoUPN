@@ -17,8 +17,9 @@ export class CrearOportunidadDTO {
     @IsEnum(['presencial', 'virtual', 'mixta'], { message: 'Modalidad inválida' })
     modalidad!: 'presencial' | 'virtual' | 'mixta';
 
-    @IsOptional() @IsString()
-    ubicacion?: string;
+    @IsNotEmpty({ message: 'La ubicación es obligatoria' })
+    @IsInt()
+    ubicacionId!: number;
 
     @IsNotEmpty({ message: 'La fecha de inicio es obligatoria' })
     @IsDateString({}, { message: 'Fecha de inicio inválida' })

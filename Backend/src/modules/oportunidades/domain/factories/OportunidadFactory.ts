@@ -10,11 +10,11 @@ interface DatosCreacion {
     descripcion: string;
     lineaIntervencionId: number;
     modalidad: Modalidad;
+    ubicacionId: number;
     fechaInicio: Date;
     fechaFin: Date;
     horasAcreditadas: number;
     cuposTotales: number;
-    ubicacion?: string;
     requisitos?: string;
     imagenUrl?: string;
     requiereAprobacion?: boolean;
@@ -29,13 +29,13 @@ export class OportunidadFactory {
             datos.descripcion,
             datos.lineaIntervencionId,
             datos.modalidad,
+            datos.ubicacionId,
             datos.fechaInicio,
             datos.fechaFin,
             datos.horasAcreditadas,
             datos.cuposTotales,
             datos.cuposTotales, // al crear, disponibles = totales
             'borrador',
-            datos.ubicacion ?? null,
             datos.requisitos ?? null,
             datos.imagenUrl ?? null,
             null,

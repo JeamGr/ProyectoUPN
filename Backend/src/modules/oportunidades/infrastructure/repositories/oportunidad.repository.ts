@@ -102,9 +102,9 @@ export class OportunidadRepository implements IOportunidadRepository {
         if (filtros.fechaHasta) {
             qb.andWhere('o.fecha_inicio <= :fechaHasta', { fechaHasta: filtros.fechaHasta });
         }
-        // RF-023: ubicacion como texto simple (ciudad/distrito), sin geolocalizacion real
-        if (filtros.ubicacion) {
-            qb.andWhere('o.ubicacion LIKE :ubicacion', { ubicacion: `%${filtros.ubicacion}%` });
+        // RF-023: ubicacion como catalogo administrable (M12/RF-057), filtro por igualdad
+        if (filtros.ubicacionId) {
+            qb.andWhere('o.ubicacion_id = :ubicacionId', { ubicacionId: filtros.ubicacionId });
         }
         // RF-023: duracion en horas
         if (filtros.horasMin !== undefined) {
