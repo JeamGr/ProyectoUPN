@@ -14,6 +14,7 @@ export class Organizacion {
         public tieneCertificadoDonacion: 'SI' | 'NO' | 'EN_PROCESO',
         public descripcionActividad: string | null = null,
         public lineaIntervencionId: number | null = null,
+        public categoriaId: number | null = null,
         public pais: string = 'Perú',
         public linkWeb: string | null = null,
         public numeroBeneficiariosAnual: string | null = null,

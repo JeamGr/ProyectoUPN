@@ -20,8 +20,8 @@ export class OportunidadModel {
     @Column({ type: 'enum', enum: ['presencial', 'virtual', 'mixta'] })
     modalidad!: 'presencial' | 'virtual' | 'mixta';
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    ubicacion!: string | null;
+    @Column({ type: 'int', unsigned: true })
+    ubicacion_id!: number;
 
     @Column({ type: 'datetime' })
     fecha_inicio!: Date;

@@ -11,6 +11,9 @@ export class RegistroOrganizacionDTO {
     @IsOptional() @IsInt()
     lineaIntervencionId?: number;
 
+    @IsOptional() @IsInt()
+    categoriaId?: number;
+
     @IsOptional() @IsString()
     pais?: string;
 

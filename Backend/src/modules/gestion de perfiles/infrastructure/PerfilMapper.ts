@@ -34,6 +34,8 @@ export class PerfilMapper {
             descripcion_actividad: model.descripcion_actividad,
             linea_intervencion_id: model.linea_intervencion_id,
             linea_intervencion_nombre: model.linea_intervencion?.nombre,
+            categoria_id: model.categoria_id,
+            categoria_nombre: model.categoria?.nombre,
             pais: model.pais,
             direccion: model.direccion,
             persona_contacto: model.persona_contacto,

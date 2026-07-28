@@ -4,6 +4,7 @@ export class Organizacion {
         public nombreOng: string,
         public descripcionActividad: string | null,
         public lineaIntervencionId: number | null,
+        public categoriaId: number | null,
         public pais: string,
         public direccion: string,
         public personaContacto: string,

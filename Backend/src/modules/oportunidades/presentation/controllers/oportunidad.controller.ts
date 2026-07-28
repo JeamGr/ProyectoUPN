@@ -77,7 +77,7 @@ export class OportunidadController {
             fechaDesde: q.fechaDesde ? new Date(q.fechaDesde) : undefined,
             fechaHasta: q.fechaHasta ? new Date(q.fechaHasta) : undefined,
             textoBusqueda: q.texto,
-            ubicacion: q.ubicacion,
+            ubicacionId: q.ubicacionId ? Number(q.ubicacionId) : undefined,
             horasMin: q.horasMin ? Number(q.horasMin) : undefined,
             horasMax: q.horasMax ? Number(q.horasMax) : undefined,
             ordenarPor: q.ordenarPor,

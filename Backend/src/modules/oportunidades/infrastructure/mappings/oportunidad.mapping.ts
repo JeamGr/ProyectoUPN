@@ -10,13 +10,13 @@ export class OportunidadMapping {
             model.descripcion,
             model.linea_intervencion_id,
             model.modalidad,
+            model.ubicacion_id,
             model.fecha_inicio,
             model.fecha_fin,
             model.horas_acreditadas,
             model.cupos_totales,
             model.cupos_disponibles,
             model.estado,
-            model.ubicacion,
             model.requisitos,
             model.imagen_url,
             model.motivo_rechazo,
@@ -34,7 +34,7 @@ export class OportunidadMapping {
         model.descripcion = oportunidad.descripcion;
         model.linea_intervencion_id = oportunidad.lineaIntervencionId;
         model.modalidad = oportunidad.modalidad;
-        model.ubicacion = oportunidad.ubicacion;
+        model.ubicacion_id = oportunidad.ubicacionId;
         model.fecha_inicio = oportunidad.fechaInicio;
         model.fecha_fin = oportunidad.fechaFin;
         model.horas_acreditadas = oportunidad.horasAcreditadas;

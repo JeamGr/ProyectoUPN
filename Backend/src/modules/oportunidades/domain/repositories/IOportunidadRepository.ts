@@ -10,7 +10,7 @@ export interface FiltrosBusqueda {
     fechaDesde?: Date;
     fechaHasta?: Date;
     textoBusqueda?: string;      // RF-022
-    ubicacion?: string;          // RF-023 (texto: ciudad/distrito)
+    ubicacionId?: number;        // RF-023 (catálogo de ubicaciones, M12/RF-057)
     horasMin?: number;           // RF-023 (duración en horas)
     horasMax?: number;
     ordenarPor?: OrdenBusqueda;  // RF-024
