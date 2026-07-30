@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
 
 import { CrearOportunidadDTO } from '../../application/dtos/crear-oportunidad.dto';
 import { RechazarOportunidadDTO } from '../../application/dtos/rechazar-oportunidad.dto';
@@ -104,4 +106,49 @@ export class OportunidadController {
         if (!oportunidad) return res.status(404).json({ ok: false, mensaje: 'Oportunidad no encontrada' });
         return res.status(200).json({ ok: true, oportunidad });
     };
+    subirImagen = async (req: Request, res: Response) => {
+        const id = Number(req.params.id);
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({ ok: false, mensaje: 'Id de oportunidad inválido' });
+        }
+        if (!req.file) {
+            return res.status(400).json({ ok: false, mensaje: 'No se recibió ninguna imagen' });
+        }
+
+        const url = `/uploads/oportunidades/${req.file.filename}`;
+
+        try {
+            const resultado = await this.oportunidadService.subirImagen(id, req.jwt!.id, url);
+
+            if (!resultado.ok) {
+                // El archivo ya se guardó en disco por multer antes de llegar aquí;
+                // si el negocio lo rechaza (no existe / no es dueño / estado inválido),
+                // se borra para no dejar huérfanos.
+                this.borrarArchivoSiExiste(req.file.filename);
+                return res.status(400).json(resultado);
+            }
+
+            // Reemplazo exitoso: se borra la imagen anterior (si tenía una) para no
+            // acumular archivos huérfanos en /uploads/oportunidades.
+            if (resultado.imagenAnterior) {
+                this.borrarArchivoSiExiste(path.basename(resultado.imagenAnterior));
+            }
+
+            return res.status(200).json({ ok: true, imagenUrl: url });
+        } catch (error) {
+            // Si algo falla después de que multer ya escribió el archivo, se limpia
+            // para no dejarlo huérfano en disco.
+            this.borrarArchivoSiExiste(req.file.filename);
+            throw error; // lo atrapa errorHandler
+        }
+    };
+
+    private borrarArchivoSiExiste(filename: string) {
+        const ruta = path.join(process.cwd(), 'uploads', 'oportunidades', filename);
+        fs.unlink(ruta, (err) => {
+            if (err && err.code !== 'ENOENT') {
+                console.error('[subirImagen] No se pudo borrar el archivo anterior:', err);
+            }
+        });
+    }
 }

@@ -194,4 +194,8 @@ export class OportunidadRepository implements IOportunidadRepository {
         });
         return modelos.map(OportunidadMapping.toDomain);
     }
+
+    async actualizarImagen(id: number, imagenUrl: string): Promise<void> {
+        await this.repo.update({ id }, { imagen_url: imagenUrl });
+    }
 }

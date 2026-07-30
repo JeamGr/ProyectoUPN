@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 import oportunidadRoutes from './modules/oportunidades/presentation/routes/oportunidad.routes';
 import { AppDataSource } from './config/datasource';
@@ -14,6 +15,9 @@ import { createInscripcionRouter } from './modules/inscripciones y gestion de cu
 import { crearCatalogoRouter } from './modules/administrador/presentation/routes/catalogo.routes';
 import { crearParametroRouter } from './modules/administrador/presentation/routes/parametro.routes';
 import { crearRolPermisoRouter } from './modules/administrador/presentation/routes/rol-permiso.routes';
+import asistenciaRoutes from './modules/asistencia/presentation/routes/asistencia.routes';
+
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -35,6 +39,12 @@ app.use('/administrador/parametros', crearParametroRouter());
 
 // M12 — RF-059: gestión de roles y permisos granular (exclusivo Super Admin)
 app.use('/administrador/roles', crearRolPermisoRouter());
+
+// M6 — Asistencia, evidencias y cumplimiento
+app.use('/asistencia', asistenciaRoutes);
+
+// Sirve las imágenes/evidencias como archivos públicos
+app.use('/uploads', express.static('uploads'));
 
 // SIEMPRE al final, después de todas las rutas
 app.use(errorHandler);

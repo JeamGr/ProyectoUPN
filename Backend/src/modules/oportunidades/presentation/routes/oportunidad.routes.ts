@@ -3,7 +3,7 @@ import { OportunidadController } from '../controllers/oportunidad.controller';
 import { CrearOportunidadDTO } from '../../application/dtos/crear-oportunidad.dto';
 import { RechazarOportunidadDTO } from '../../application/dtos/rechazar-oportunidad.dto';
 import { authHandler } from '../../../../shared/middlewares/auth.handler';
-
+import { uploadImagenOportunidad, manejarSubida } from '../../../../shared/middlewares/upload.middleware';
 const router = Router();
 const controller = new OportunidadController();
 
@@ -27,4 +27,5 @@ router.post('/:id/aprobar', authHandler({ roles: ['ADMINISTRADOR', 'SUPER_ADMINI
 router.post('/:id/rechazar', authHandler({ roles: ['ADMINISTRADOR', 'SUPER_ADMINISTRADOR'], dto: RechazarOportunidadDTO }), controller.rechazar);
 router.post('/:id/cancelar', authHandler({ roles: ['ADMINISTRADOR', 'SUPER_ADMINISTRADOR'], dto: RechazarOportunidadDTO }), controller.cancelar);
 
+router.post('/:id/imagen', authHandler({ roles: ['ORGANIZACION'] }), manejarSubida(uploadImagenOportunidad, 'imagen'), controller.subirImagen);
 export default router;

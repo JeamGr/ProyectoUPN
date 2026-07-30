@@ -103,6 +103,27 @@ export class OportunidadService {
         return { ok: true };
     }
 
+    // RF-014: actualiza la imagen de portada. Devuelve la URL anterior (si existía)
+    // para que el controller pueda borrar el archivo físico huérfano en disco.
+    async subirImagen(
+        id: number,
+        organizacionId: number,
+        imagenUrl: string,
+    ): Promise<Resultado<{ imagenAnterior: string | null }>> {
+        const oportunidad = await this.oportunidadRepository.buscarPorId(id);
+        if (!oportunidad) return { ok: false, mensaje: 'Oportunidad no encontrada' };
+        if (oportunidad.organizacionId !== organizacionId) {
+            return { ok: false, mensaje: 'No tienes permiso sobre esta oportunidad' };
+        }
+        if (oportunidad.estado === 'cerrado' || oportunidad.estado === 'cancelado') {
+            return { ok: false, mensaje: `No se puede modificar la imagen de una oportunidad en estado "${oportunidad.estado}"` };
+        }
+
+        const imagenAnterior = oportunidad.imagenUrl;
+        await this.oportunidadRepository.actualizarImagen(id, imagenUrl);
+        return { ok: true, imagenAnterior };
+    }
+
     private async transicionSimple(id: number, organizacionId: number, destino: EstadoOportunidad): Promise<Resultado> {
         const oportunidad = await this.oportunidadRepository.buscarPorId(id);
         if (!oportunidad) return { ok: false, mensaje: 'Oportunidad no encontrada' };
