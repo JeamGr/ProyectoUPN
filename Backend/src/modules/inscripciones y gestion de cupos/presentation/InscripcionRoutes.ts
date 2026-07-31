@@ -4,14 +4,6 @@ import { MysqlInscripcionRepository } from '../infrastructure/MysqlInscripcionRe
 import { InscripcionService } from '../application/InscripcionService';
 import { InscripcionController } from './InscripcionController';
 
-// authHandlerFactory es la función `authHandler` real de
-// shared/middlewares/auth.handler.ts. Se recibe como parámetro (en vez de
-// importarla directo) para no acoplar este módulo a esa ruta de archivo,
-// igual que hace createPerfilRouter con su `authMiddleware`.
-// El tipo de authHandlerFactory se deja como `any`, igual que hace
-// PerfilRoutes.ts con su `authMiddleware: any` — evita un choque de tipos
-// entre el `Rol` real (unión de literales) de auth.handler.ts y un tipo
-// genérico string[] declarado aquí.
 export const createInscripcionRouter = (dataSource: DataSource, authHandlerFactory: any): Router => {
     const router = Router();
 
@@ -21,6 +13,9 @@ export const createInscripcionRouter = (dataSource: DataSource, authHandlerFacto
 
     // RF-026: solo VOLUNTARIO puede inscribirse
     router.post('/', authHandlerFactory({ roles: ['VOLUNTARIO'] }), controller.inscribirse);
+
+    // RF-028 (Vista Voluntario): Obtener 'Mis Eventos' del voluntario logueado
+    router.get('/mis-eventos', authHandlerFactory({ roles: ['VOLUNTARIO'] }), controller.obtenerMisInscripciones);
 
     // RF-027: solo VOLUNTARIO puede cancelar (y el Service valida que sea SU inscripción)
     router.delete('/:id', authHandlerFactory({ roles: ['VOLUNTARIO'] }), controller.cancelarInscripcion);
