@@ -42,4 +42,10 @@ export interface InscripcionRepository {
     aprobarInscripcion(inscripcionId: number): Promise<void>;
     // Rechazar libera el cupo y promueve lista de espera, igual que cancelar.
     rechazarInscripcionYPromoverListaEspera(inscripcionId: number, motivo: string): Promise<void>;
+    // Add to InscripcionRepository.ts
+
+    // --------------------------------------------------
+    // RF-028: Mis Eventos (Vista Voluntario)
+    // --------------------------------------------------
+    obtenerInscripcionesPorUsuario(usuarioId: number): Promise<any[]>;
 }
