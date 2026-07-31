@@ -116,7 +116,7 @@
 <script>
 const API_BASE_URL = 'http://localhost:3003';
 const token = localStorage.getItem('token');
-if (!token) window.location.href = '../public-auth/login.html';
+if (!token) window.location.href = '../public-auth/login-organizacion.html';
 const headers = { Authorization: `Bearer ${token}` };
 
 let pasoActual = 1;

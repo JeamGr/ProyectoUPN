@@ -28,4 +28,6 @@ router.post('/:id/rechazar', authHandler({ roles: ['ADMINISTRADOR', 'SUPER_ADMIN
 router.post('/:id/cancelar', authHandler({ roles: ['ADMINISTRADOR', 'SUPER_ADMINISTRADOR'], dto: RechazarOportunidadDTO }), controller.cancelar);
 
 router.post('/:id/imagen', authHandler({ roles: ['ORGANIZACION'] }), manejarSubida(uploadImagenOportunidad, 'imagen'), controller.subirImagen);
+router.get('/pendientes/aprobacion', authHandler({ roles: ['ADMINISTRADOR', 'SUPER_ADMINISTRADOR'] }), controller.listarPendientes);
+router.get('/me/metricas', authHandler({ roles: ['ORGANIZACION'] }), controller.misMetricas);
 export default router;

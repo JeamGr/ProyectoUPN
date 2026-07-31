@@ -40,5 +40,5 @@ router.patch(
     authHandler({ roles: ['ORGANIZACION', 'ADMINISTRADOR', 'SUPER_ADMINISTRADOR'], dto: ActualizarEstadoIncidenciaDTO }),
     controller.actualizarEstadoIncidencia,
 );
-
+router.get('/inscritos/:oportunidadId', authHandler({ roles: ['ORGANIZACION'] }), controller.listarInscritos);
 export default router;

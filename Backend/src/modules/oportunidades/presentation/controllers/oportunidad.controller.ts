@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
 
+import { AppDataSource } from '../../../../config/datasource';
 import { CrearOportunidadDTO } from '../../application/dtos/crear-oportunidad.dto';
 import { RechazarOportunidadDTO } from '../../application/dtos/rechazar-oportunidad.dto';
 import { BuscarOportunidadesDTO } from '../../application/dtos/buscar-oportunidades.dto';
@@ -10,6 +11,7 @@ import { BusquedaOportunidadService } from '../../application/services/busqueda-
 
 import { OportunidadRepository } from '../../infrastructure/repositories/oportunidad.repository';
 import { OrganizacionValidacionRepository } from '../../infrastructure/repositories/organizacion-validacion.repository';
+
 
 export class OportunidadController {
     private oportunidadService: OportunidadService;
@@ -23,6 +25,11 @@ export class OportunidadController {
         this.oportunidadService = new OportunidadService(this.oportunidadRepository, organizacionValidacionRepository);
         this.busquedaService = new BusquedaOportunidadService(this.oportunidadRepository);
     }
+
+    listarPendientes = async (req: Request, res: Response) => {
+        const datos = await this.oportunidadRepository.buscarPendientesAprobacion();
+        return res.status(200).json({ ok: true, oportunidades: datos });
+    };
 
     crear = async (req: Request, res: Response) => {
         const dto = req.dto as CrearOportunidadDTO;
@@ -99,7 +106,7 @@ export class OportunidadController {
         const resultados = await this.busquedaService.buscarPorOrganizacion(req.jwt!.id);
         return res.status(200).json({ ok: true, oportunidades: resultados });
     };
-
+    
     obtenerPorId = async (req: Request, res: Response) => {
         const id = Number(req.params.id);
         const oportunidad = await this.oportunidadRepository.buscarPorId(id);
@@ -151,4 +158,28 @@ export class OportunidadController {
             }
         });
     }
+    misMetricas = async (req: Request, res: Response) => {
+        const organizacionId = req.jwt!.id;
+        const [activas] = await AppDataSource.query(
+            `SELECT COUNT(*) AS total FROM oportunidades WHERE organizacion_id = ? AND estado = 'publicado'`, [organizacionId],
+        );
+        const [inscritos] = await AppDataSource.query(
+            `SELECT COUNT(*) AS total FROM inscripciones i
+             INNER JOIN oportunidades o ON o.id = i.oportunidad_id
+             WHERE o.organizacion_id = ? AND i.estado != 'cancelado'`, [organizacionId],
+        );
+        const [horas] = await AppDataSource.query(
+            `SELECT COALESCE(SUM(o.horas_acreditadas),0) AS total FROM asistencias a
+             INNER JOIN inscripciones i ON i.id = a.inscripcion_id
+             INNER JOIN oportunidades o ON o.id = i.oportunidad_id
+             WHERE o.organizacion_id = ? AND a.estado = 'presente'`, [organizacionId],
+        );
+        return res.status(200).json({
+            ok: true,
+            oportunidadesActivas: Number(activas.total),
+            voluntariosInscritos: Number(inscritos.total),
+            horasGeneradas: Number(horas.total),
+        });
+    };
+    
 }

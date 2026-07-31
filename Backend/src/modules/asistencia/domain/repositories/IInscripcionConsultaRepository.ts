@@ -19,4 +19,5 @@ export interface IInscripcionConsultaRepository {
     buscarInscripcionDe(voluntarioId: number, oportunidadId: number): Promise<DatosInscripcion | null>;
     // Para saber si quien pide la accion es dueño de la oportunidad (Organizacion)
     obtenerOrganizacionDeOportunidad(oportunidadId: number): Promise<number | null>;
+    listarInscritosDeOportunidad(oportunidadId: number): Promise<DatosInscripcion[]>;
 }

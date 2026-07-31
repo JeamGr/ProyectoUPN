@@ -124,3 +124,80 @@ body {
 }
 .social-btn:hover { background: #FAFAFC; }
 .social-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* =====================================================================
+   LANDING PAGE
+   ===================================================================== */
+.lp-navbar {
+    background: #fff;
+    border-bottom: 1px solid #ECE9F5;
+    padding: 0.9rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+.lp-navbar .nav-link {
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+.lp-navbar .nav-link:hover { color: var(--color-secondary); }
+
+.lp-hero {
+    background: linear-gradient(160deg, var(--color-dark) 0%, var(--color-secondary) 120%);
+    color: #fff;
+    padding: 5rem 0 6rem;
+}
+.lp-hero h1 {
+    font-weight: 800;
+    font-size: 2.6rem;
+    line-height: 1.15;
+}
+.lp-hero p.lead { color: rgba(255,255,255,.85); }
+
+.lp-audience-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(23,19,49,.06);
+    height: 100%;
+    border: 1px solid #ECE9F5;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.lp-audience-card:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(23,19,49,.10); }
+.lp-audience-card .icon-circle {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.lp-stats {
+    background: #fff;
+    padding: 3.5rem 0;
+}
+.lp-stat-value {
+    font-weight: 800;
+    font-size: 2.4rem;
+    color: var(--color-dark);
+    line-height: 1;
+}
+.lp-stat-label { color: var(--color-text-muted); font-size: 0.9rem; margin-top: .35rem; }
+
+.lp-footer {
+    background: var(--color-dark);
+    color: rgba(255,255,255,.7);
+    padding: 2.5rem 0;
+    font-size: 0.88rem;
+}
+.lp-footer a { color: rgba(255,255,255,.85); }
+
+.btn-yn-outline-light {
+    border: 1.5px solid rgba(255,255,255,.5);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 0.6rem 1.3rem;
+}
+.btn-yn-outline-light:hover { background: rgba(255,255,255,.1); color: #fff; }

@@ -198,4 +198,11 @@ export class OportunidadRepository implements IOportunidadRepository {
     async actualizarImagen(id: number, imagenUrl: string): Promise<void> {
         await this.repo.update({ id }, { imagen_url: imagenUrl });
     }
+    async buscarPendientesAprobacion(): Promise<Oportunidad[]> {
+        const modelos = await this.repo.find({
+            where: { estado: 'pendiente_aprobacion' },
+            order: { created_at: 'ASC' },
+        });
+        return modelos.map(OportunidadMapping.toDomain);
+    }
 }
