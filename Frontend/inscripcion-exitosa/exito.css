@@ -1,0 +1,82 @@
+/* Importación directa de Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F8FAFC;
+  color: #1A1147;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.brand-logo {
+  font-weight: 700;
+  color: #6D28D9;
+  font-size: 1.4rem;
+}
+
+/* Card de Éxito */
+.card-success {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(26, 17, 71, 0.06);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* Icono Animado de Éxito */
+.success-icon-wrapper {
+  width: 90px;
+  height: 90px;
+  background-color: #DCFCE7;
+  color: #16A34A;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  margin: 0 auto 1.5rem auto;
+}
+
+/* Caja Destacada del Evento */
+.event-info-box {
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+/* Botones YANANTIN */
+.btn-yanantin {
+  background-color: #6D28D9;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 0.85rem 1.8rem;
+  border: none;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.btn-yanantin:hover {
+  background-color: #5B21B6;
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.3);
+}
+
+.link-explore {
+  color: #6D28D9;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link-explore:hover {
+  color: #5B21B6;
+  text-decoration: underline;
+}

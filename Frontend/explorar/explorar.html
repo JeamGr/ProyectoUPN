@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YANANTIN - Explorar Oportunidades</title>
+
+  <!-- Bootstrap 5 CSS e Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- CSS Exclusivo de Explorar -->
+  <link rel="stylesheet" href="./explorar.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand-logo d-flex align-items-center gap-2">
+        <i class="bi bi-heart-pulse-fill text-danger"></i> YANANTIN
+      </div>
+
+      <nav class="flex-grow-1">
+        <a href="../dashboard-voluntario/dashboard-voluntario.html" class="nav-link-custom">
+          <i class="bi bi-house-door"></i> Inicio
+        </a>
+        <a href="#" class="nav-link-custom active">
+          <i class="bi bi-compass-fill"></i> Explorar
+        </a>
+        <a href="../mis-eventos/mis-eventos.html" class="nav-link-custom">
+          <i class="bi bi-calendar-event"></i> Mis eventos
+        </a>
+        <a href="../perfil/perfil.html" class="nav-link-custom">
+          <i class="bi bi-person"></i> Mi perfil
+        </a>
+        <a href="#" class="nav-link-custom">
+          <i class="bi bi-gear"></i> Configuración
+        </a>
+      </nav>
+
+      <div class="border-top pt-3">
+        <a href="#" id="btnCerrarSesion" class="nav-link-custom text-danger">
+          <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Header & Buscador -->
+      <div class="mb-4">
+        <h3 class="fw-bold mb-1">Explorar Oportunidades</h3>
+        <p class="text-muted small mb-3">Encuentra iniciativas alineadas con tus pasiones e impacto deseado.</p>
+
+        <div class="row g-2 align-items-center">
+          <div class="col-md-9">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0 rounded-start-3 ps-3 text-muted">
+                <i class="bi bi-search"></i>
+              </span>
+              <input type="text" id="inputBusqueda" class="form-control search-input border-start-0" placeholder="Buscar por palabra clave, voluntariado u organización...">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-white border w-100 py-2 rounded-3 fw-semibold text-muted">
+              <i class="bi bi-sliders me-1"></i> Filtros avanzados
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chips de Categorías -->
+      <div class="d-flex gap-2 flex-wrap mb-4">
+        <button class="category-chip active" data-categoria=""><i class="bi bi-grid-fill"></i> Todos</button>
+        <button class="category-chip" data-categoria="Medio ambiente"><i class="bi bi-tree"></i> Medio ambiente</button>
+        <button class="category-chip" data-categoria="Educación"><i class="bi bi-book"></i> Educación</button>
+        <button class="category-chip" data-categoria="Salud"><i class="bi bi-heart-pulse"></i> Salud</button>
+        <button class="category-chip" data-categoria="Inclusión social"><i class="bi bi-people"></i> Inclusión social</button>
+      </div>
+
+      <!-- Rejilla de Oportunidades (Contenedor Dinámico) -->
+      <div class="row g-4 mb-4" id="contenedorOportunidades">
+        <!-- Las tarjetas se cargarán dinámicamente desde el backend -->
+      </div>
+
+      <!-- Paginación -->
+      <nav class="d-flex justify-content-center">
+        <ul class="pagination" id="paginacion">
+          <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
+        </ul>
+      </nav>
+
+    </main>
+  </div>
+
+  <!-- SCRIPT DE CONEXIÓN CON LA API -->
+  <script>
+    const API_BASE_URL = 'http://localhost:3003';
+    const token = localStorage.getItem('token');
+    
+    // Guard de autenticación
+    if (!token) window.location.href = '../public-auth/login.html';
+    const headers = { Authorization: `Bearer ${token}` };
+
+    let categoriaActual = '';
+
+    async function cargarOportunidades(query = '', categoria = '') {
+      try {
+        let url = `${API_BASE_URL}/oportunidades?`;
+        if (query) url += `q=${encodeURIComponent(query)}&`;
+        if (categoria) url += `categoria=${encodeURIComponent(categoria)}`;
+
+        const resp = await fetch(url, { headers });
+        const datos = await resp.json();
+
+        // Extraer la lista sin importar la forma en que responda el controlador
+        const lista = Array.isArray(datos) ? datos : (datos.data || datos.oportunidades || []);
+        const contenedor = document.getElementById('contenedorOportunidades');
+        contenedor.innerHTML = '';
+
+        if (lista.length === 0) {
+          contenedor.innerHTML = `
+            <div class="col-12 text-center py-5">
+              <i class="bi bi-search fs-1 text-muted"></i>
+              <p class="text-muted mt-2">No se encontraron oportunidades disponibles con los filtros aplicados.</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Renderizar dinámicamente
+        lista.forEach((item) => {
+          const col = document.createElement('div');
+          col.className = 'col-md-6 col-lg-4';
+
+          const esPresencial = item.modalidad === 'Presencial';
+          const badgeModalidad = esPresencial ? 'badge-presencial' : 'badge-virtual';
+          const imgDefault = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=400';
+
+          col.innerHTML = `
+            <div class="opportunity-card">
+              <img src="${item.imagenUrl || imgDefault}" class="card-banner" alt="${item.titulo}">
+              <div class="p-3 d-flex flex-column flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="badge ${badgeModalidad} px-2.5 py-1.5 rounded-pill">${item.modalidad || 'Presencial'}</span>
+                  <small class="text-muted"><i class="bi bi-people-fill text-primary"></i> ${item.cuposDisponibles || item.cupos || 0} cupos</small>
+                </div>
+                <h6 class="fw-bold mb-1">${item.titulo}</h6>
+                <p class="text-muted small mb-2"><i class="bi bi-building"></i> ${item.organizacionNombre || item.organizacion?.nombre || 'Organización'}</p>
+                
+                <div class="small text-muted mb-3">
+                  <p class="mb-1"><i class="bi bi-calendar3 me-1"></i> ${item.fechaTexto || item.fecha || 'Por confirmar'}</p>
+                  <p class="mb-0"><i class="bi bi-geo-alt me-1"></i> ${item.ubicacion || 'Lima'}</p>
+                </div>
+
+                <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                  <a href="../detalle/detalle.html?id=${item.id}" class="btn btn-yanantin-outline btn-sm w-100">Ver detalles</a>
+                </div>
+              </div>
+            </div>
+          `;
+          contenedor.appendChild(col);
+        });
+
+      } catch (error) {
+        console.error('Error al explorar oportunidades:', error);
+      }
+    }
+
+    // Buscador en tiempo real
+    const inputBusqueda = document.getElementById('inputBusqueda');
+    if (inputBusqueda) {
+      inputBusqueda.addEventListener('input', (e) => {
+        cargarOportunidades(e.target.value, categoriaActual);
+      });
+    }
+
+    // Chips de filtro por Categoría
+    document.querySelectorAll('.category-chip').forEach((chip) => {
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+
+        categoriaActual = this.dataset.categoria || '';
+        cargarOportunidades(inputBusqueda ? inputBusqueda.value : '', categoriaActual);
+      });
+    });
+
+    // Cerrar Sesión
+    const btnCerrar = document.getElementById('btnCerrarSesion');
+    if (btnCerrar) {
+      btnCerrar.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        window.location.href = '../public-auth/login.html';
+      });
+    }
+
+    // Carga inicial
+    cargarOportunidades();
+  </script>
+</body>
+</html>

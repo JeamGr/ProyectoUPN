@@ -1,0 +1,169 @@
+/* Importación directa de Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F8FAFC;
+  color: #1A1147;
+}
+
+/* Layout con Sidebar */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #FFFFFF;
+  border-right: 1px solid #E2E8F0;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-logo {
+  font-weight: 700;
+  color: #6D28D9;
+  font-size: 1.4rem;
+  padding: 0 0.5rem 1.5rem 0.5rem;
+}
+
+.nav-link-custom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 1rem;
+  color: #64748B;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.nav-link-custom:hover {
+  background-color: #F1F5F9;
+  color: #6D28D9;
+}
+
+.nav-link-custom.active {
+  background-color: #F3E8FF;
+  color: #6D28D9;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Buscador y Filtros (Categorías) */
+.search-input {
+  border-radius: 12px;
+  padding: 0.75rem 1.2rem;
+  border: 1px solid #E2E8F0;
+  background-color: #FFFFFF;
+}
+
+.search-input:focus {
+  border-color: #6D28D9;
+  box-shadow: 0 0 0 0.25rem rgba(109, 40, 217, 0.15);
+}
+
+.category-chip {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  color: #64748B;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-chip:hover {
+  border-color: #6D28D9;
+  color: #6D28D9;
+}
+
+.category-chip.active {
+  background-color: #6D28D9;
+  color: #FFFFFF;
+  border-color: #6D28D9;
+}
+
+/* Tarjetas de Oportunidades (Cards) */
+.opportunity-card {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(26, 17, 71, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.opportunity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(26, 17, 71, 0.08);
+}
+
+.card-banner {
+  height: 160px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.badge-presencial {
+  background-color: #F3E8FF;
+  color: #6D28D9;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.8rem;
+}
+
+.badge-virtual {
+  background-color: #DCFCE7;
+  color: #15803D;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.8rem;
+}
+
+.btn-yanantin-outline {
+  border: 1.5px solid #6D28D9;
+  color: #6D28D9;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  text-decoration: none; /* Evita subrayado en la etiqueta <a> */
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-yanantin-outline:hover {
+  background-color: #6D28D9;
+  color: #FFFFFF;
+}
+
+/* Paginación */
+.pagination .page-link {
+  color: #6D28D9;
+  border-radius: 8px;
+  margin: 0 2px;
+  border: none;
+  font-weight: 600;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #6D28D9;
+  color: #FFFFFF;
+}

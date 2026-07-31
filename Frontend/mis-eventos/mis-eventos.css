@@ -1,0 +1,151 @@
+/* Importación directa de Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F8FAFC;
+  color: #1A1147;
+}
+
+/* Layout con Sidebar */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #FFFFFF;
+  border-right: 1px solid #E2E8F0;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-logo {
+  font-weight: 700;
+  color: #6D28D9;
+  font-size: 1.4rem;
+  padding: 0 0.5rem 1.5rem 0.5rem;
+}
+
+.nav-link-custom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 1rem;
+  color: #64748B;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.nav-link-custom:hover {
+  background-color: #F1F5F9;
+  color: #6D28D9;
+}
+
+.nav-link-custom.active {
+  background-color: #F3E8FF;
+  color: #6D28D9;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Pestañas (Nav Tabs) */
+.nav-tabs-custom {
+  border-bottom: 2px solid #E2E8F0;
+}
+
+.nav-tabs-custom .nav-link {
+  color: #64748B;
+  font-weight: 600;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nav-tabs-custom .nav-link:hover {
+  color: #6D28D9;
+}
+
+.nav-tabs-custom .nav-link.active {
+  color: #6D28D9;
+  background: transparent;
+  border-bottom-color: #6D28D9;
+}
+
+/* Items de Evento (Lista / Tarjetas) */
+.event-item-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 15px rgba(26, 17, 71, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.event-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 17, 71, 0.06);
+}
+
+.event-date-box {
+  width: 65px;
+  height: 65px;
+  background-color: #F3E8FF;
+  color: #6D28D9;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  line-height: 1.1;
+  flex-shrink: 0;
+}
+
+.event-date-box .day {
+  font-size: 1.2rem;
+}
+
+.event-date-box .month {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+/* Badges */
+.badge-presencial {
+  background-color: #F3E8FF;
+  color: #6D28D9;
+  font-weight: 600;
+}
+
+.badge-virtual {
+  background-color: #DCFCE7;
+  color: #15803D;
+  font-weight: 600;
+}
+
+.badge-en-curso {
+  background-color: #FEF3C7;
+  color: #D97706;
+  font-weight: 600;
+}
+
+/* Utilidades para botones y menús */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.dropdown-menu-item:hover {
+  background-color: #FEF2F2;
+  border-radius: 6px;
+}
