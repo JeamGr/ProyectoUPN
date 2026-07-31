@@ -1,0 +1,126 @@
+/* =====================================================================
+   Paleta ALTERNA — inspirada en el manual de marca, pero con valores
+   hex distintos a los oficiales (#FF1478 / #6D28D9 / #FFC107 / #1A1147)
+   para no reproducir la identidad visual patentada.
+   ===================================================================== */
+:root {
+    --color-dark: #171331;      /* en vez de #1A1147 */
+    --color-primary: #E0247A;   /* en vez de #FF1478 */
+    --color-secondary: #5B3EE8; /* en vez de #6D28D9 */
+    --color-accent: #FFB300;    /* en vez de #FFC107 */
+    --color-bg: #F7F6FB;
+    --color-text: #1F1B33;
+    --color-text-muted: #6B6580;
+    --radius-lg: 16px;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.brand-logo {
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--color-dark);
+}
+.brand-logo span { color: var(--color-primary); }
+
+.auth-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.auth-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 40px rgba(23, 19, 49, 0.08);
+    overflow: hidden;
+    max-width: 980px;
+    width: 100%;
+}
+
+.auth-panel-side {
+    background: linear-gradient(160deg, var(--color-dark) 0%, var(--color-secondary) 100%);
+    color: #fff;
+    padding: 3rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.auth-panel-side .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    opacity: 0.95;
+}
+.auth-panel-side .check-item i { color: var(--color-accent); margin-top: 2px; }
+
+.btn-brand-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+}
+.btn-brand-primary:hover { background-color: #c01d68; border-color: #c01d68; color: #fff; }
+
+.form-label { font-weight: 600; font-size: 0.9rem; color: var(--color-text); }
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 1px solid #E3E0EE;
+    padding: 0.6rem 0.85rem;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(91, 62, 232, 0.15);
+}
+
+.link-brand { color: var(--color-secondary); font-weight: 600; text-decoration: none; }
+.link-brand:hover { text-decoration: underline; }
+
+.divider-text {
+    display: flex; align-items: center; gap: 0.75rem;
+    color: var(--color-text-muted); font-size: 0.85rem; margin: 1.25rem 0;
+}
+.divider-text::before, .divider-text::after { content: ""; flex: 1; height: 1px; background: #E3E0EE; }
+
+.interes-chip {
+    border: 1.5px solid #E3E0EE;
+    border-radius: 12px;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text);
+    user-select: none;
+}
+.interes-chip:hover { border-color: var(--color-secondary); }
+.interes-chip.activo {
+    background-color: rgba(91, 62, 232, 0.08);
+    border-color: var(--color-secondary);
+    color: var(--color-secondary);
+}
+
+.alert-form { display: none; }
+
+.social-btn {
+    border: 1.5px solid #E3E0EE;
+    border-radius: 10px;
+    padding: 0.55rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    background: #fff;
+}
+.social-btn:hover { background: #FAFAFC; }
+.social-btn.disabled { opacity: 0.5; cursor: not-allowed; }

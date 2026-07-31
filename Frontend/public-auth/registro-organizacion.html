@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Crear cuenta como organización — Voluntariados UPN</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="row g-0">
+      <div class="col-lg-7 p-4 p-md-5">
+        <div class="brand-logo fs-4 mb-4">VOLUNTARIADO<span>UPN</span></div>
+
+        <h2 class="fw-bold mb-1">Crear cuenta como organización</h2>
+        <p class="text-muted mb-4">Publica oportunidades y conecta con voluntarios.</p>
+
+        <div id="alertaError" class="alert alert-danger alert-form" role="alert"></div>
+
+        <form id="formRegistro" novalidate>
+
+          <p class="text-uppercase text-muted small fw-bold mb-2">Datos de la organización</p>
+          <div class="mb-3">
+            <label class="form-label">Nombre de la organización</label>
+            <input type="text" class="form-control" id="nombreOng" placeholder="Ej. Fundación Verde" required>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">RUC / Identificación tributaria</label>
+              <input type="text" class="form-control" id="ruc" placeholder="Ej. 20123456789" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Razón social</label>
+              <input type="text" class="form-control" id="razonSocial" placeholder="Razón social exacta" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="direccion" placeholder="Calle/Avenida/Número, distrito" required>
+          </div>
+
+          <p class="text-uppercase text-muted small fw-bold mb-2 mt-2">Persona de contacto</p>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Nombres y apellidos</label>
+              <input type="text" class="form-control" id="personaContacto" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Celular de contacto</label>
+              <input type="text" class="form-control" id="celularContacto" placeholder="987 654 321" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Tipo de documento</label>
+              <select class="form-select" id="tipoDocumentoContacto" required>
+                <option value="DNI">DNI</option>
+                <option value="CE">Carné de extranjería</option>
+                <option value="PASAPORTE">Pasaporte</option>
+              </select>
+            </div>
+            <div class="col-md-8 mb-3">
+              <label class="form-label">Número de documento</label>
+              <input type="text" class="form-control" id="numeroDocumentoContacto" required>
+            </div>
+          </div>
+
+          <p class="text-uppercase text-muted small fw-bold mb-2 mt-2">Información legal</p>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">¿Está constituida legalmente?</label>
+              <select class="form-select" id="constituidaLegalmente" required>
+                <option value="SI">Sí</option>
+                <option value="NO">No</option>
+                <option value="EN_PROCESO">En proceso</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">¿Tiene certificado de donación?</label>
+              <select class="form-select" id="tieneCertificadoDonacion" required>
+                <option value="NO">No</option>
+                <option value="SI">Sí</option>
+                <option value="EN_PROCESO">En proceso</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Link de redes sociales</label>
+            <input type="text" class="form-control" id="linkRedesSociales" placeholder="https://instagram.com/tu-ong" required>
+          </div>
+
+          <p class="text-uppercase text-muted small fw-bold mb-2 mt-2">Acceso a la cuenta</p>
+          <div class="mb-3">
+            <label class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="correo" placeholder="contacto@fundacionverde.org" required>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="password" minlength="8" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Confirmar contraseña</label>
+              <input type="password" class="form-control" id="confirmarPassword" required>
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="aceptaTerminos" required>
+            <label class="form-check-label small" for="aceptaTerminos">
+              Acepto los <a href="#" class="link-brand">Términos y condiciones</a> y la <a href="#" class="link-brand">Política de privacidad</a>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-brand-primary w-100" id="btnRegistro">
+            <span id="btnTexto">Crear cuenta</span>
+            <span id="btnSpinner" class="spinner-border spinner-border-sm ms-1 d-none"></span>
+          </button>
+        </form>
+
+        <p class="text-center text-muted small mt-4 mb-0">
+          ¿Ya tienes cuenta? <a href="login.html" class="link-brand">Inicia sesión</a>
+        </p>
+      </div>
+
+      <div class="col-lg-5 d-none d-lg-flex auth-panel-side">
+        <div>
+          <h4 class="fw-bold mb-4">Al registrarte como organización podrás:</h4>
+          <div class="check-item"><i class="bi">✓</i> Publicar oportunidades de voluntariado</div>
+          <div class="check-item"><i class="bi">✓</i> Gestionar inscritos y actividades</div>
+          <div class="check-item"><i class="bi">✓</i> Registrar el impacto generado</div>
+          <div class="check-item"><i class="bi">✓</i> Obtener reportes y estadísticas</div>
+          <hr class="border-light opacity-25 my-3">
+          <p class="small opacity-75 mb-0">Tu cuenta quedará pendiente de aprobación por el equipo administrador antes de poder publicar oportunidades.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE_URL = 'http://localhost:3003';
+
+const form = document.getElementById('formRegistro');
+const alerta = document.getElementById('alertaError');
+const btn = document.getElementById('btnRegistro');
+const btnTexto = document.getElementById('btnTexto');
+const btnSpinner = document.getElementById('btnSpinner');
+
+function mostrarError(mensaje) {
+    alerta.textContent = mensaje;
+    alerta.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function ponerCargando(cargando) {
+    btn.disabled = cargando;
+    btnTexto.textContent = cargando ? 'Creando cuenta...' : 'Crear cuenta';
+    btnSpinner.classList.toggle('d-none', !cargando);
+}
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    alerta.style.display = 'none';
+
+    if (!document.getElementById('aceptaTerminos').checked) {
+        mostrarError('Debes aceptar los Términos y condiciones para continuar.');
+        return;
+    }
+
+    ponerCargando(true);
+    try {
+        const respuesta = await fetch(`${API_BASE_URL}/organizacion/registro`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nombreOng: document.getElementById('nombreOng').value,
+                ruc: document.getElementById('ruc').value,
+                razonSocial: document.getElementById('razonSocial').value,
+                direccion: document.getElementById('direccion').value,
+                personaContacto: document.getElementById('personaContacto').value,
+                celularContacto: document.getElementById('celularContacto').value,
+                tipoDocumentoContacto: document.getElementById('tipoDocumentoContacto').value,
+                numeroDocumentoContacto: document.getElementById('numeroDocumentoContacto').value,
+                constituidaLegalmente: document.getElementById('constituidaLegalmente').value,
+                tieneCertificadoDonacion: document.getElementById('tieneCertificadoDonacion').value,
+                linkRedesSociales: document.getElementById('linkRedesSociales').value,
+                correo: document.getElementById('correo').value,
+                password: document.getElementById('password').value,
+                confirmarPassword: document.getElementById('confirmarPassword').value,
+            }),
+        });
+        const datos = await respuesta.json();
+
+        if (!datos.ok) {
+            mostrarError(datos.mensaje);
+            return;
+        }
+
+        window.location.href = `verificar-correo.html?usuarioId=${datos.usuarioId}`;
+    } catch (error) {
+        mostrarError('No se pudo conectar con el servidor. Intenta de nuevo.');
+    } finally {
+        ponerCargando(false);
+    }
+});
+</script>
+</body>
+</html>

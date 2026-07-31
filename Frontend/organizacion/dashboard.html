@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Dashboard — Organización</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0" id="saludo">¡Hola!</h3>
+      <p class="text-muted mb-0">Aquí tienes el resumen de tu organización.</p>
+    </div>
+    <div>
+      <a href="mis-oportunidades.html" class="btn btn-outline-secondary me-2">Mis oportunidades</a>
+      <a href="crear-oportunidad.html" class="btn btn-brand-primary">+ Nueva oportunidad</a>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="bg-white rounded-3 shadow-sm p-3 text-center">
+        <div class="fs-2 fw-bold" style="color: var(--color-primary);" id="mOportunidades">–</div>
+        <div class="text-muted small">Oportunidades activas</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="bg-white rounded-3 shadow-sm p-3 text-center">
+        <div class="fs-2 fw-bold" style="color: var(--color-secondary);" id="mInscritos">–</div>
+        <div class="text-muted small">Voluntarios inscritos</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="bg-white rounded-3 shadow-sm p-3 text-center">
+        <div class="fs-2 fw-bold" style="color: var(--color-accent);" id="mHoras">–</div>
+        <div class="text-muted small">Horas generadas</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-3 shadow-sm p-3">
+    <h5 class="fw-bold mb-3">Próximas actividades</h5>
+    <div id="listaActividades" class="list-group list-group-flush"></div>
+    <p class="text-muted text-center my-3" id="vacioMensaje" style="display:none;">Aún no tienes oportunidades publicadas.</p>
+  </div>
+</div>
+
+<script>
+const API_BASE_URL = 'http://localhost:3003';
+const token = localStorage.getItem('token');
+if (!token) window.location.href = '../public-auth/login.html';
+const headers = { Authorization: `Bearer ${token}` };
+
+async function cargarMetricas() {
+    const resp = await fetch(`${API_BASE_URL}/oportunidades/me/metricas`, { headers });
+    const datos = await resp.json();
+    if (!datos.ok) return;
+    document.getElementById('mOportunidades').textContent = datos.oportunidadesActivas;
+    document.getElementById('mInscritos').textContent = datos.voluntariosInscritos;
+    document.getElementById('mHoras').textContent = datos.horasGeneradas;
+}
+
+async function cargarActividades() {
+    const resp = await fetch(`${API_BASE_URL}/oportunidades/me/mias`, { headers });
+    const datos = await resp.json();
+    if (!datos.ok) return;
+
+    const proximas = datos.oportunidades.filter((o) => o.estado === 'publicado');
+    const cont = document.getElementById('listaActividades');
+
+    if (proximas.length === 0) {
+        document.getElementById('vacioMensaje').style.display = 'block';
+        return;
+    }
+
+    proximas.forEach((o) => {
+        const item = document.createElement('div');
+        item.className = 'list-group-item d-flex justify-content-between align-items-center';
+        item.innerHTML = `
+            <div>
+                <div class="fw-semibold">${o.titulo}</div>
+                <div class="text-muted small">${new Date(o.fechaInicio).toLocaleDateString('es-PE')} · ${o.modalidad}</div>
+            </div>
+            <span class="badge bg-secondary">${o.cuposTotales - o.cuposDisponibles}/${o.cuposTotales} inscritos</span>
+        `;
+        cont.appendChild(item);
+    });
+}
+
+const rol = localStorage.getItem('rol');
+document.getElementById('saludo').textContent = '¡Hola!';
+
+cargarMetricas();
+cargarActividades();
+</script>
+</body>
+</html>

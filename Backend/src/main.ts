@@ -17,7 +17,6 @@ import { crearParametroRouter } from './modules/administrador/presentation/route
 import { crearRolPermisoRouter } from './modules/administrador/presentation/routes/rol-permiso.routes';
 import asistenciaRoutes from './modules/asistencia/presentation/routes/asistencia.routes';
 
-
 const app = express();
 const PORT = process.env.PORT || 4000;
 
