@@ -300,4 +300,38 @@ export class MysqlInscripcionRepository implements InscripcionRepository {
             fecha_registro: f.fecha_registro
         }));
     }
+    // Add to MysqlInscripcionRepository.ts
+async obtenerInscripcionesPorUsuario(usuarioId: number): Promise<any[]> {
+    const filas = await this.inscripcionRepo
+        .createQueryBuilder('i')
+        .innerJoin(OportunidadModel, 'op', 'op.id = i.oportunidad_id')
+        .select([
+            'i.id AS id',
+            'i.estado AS estado',
+            'i.fecha_inscripcion AS fecha_inscripcion',
+            'op.id AS oportunidad_id',
+            'op.titulo AS titulo',
+            'op.modalidad AS modalidad',
+            'op.fecha_inicio AS fecha_inicio',
+            'op.ubicacion AS ubicacion',
+            'op.organizacion_nombre AS organizacion_nombre'
+        ])
+        .where('i.usuario_id = :usuarioId', { usuarioId })
+        .orderBy('i.fecha_inscripcion', 'DESC')
+        .getRawMany();
+
+    return filas.map(f => ({
+        id: Number(f.id),
+        estado: f.estado,
+        fechaInscripcion: f.fecha_inscripcion,
+        oportunidad: {
+            id: Number(f.oportunidad_id),
+            titulo: f.titulo,
+            modalidad: f.modalidad,
+            fecha: f.fecha_inicio,
+            ubicacion: f.ubicacion,
+            organizacionNombre: f.organizacion_nombre
+        }
+    }));
+}
 }
