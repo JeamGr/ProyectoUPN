@@ -209,7 +209,7 @@
     }
 
     // 2. Acción de inscripción
-    document.getElementById('btnInscribirme').addEventListener('click', async () => {
+document.getElementById('btnInscribirme').addEventListener('click', async () => {
   try {
     const resp = await fetch('http://localhost:3003/inscripciones', {
       method: 'POST',
@@ -217,15 +217,33 @@
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ oportunidad_id: oportunidadId }) // 👈 Snake_case
+      body: JSON.stringify({ oportunidad_id: oportunidadId })
     });
 
-    const datos = await resp.json();
+    const resData = await resp.json();
 
-    if (resp.ok && datos.status === 'success') {
-      window.location.href = `../inscripcion-exitosa/exito.html?id=${oportunidadId}`;
+    if (resp.ok && resData.status === 'success') {
+      const data = resData.data;
+
+      if (data.en_lista_espera) {
+        alert(`¡Cupos agotados! Has ingresado a la lista de espera en la posición #${data.posicion_lista_espera}.`);
+      } else {
+        alert('¡Inscripción realizada con éxito!');
+      }
+
+      window.location.href = '../mis-eventos/mis-eventos.html';
+
     } else {
-      alert(datos.message || 'No se pudo completar la inscripción.');
+      // Manejo inteligente de los errores del InscripcionService
+      const mensaje = resData.message || '';
+
+      if (mensaje.includes('completar tu perfil')) {
+        if (confirm(`${mensaje}\n\n¿Deseas ir a tu perfil ahora para completarlo?`)) {
+          window.location.href = '../onboarding/onboarding-voluntario.html';
+        }
+      } else {
+        alert(mensaje || 'No se pudo realizar la inscripción.');
+      }
     }
   } catch (error) {
     console.error('Error al inscribirse:', error);
