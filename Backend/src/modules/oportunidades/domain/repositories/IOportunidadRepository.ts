@@ -40,4 +40,7 @@ export interface IOportunidadRepository {
 
     // Actualiza únicamente la URL de la imagen de portada (RF-014 / M3).
     actualizarImagen(id: number, imagenUrl: string): Promise<void>;
+
+    // RF-017: cola de moderación para Administrador/Super Administrador.
+    buscarPendientesAprobacion(): Promise<Oportunidad[]>;
 }

@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 import oportunidadRoutes from './modules/oportunidades/presentation/routes/oportunidad.routes';
+import administradorRoutes from './modules/administrador/presentation/routes/administrador.routes';
 import { AppDataSource } from './config/datasource';
 import { errorHandler } from './shared/middlewares/error.handler';
 import { authHandler } from './shared/middlewares/auth.handler';
@@ -27,7 +28,7 @@ app.use('/auth', authRoutes);
 app.use('/organizacion', organizacionRoutes);
 app.use('/perfiles', createPerfilRouter(AppDataSource, authHandler()));
 app.use('/inscripciones', createInscripcionRouter(AppDataSource, authHandler));
-
+app.use('/administrador', administradorRoutes);
 // M12 — RF-057: catálogos administrables
 app.use('/administrador/catalogos/lineas-intervencion', crearCatalogoRouter('linea_intervencion'));
 app.use('/administrador/catalogos/categorias-organizacion', crearCatalogoRouter('categoria_organizacion'));

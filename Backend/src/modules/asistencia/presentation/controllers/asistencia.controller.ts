@@ -18,9 +18,11 @@ export class AsistenciaController {
     private asistenciaService: AsistenciaService;
     private evidenciaService: EvidenciaService;
     private incidenciaService: IncidenciaService;
+    private inscripcionRepo: InscripcionConsultaRepository;
 
     constructor() {
         const inscripcionRepository = new InscripcionConsultaRepository();
+        this.inscripcionRepo = inscripcionRepository;
         this.asistenciaService = new AsistenciaService(new AsistenciaRepository(), inscripcionRepository);
         this.evidenciaService = new EvidenciaService(new EvidenciaRepository(), inscripcionRepository);
         this.incidenciaService = new IncidenciaService(new IncidenciaRepository(), inscripcionRepository);
@@ -85,5 +87,12 @@ export class AsistenciaController {
         const dto = req.dto as ActualizarEstadoIncidenciaDTO;
         const resultado = await this.incidenciaService.actualizarEstado(Number(req.params.id), dto.estado, req.jwt!.id);
         return res.status(resultado.ok ? 200 : 400).json(resultado);
+    };
+    listarInscritos = async (req: Request, res: Response) => {
+        const oportunidadId = Number(req.params.oportunidadId);
+        const dueño = await this.inscripcionRepo.obtenerOrganizacionDeOportunidad(oportunidadId);
+        if (dueño !== req.jwt!.id) return res.status(403).json({ ok: false, mensaje: 'No tienes permiso' });
+        const datos = await this.inscripcionRepo.listarInscritosDeOportunidad(oportunidadId);
+        return res.status(200).json({ ok: true, datos });
     };
 }

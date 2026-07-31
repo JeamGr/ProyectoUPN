@@ -34,4 +34,20 @@ export class InscripcionConsultaRepository implements IInscripcionConsultaReposi
         const filas = await AppDataSource.query('SELECT organizacion_id FROM oportunidades WHERE id = ? LIMIT 1', [oportunidadId]);
         return filas.length > 0 ? filas[0].organizacion_id : null;
     }
+    async listarInscritosDeOportunidad(oportunidadId: number): Promise<DatosInscripcion[]> {
+        const filas = await AppDataSource.query(
+            `SELECT i.id AS inscripcion_id, i.usuario_id AS voluntario_id, i.oportunidad_id,
+                    o.organizacion_id, o.horas_acreditadas, pv.nombres AS nombre_voluntario, o.titulo AS titulo_oportunidad
+             FROM inscripciones i
+             INNER JOIN oportunidades o ON o.id = i.oportunidad_id
+             INNER JOIN perfiles_voluntario pv ON pv.usuario_id = i.usuario_id
+             WHERE i.oportunidad_id = ? AND i.estado != 'cancelado'`,
+            [oportunidadId],
+        );
+        return filas.map((f: any) => ({
+            inscripcionId: f.inscripcion_id, voluntarioId: f.voluntario_id, oportunidadId: f.oportunidad_id,
+            organizacionId: f.organizacion_id, horasAcreditadas: f.horas_acreditadas,
+            nombreVoluntario: f.nombre_voluntario, tituloOportunidad: f.titulo_oportunidad,
+        }));
+    }
 }
