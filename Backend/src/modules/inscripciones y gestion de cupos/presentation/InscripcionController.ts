@@ -108,4 +108,14 @@ export class InscripcionController {
             res.status(400).json({ status: 'error', message: error.message });
         }
     };
+    // En InscripcionController.ts
+obtenerMisInscripciones = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const usuarioId = req.jwt!.id; // 👈 Usar req.jwt igual que los otros métodos
+        const inscripciones = await this.service.obtenerMisInscripciones(usuarioId);
+        res.status(200).json({ status: 'success', data: inscripciones });
+    } catch (error: any) {
+        res.status(400).json({ status: 'error', message: error.message });
+    }
+};
 }
