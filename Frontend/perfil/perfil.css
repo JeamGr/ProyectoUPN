@@ -1,0 +1,114 @@
+/* Importación directa de Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F8FAFC;
+  color: #1A1147;
+}
+
+/* Layout con Sidebar */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #FFFFFF;
+  border-right: 1px solid #E2E8F0;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-logo {
+  font-weight: 700;
+  color: #6D28D9;
+  font-size: 1.4rem;
+  padding: 0 0.5rem 1.5rem 0.5rem;
+}
+
+.nav-link-custom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 1rem;
+  color: #64748B;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.nav-link-custom:hover {
+  background-color: #F1F5F9;
+  color: #6D28D9;
+}
+
+.nav-link-custom.active {
+  background-color: #F3E8FF;
+  color: #6D28D9;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Card de Perfil y Header Banner */
+.card-profile {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(26, 17, 71, 0.05);
+  overflow: hidden;
+}
+
+.profile-banner {
+  height: 140px;
+  background: linear-gradient(135deg, #6D28D9 0%, #FF1478 100%);
+  position: relative;
+}
+
+.profile-avatar-wrapper {
+  margin-top: -60px;
+  margin-left: 2rem;
+  position: relative;
+  display: inline-block;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #FFFFFF;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Botones */
+.btn-yanantin-outline {
+  border: 1.5px solid #6D28D9;
+  color: #6D28D9;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0.5rem 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.btn-yanantin-outline:hover {
+  background-color: #6D28D9;
+  color: #FFFFFF;
+}
+
+/* Cajas de Métricas Internas */
+.metric-box {
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+}

@@ -1,0 +1,119 @@
+/* Importación directa de la tipografía oficial Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F8FAFC;
+  color: #1A1147;
+}
+
+/* Header & Logo */
+.brand-logo {
+  font-weight: 700;
+  color: #6D28D9;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+}
+
+/* Stepper Lateral */
+.stepper-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #94A3B8;
+}
+
+.stepper-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #E2E8F0;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-weight: 700;
+}
+
+.stepper-item.active {
+  color: #6D28D9;
+}
+
+.stepper-item.active .stepper-icon {
+  background-color: #6D28D9;
+  color: #ffffff;
+}
+
+/* Tarjeta y Formulario */
+.card-custom {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(26, 17, 71, 0.05);
+}
+
+.form-control, .form-select {
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #CBD5E1;
+  font-size: 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #6D28D9;
+  box-shadow: 0 0 0 0.25rem rgba(109, 40, 217, 0.15);
+}
+
+/* Foto de Perfil */
+.avatar-wrapper {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin: 0 auto;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #6D28D9;
+}
+
+.avatar-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #FF1478;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(255, 20, 120, 0.3);
+}
+
+/* Botón Principal YANANTIN */
+.btn-yanantin {
+  background-color: #6D28D9;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 0.8rem 2rem;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-yanantin:hover {
+  background-color: #5B21B6;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.3);
+}

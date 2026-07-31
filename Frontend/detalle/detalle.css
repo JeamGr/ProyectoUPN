@@ -1,0 +1,128 @@
+/* Importación directa de Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F8FAFC;
+  color: #1A1147;
+}
+
+/* Header & Navegación de retorno */
+.back-link {
+  color: #64748B;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: #6D28D9;
+}
+
+/* Tarjeta Principal */
+.card-detail {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(26, 17, 71, 0.05);
+}
+
+.banner-img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* Badges y Etiquetas */
+.badge-category {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.badge-presencial {
+  background-color: #F3E8FF;
+  color: #6D28D9;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.badge-virtual {
+  background-color: #DCFCE7;
+  color: #15803D;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+/* Info Items */
+.info-box {
+  background-color: #F8FAFC;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #E2E8F0;
+}
+
+.info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #F3E8FF;
+  color: #6D28D9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* Listas de Requisitos y Actividades */
+.custom-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.custom-list li {
+  position: relative;
+  padding-left: 1.8rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.custom-list li::before {
+  content: "\F26A"; /* Icono check de Bootstrap Icons */
+  font-family: "bootstrap-icons";
+  position: absolute;
+  left: 0;
+  color: #6D28D9;
+  font-weight: bold;
+}
+
+/* Botón Inscribirme */
+.btn-yanantin-lg {
+  background-color: #6D28D9;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 0.9rem 2.5rem;
+  border: none;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.btn-yanantin-lg:hover {
+  background-color: #5B21B6;
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.3);
+}

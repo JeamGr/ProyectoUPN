@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YANANTIN - Dashboard Voluntario</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- CSS Exclusivo del Dashboard -->
+  <link rel="stylesheet" href="./dashboard-voluntario.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Sidebar Lateral Navigation -->
+    <aside class="sidebar">
+      <div class="brand-logo d-flex align-items-center gap-2">
+        <i class="bi bi-heart-pulse-fill text-danger"></i> YANANTIN
+      </div>
+
+      <nav class="flex-grow-1">
+        <a href="#" class="nav-link-custom active">
+          <i class="bi bi-house-door-fill"></i> Inicio
+        </a>
+        <a href="../explorar/explorar.html" class="nav-link-custom">
+          <i class="bi bi-compass"></i> Explorar
+        </a>
+        <a href="../mis-eventos/mis-eventos.html" class="nav-link-custom">
+          <i class="bi bi-calendar-event"></i> Mis eventos
+        </a>
+        <a href="../perfil/perfil.html" class="nav-link-custom">
+          <i class="bi bi-person"></i> Mi perfil
+        </a>
+        <a href="#" class="nav-link-custom">
+          <i class="bi bi-gear"></i> Configuración
+        </a>
+      </nav>
+
+      <div class="border-top pt-3">
+        <a href="#" id="btnCerrarSesion" class="nav-link-custom text-danger">
+          <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Header Topbar -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h3 id="txtSaludo" class="fw-bold mb-0">¡Hola! 👋</h3>
+          <p class="text-muted small mb-0">Gracias por ser parte del cambio.</p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-white border rounded-circle p-2" title="Notificaciones">
+            <i class="bi bi-bell"></i>
+          </button>
+          <div class="d-flex align-items-center gap-2">
+            <img id="imgAvatarHeader" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300" alt="Usuario" class="user-avatar">
+            <div>
+              <span id="txtNombreHeader" class="d-block fw-bold small">Cargando...</span>
+              <span id="txtCarreraHeader" class="d-block text-muted" style="font-size: 0.75rem;">Estudiante UPN</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Métricas del Perfil -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="card-metric">
+            <div>
+              <span class="text-muted small d-block">Horas acumuladas</span>
+              <h3 id="mHoras" class="fw-bold mb-0" style="color: #6D28D9;">0 <small class="fs-6 text-muted">hrs</small></h3>
+            </div>
+            <div class="metric-icon bg-purple-light">
+              <i class="bi bi-clock-history"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card-metric">
+            <div>
+              <span class="text-muted small d-block">Oportunidades completadas</span>
+              <h3 id="mCompletadas" class="fw-bold mb-0">0</h3>
+            </div>
+            <div class="metric-icon bg-pink-light">
+              <i class="bi bi-check-circle"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card-metric">
+            <div>
+              <span class="text-muted small d-block">Próximos eventos</span>
+              <h3 id="mProximos" class="fw-bold mb-0">0</h3>
+            </div>
+            <div class="metric-icon bg-amber-light">
+              <i class="bi bi-calendar-check"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secciones Principales: Próximos Eventos + Tu Impacto -->
+      <div class="row g-4">
+
+        <!-- Columna Izquierda: Próximos Eventos -->
+        <div class="col-lg-7">
+          <div class="card card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">Próximos eventos</h5>
+              <a href="../mis-eventos/mis-eventos.html" class="text-decoration-none fw-semibold small" style="color: #6D28D9;">Ver todos</a>
+            </div>
+
+            <!-- Contenedor dinámico de eventos -->
+            <div id="contenedorEventos">
+              <!-- Se cargarán con la llamada a la API -->
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Gráfico de Impacto -->
+        <div class="col-lg-5">
+          <div class="card card-custom p-4 text-center">
+            <h5 class="fw-bold text-start mb-3">Tu impacto</h5>
+
+            <!-- Donut Chart -->
+            <div class="donut-chart mb-3">
+              <div class="donut-inner">
+                <span id="mHorasChart" class="fw-bold fs-4 mb-0" style="color: #1A1147;">0</span>
+                <small class="text-muted" style="font-size: 0.7rem;">horas</small>
+              </div>
+            </div>
+
+            <!-- Leyenda de Categorías -->
+            <div class="row g-2 text-start small">
+              <div class="col-6 d-flex align-items-center gap-2">
+                <span style="width: 10px; height: 10px; background-color: #6D28D9; border-radius: 50%;"></span>
+                <span>Educación <strong>40%</strong></span>
+              </div>
+              <div class="col-6 d-flex align-items-center gap-2">
+                <span style="width: 10px; height: 10px; background-color: #FF1478; border-radius: 50%;"></span>
+                <span>Medio ambiente <strong>30%</strong></span>
+              </div>
+              <div class="col-6 d-flex align-items-center gap-2">
+                <span style="width: 10px; height: 10px; background-color: #4CAF50; border-radius: 50%;"></span>
+                <span>Salud <strong>20%</strong></span>
+              </div>
+              <div class="col-6 d-flex align-items-center gap-2">
+                <span style="width: 10px; height: 10px; background-color: #FFC107; border-radius: 50%;"></span>
+                <span>Inclusión <strong>10%</strong></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- SCRIPT DE CONEXIÓN CON LA API -->
+  <script>
+    const API_BASE_URL = 'http://localhost:3003';
+    const token = localStorage.getItem('token');
+
+    // 🔒 Guard de Autenticación
+    if (!token) {
+      window.location.href = '../public-auth/login.html';
+    }
+
+    const headers = { Authorization: `Bearer ${token}` };
+
+    async function cargarDashboardVoluntario() {
+      try {
+        // 1. Obtener perfil e indicadores del voluntario logueado
+        const respPerfil = await fetch(`${API_BASE_URL}/perfil/voluntario`, { headers });
+        const datosPerfil = await respPerfil.json();
+        const perfil = datosPerfil.data || datosPerfil;
+
+        if (perfil) {
+          const primerNombre = (perfil.nombres || perfil.nombre || 'Voluntario').split(' ')[0];
+          document.getElementById('txtSaludo').textContent = `¡Hola, ${primerNombre}! 👋`;
+          document.getElementById('txtNombreHeader').textContent = `${primerNombre} ${perfil.apellidos ? perfil.apellidos[0] + '.' : ''}`;
+          document.getElementById('txtCarreraHeader').textContent = perfil.carrera || 'Estudiante UPN';
+
+          if (perfil.fotoUrl) {
+            document.getElementById('imgAvatarHeader').src = perfil.fotoUrl;
+          }
+
+          const horas = perfil.horasAcumuladas ?? perfil.horas ?? 0;
+          document.getElementById('mHoras').childNodes[0].textContent = `${horas} `;
+          document.getElementById('mHorasChart').textContent = horas;
+          document.getElementById('mCompletadas').textContent = perfil.oportunidadesCompletadas ?? perfil.eventosCompletados ?? 0;
+        }
+
+        // 2. Obtener las inscripciones/eventos del voluntario
+        const respEventos = await fetch(`${API_BASE_URL}/inscripciones/me`, { headers });
+        const datosEventos = await respEventos.json();
+        const listaInscripciones = Array.isArray(datosEventos) ? datosEventos : (datosEventos.data || []);
+
+        const proximos = listaInscripciones.filter(i => !i.estado || i.estado === 'CONFIRMADO' || i.estado === 'PENDIENTE');
+        document.getElementById('mProximos').textContent = proximos.length;
+
+        // Renderizado de próximos eventos en el DOM
+        const contenedor = document.getElementById('contenedorEventos');
+        contenedor.innerHTML = '';
+
+        if (proximos.length === 0) {
+          contenedor.innerHTML = `
+            <div class="text-center py-4">
+              <i class="bi bi-calendar-x fs-2 text-muted"></i>
+              <p class="text-muted small mt-2">No tienes próximos eventos. ¡Explora nuevas oportunidades!</p>
+            </div>
+          `;
+          return;
+        }
+
+        proximos.slice(0, 3).forEach(item => {
+          const op = item.oportunidad || item;
+          const esPresencial = op.modalidad === 'Presencial';
+          const badgeClass = esPresencial ? 'badge-presencial' : 'badge-virtual';
+          const imgDefault = esPresencial 
+            ? 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=200'
+            : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=200';
+
+          const div = document.createElement('div');
+          div.className = 'd-flex align-items-center justify-content-between p-3 border rounded-3 mb-3';
+          div.innerHTML = `
+            <div class="d-flex align-items-center gap-3">
+              <img src="${op.imagenUrl || imgDefault}" class="event-img" alt="${op.titulo}">
+              <div>
+                <h6 class="fw-bold mb-1">${op.titulo || 'Voluntariado'}</h6>
+                <p class="text-muted small mb-1">${op.organizacionNombre || op.organizacion?.nombre || 'Organización'}</p>
+                <small class="text-muted"><i class="bi bi-clock"></i> ${op.fechaTexto || op.fecha || 'Por definir'} | ${op.horario || 'Por definir'}</small>
+              </div>
+            </div>
+            <span class="badge ${badgeClass} rounded-pill px-3 py-2">${op.modalidad || 'Presencial'}</span>
+          `;
+          contenedor.appendChild(div);
+        });
+
+      } catch (error) {
+        console.error('Error al cargar el dashboard:', error);
+      }
+    }
+
+    // Cerrar sesión
+    document.getElementById('btnCerrarSesion').addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      window.location.href = '../public-auth/login.html';
+    });
+
+    cargarDashboardVoluntario();
+  </script>
+</body>
+</html>

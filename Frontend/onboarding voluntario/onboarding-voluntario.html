@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YANANTIN - Onboarding Voluntario</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- CSS Exclusivo -->
+  <link rel="stylesheet" href="./onboarding-voluntario.css">
+</head>
+<body>
+
+  <header class="bg-white py-3 border-bottom mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="brand-logo d-flex align-items-center gap-2">
+        <i class="bi bi-heart-pulse-fill text-danger"></i> YANANTIN
+      </div>
+      <span class="badge bg-light text-dark fw-normal border">Paso 1 de 5</span>
+    </div>
+  </header>
+
+  <main class="container my-4">
+    <div class="row g-4 justify-content-center">
+
+      <!-- Stepper (Pasos) -->
+      <aside class="col-lg-3 col-md-4">
+        <div class="card card-custom p-4 bg-white">
+          <h6 class="text-uppercase fw-bold text-muted small mb-4">Pasos de Registro</h6>
+          
+          <div class="stepper-item active">
+            <div class="stepper-icon"><i class="bi bi-person-fill"></i></div>
+            <span>1. Información Personal</span>
+          </div>
+          <div class="stepper-item">
+            <div class="stepper-icon">2</div>
+            <span>2. Intereses</span>
+          </div>
+          <div class="stepper-item">
+            <div class="stepper-icon">3</div>
+            <span>3. Disponibilidad</span>
+          </div>
+          <div class="stepper-item">
+            <div class="stepper-icon">4</div>
+            <span>4. Habilidades</span>
+          </div>
+          <div class="stepper-item">
+            <div class="stepper-icon">5</div>
+            <span>5. Confirmar</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Formulario -->
+      <section class="col-lg-7 col-md-8">
+        <div class="card card-custom p-4 p-md-5 bg-white">
+          <div class="mb-4">
+            <h2 class="fw-bold mb-1">Cuéntanos sobre ti</h2>
+            <p class="text-muted small">Completa tu perfil para encontrar oportunidades perfectas para ti en YANANTIN.</p>
+          </div>
+
+          <form id="onboardingForm">
+            <!-- Foto de Perfil -->
+            <div class="text-center mb-4">
+              <div class="avatar-wrapper">
+                <img id="avatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300" alt="Foto de Perfil" class="avatar-img">
+                <label for="fotoInput" class="avatar-btn">
+                  <i class="bi bi-camera-fill"></i>
+                </label>
+                <input type="file" id="fotoInput" accept="image/*" class="d-none">
+              </div>
+              <small class="text-muted d-block mt-2">Cambiar foto de perfil</small>
+            </div>
+
+            <!-- Nombres y Apellidos -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Nombres</label>
+                <input type="text" id="inputNombres" class="form-control" placeholder="Tus nombres" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Apellidos</label>
+                <input type="text" id="inputApellidos" class="form-control" placeholder="Tus apellidos" required>
+              </div>
+            </div>
+
+            <!-- Universidad y Carrera -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Universidad</label>
+                <select id="selectUniversidad" class="form-select" disabled>
+                  <option value="Universidad Privada del Norte (UPN)" selected>Universidad Privada del Norte (UPN)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Carrera</label>
+                <select id="selectCarrera" class="form-select" required>
+                  <option value="" disabled selected>Selecciona tu carrera</option>
+                  <option value="Administración y Marketing">Administración y Marketing</option>
+                  <option value="Ingeniería de Sistemas Computacionales">Ingeniería de Sistemas Computacionales</option>
+                  <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+                  <option value="Psicología">Psicología</option>
+                  <option value="Derecho">Derecho</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Distrito y Teléfono -->
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Distrito de residencia</label>
+                <select id="selectDistrito" class="form-select" required>
+                  <option value="" disabled selected>Selecciona tu distrito</option>
+                  <option value="Santiago de Surco">Santiago de Surco</option>
+                  <option value="Los Olivos">Los Olivos</option>
+                  <option value="San Juan de Lurigancho">San Juan de Lurigancho</option>
+                  <option value="Comas">Comas</option>
+                  <option value="Lima Cercado">Lima Cercado</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Teléfono (opcional)</label>
+                <input type="tel" id="inputTelefono" class="form-control" placeholder="987 654 321">
+              </div>
+            </div>
+
+            <!-- Botón de Envío -->
+            <div class="d-grid mt-4">
+              <button type="submit" id="btnGuardar" class="btn btn-yanantin">
+                Continuar <i class="bi bi-arrow-right ms-2"></i>
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- SCRIPT CONECTADO A PERFILSERVICE EN LA API -->
+  <script>
+    const API_BASE_URL = 'http://localhost:3003';
+    const token = localStorage.getItem('token');
+
+    // 🔒 Guard de seguridad
+    if (!token) {
+      window.location.href = '../public-auth/login.html';
+    }
+
+    const headers = { 
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+
+    // Previsualización de Foto de Perfil
+    const fotoInput = document.getElementById('fotoInput');
+    const avatarPreview = document.getElementById('avatarPreview');
+
+    if (fotoInput) {
+      fotoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => avatarPreview.src = e.target.result;
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // 1. Cargar datos existentes si ya estuvo registrado
+    async function cargarDatosOnboarding() {
+      try {
+        const resp = await fetch(`${API_BASE_URL}/perfil/voluntario`, { headers });
+        if (!resp.ok) return;
+
+        const datos = await resp.json();
+        const perfil = datos.data || datos;
+
+        if (perfil.nombres) document.getElementById('inputNombres').value = perfil.nombres;
+        if (perfil.apellidos) document.getElementById('inputApellidos').value = perfil.apellidos;
+        if (perfil.carrera) document.getElementById('selectCarrera').value = perfil.carrera;
+        if (perfil.distrito) document.getElementById('selectDistrito').value = perfil.distrito;
+        if (perfil.telefono) document.getElementById('inputTelefono').value = perfil.telefono;
+        if (perfil.fotoUrl) avatarPreview.src = perfil.fotoUrl;
+
+      } catch (error) {
+        console.error('Error al precargar datos de onboarding:', error);
+      }
+    }
+
+    // 2. Guardar datos mediante PerfilService (actualizarPerfilVoluntario)
+    const form = document.getElementById('onboardingForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = document.getElementById('btnGuardar');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+
+      // Estructuramos el DTO esperado por ActualizarPerfilVoluntarioDTO
+      const dto = {
+        nombres: document.getElementById('inputNombres').value.trim(),
+        apellidos: document.getElementById('inputApellidos').value.trim(),
+        universidad: 'Universidad Privada del Norte (UPN)',
+        carrera: document.getElementById('selectCarrera').value,
+        distrito: document.getElementById('selectDistrito').value,
+        telefono: document.getElementById('inputTelefono').value.trim()
+      };
+
+      try {
+        const resp = await fetch(`${API_BASE_URL}/perfil/voluntario`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(dto)
+        });
+
+        if (resp.ok) {
+          // Redirección al siguiente paso o directamente al Dashboard
+          window.location.href = '../dashboard-voluntario/dashboard-voluntario.html';
+        } else {
+          const resData = await resp.json();
+          alert(resData.message || 'Error al guardar los datos del perfil.');
+          btn.disabled = false;
+          btn.innerHTML = 'Continuar <i class="bi bi-arrow-right ms-2"></i>';
+        }
+
+      } catch (error) {
+        console.error('Error al actualizar el perfil:', error);
+        btn.disabled = false;
+        btn.innerHTML = 'Continuar <i class="bi bi-arrow-right ms-2"></i>';
+      }
+    });
+
+    cargarDatosOnboarding();
+  </script>
+</body>
+</html>

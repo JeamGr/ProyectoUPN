@@ -1,0 +1,156 @@
+/* Importación de la tipografía oficial Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F8FAFC;
+  color: #1A1147;
+  overflow-x: hidden;
+}
+
+/* --- Layout Principal --- */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background-color: #FFFFFF;
+  border-right: 1px solid #E2E8F0;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-logo {
+  font-weight: 700;
+  color: #6D28D9;
+  font-size: 1.4rem;
+  padding: 0 0.5rem 1.5rem 0.5rem;
+}
+
+.nav-link-custom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 1rem;
+  color: #64748B;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.nav-link-custom:hover {
+  background-color: #F1F5F9;
+  color: #6D28D9;
+}
+
+.nav-link-custom.active {
+  background-color: #F3E8FF;
+  color: #6D28D9;
+}
+
+.nav-link-custom i {
+  font-size: 1.1rem;
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Topbar Header */
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #6D28D9;
+}
+
+/* Tarjetas de Métricas */
+.card-metric {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 15px rgba(26, 17, 71, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 👈 Corregido el duplicado */
+  font-size: 1.3rem;
+}
+
+.bg-purple-light { background-color: #F3E8FF; color: #6D28D9; }
+.bg-pink-light { background-color: #FFE4E6; color: #FF1478; }
+.bg-amber-light { background-color: #FEF3C7; color: #D97706; }
+
+/* Tarjetas de Eventos / Oportunidades */
+.card-custom {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(26, 17, 71, 0.04);
+}
+
+.event-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.badge-presencial {
+  background-color: #F3E8FF;
+  color: #6D28D9;
+  font-weight: 600;
+}
+
+.badge-virtual {
+  background-color: #DCFCE7;
+  color: #15803D;
+  font-weight: 600;
+}
+
+/* Donut Chart Mock */
+.donut-chart {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #6D28D9 0% 40%, 
+    #FF1478 40% 70%, 
+    #4CAF50 70% 90%, 
+    #FFC107 90% 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.donut-inner {
+  width: 90px;
+  height: 90px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
