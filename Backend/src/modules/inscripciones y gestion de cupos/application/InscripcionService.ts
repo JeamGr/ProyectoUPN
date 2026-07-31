@@ -153,4 +153,7 @@ export class InscripcionService {
             throw new Error('No tienes permiso sobre esta oportunidad');
         }
     }
+    async obtenerMisInscripciones(usuarioId: number): Promise<any[]> {
+        return await this.repo.obtenerInscripcionesPorUsuario(usuarioId);
+    }
 }
