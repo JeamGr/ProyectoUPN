@@ -211,18 +211,18 @@
     // 2. Acción de inscripción
     document.getElementById('btnInscribirme').addEventListener('click', async () => {
   try {
-    const resp = await fetch(`${API_BASE_URL}/inscripciones`, {
+    const resp = await fetch('http://localhost:3003/inscripciones', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ oportunidadId })
+      body: JSON.stringify({ oportunidad_id: oportunidadId }) // 👈 Snake_case
     });
 
     const datos = await resp.json();
 
-    if (resp.ok) {
+    if (resp.ok && datos.status === 'success') {
       window.location.href = `../inscripcion-exitosa/exito.html?id=${oportunidadId}`;
     } else {
       alert(datos.message || 'No se pudo completar la inscripción.');
