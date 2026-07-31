@@ -8,7 +8,8 @@ import jwt from 'jsonwebtoken';
 import { plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 import { Rol } from '../builders/token.builder';
-
+import crypto from 'crypto';
+import { AppDataSource } from '../../config/datasource';
 declare global {
     namespace Express {
         interface Request {
@@ -42,7 +43,12 @@ export const authHandler = (opts: AuthHandlerOptions = {}): RequestHandler => {
         } catch (error) {
             return res.status(401).json({ ok: false, mensaje: 'Token inválido o expirado' });
         }
-
+        
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        const invalidado = await AppDataSource.query('SELECT 1 FROM tokens_invalidados WHERE token_hash = ? LIMIT 1', [tokenHash]);
+        if (invalidado.length > 0) {
+            return res.status(401).json({ ok: false, mensaje: 'Sesión cerrada. Inicia sesión de nuevo.' });
+        }
         req.jwt = { id: payload.id, rol: payload.rol };
 
         if (opts.roles && opts.roles.length > 0) {

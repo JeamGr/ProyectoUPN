@@ -20,20 +20,30 @@ import { TokenRecuperacionRepository } from '../../infrastructure/repositories/t
 
 import { LoginDTO } from '../../application/dtos/login.dto';
 import { LoginService } from '../../application/services/login.service';
-
+import { LoginGoogleDTO } from '../../application/dtos/login-google.dto';
+import { GoogleAuthService } from '../../application/services/google-auth.service';
+import { LogoutService } from '../../application/services/logout.service';
+import { IdentidadOAuthRepository } from '../../infrastructure/repositories/identidad-oauth.repository';
+import { TokenInvalidadoRepository } from '../../infrastructure/repositories/token-invalidado.repository';
 export class AuthController {
     private registroService: RegistroVoluntarioService;
     private verificacionService: VerificacionService;
     private usuarioRepository: IUsuarioRepository;
     private loginService: LoginService;
     private recuperacionService: RecuperacionPasswordService;
+    private googleAuthService: GoogleAuthService;
+    private logoutService: LogoutService;
     constructor() {
         this.usuarioRepository = new UsuarioRepository();
         const rolRepository = new RolRepository();
         const codigoRepository = new CodigoVerificacionRepository();
         const mailerService = new MailerService();
         const tokenRecuperacionRepository = new TokenRecuperacionRepository();
+        const identidadRepository = new IdentidadOAuthRepository();
+        this.googleAuthService = new GoogleAuthService(this.usuarioRepository, rolRepository, identidadRepository);
 
+        const tokenInvalidadoRepository = new TokenInvalidadoRepository();
+        this.logoutService = new LogoutService(tokenInvalidadoRepository);
         this.verificacionService = new VerificacionService(codigoRepository, this.usuarioRepository, mailerService);
         this.registroService = new RegistroVoluntarioService(this.usuarioRepository, rolRepository, this.verificacionService);
         this.loginService = new LoginService(this.usuarioRepository, rolRepository);
@@ -44,6 +54,18 @@ export class AuthController {
         const dto = req.dto as RegistroVoluntarioDTO;
         const resultado = await this.registroService.registrar(dto);
         return res.status(resultado.ok ? 201 : 409).json(resultado);
+    };
+
+    loginGoogle = async (req: Request, res: Response) => {
+        const dto = req.dto as LoginGoogleDTO;
+        const resultado = await this.googleAuthService.login(dto);
+        return res.status(resultado.ok ? 200 : 401).json(resultado);
+    };
+
+    logout = async (req: Request, res: Response) => {
+        const token = req.headers.authorization!.split(' ')[1];
+        const resultado = await this.logoutService.cerrarSesion(token);
+        return res.status(resultado.ok ? 200 : 400).json(resultado);
     };
 
     verificarCodigo = async (req: Request, res: Response) => {

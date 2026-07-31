@@ -79,7 +79,7 @@ export class MysqlPerfilRepository implements PerfilRepository {
     async obtenerOrganizacionPorUsuarioId(usuarioId: number): Promise<PerfilOrganizacionResponseDTO | null> {
         const model = await this.organizacionRepo.findOne({
             where: { usuario_id: usuarioId },
-            relations: ['usuario', 'linea_intervencion']
+            relations: ['usuario', 'linea_intervencion', 'categoria']
         });
 
         if (!model) return null;

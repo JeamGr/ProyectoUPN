@@ -40,6 +40,18 @@ export class LineaIntervencionModel {
 }
 
 // --------------------------------------------------
+// Entidad de Categorías de Organización (M12 / RF-057)
+// --------------------------------------------------
+@Entity('categorias_organizacion')
+export class CategoriaOrganizacionModel {
+    @PrimaryColumn({ type: 'int', unsigned: true })
+    id!: number;
+
+    @Column({ type: 'varchar', length: 100 })
+    nombre!: string;
+}
+
+// --------------------------------------------------
 // Entidad de Perfil Voluntario
 // --------------------------------------------------
 @Entity('perfiles_voluntario')
@@ -108,6 +120,9 @@ export class OrganizacionModel {
     @Column({ type: 'int', unsigned: true, nullable: true })
     linea_intervencion_id!: number | null;
 
+    @Column({ type: 'int', unsigned: true, nullable: true })
+    categoria_id!: number | null;
+
     @Column({ type: 'varchar', length: 100, default: 'Perú' })
     pais!: string;
 
@@ -164,6 +179,10 @@ export class OrganizacionModel {
     @ManyToOne(() => LineaIntervencionModel)
     @JoinColumn({ name: 'linea_intervencion_id' })
     linea_intervencion?: LineaIntervencionModel;
+
+    @ManyToOne(() => CategoriaOrganizacionModel)
+    @JoinColumn({ name: 'categoria_id' })
+    categoria?: CategoriaOrganizacionModel;
 }
 
 // --------------------------------------------------

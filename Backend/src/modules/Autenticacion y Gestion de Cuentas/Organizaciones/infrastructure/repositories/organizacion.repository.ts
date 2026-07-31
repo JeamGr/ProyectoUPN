@@ -39,6 +39,7 @@ export class OrganizacionRepository implements IOrganizacionRepository {
             orgModel.nombre_ong = organizacion.nombreOng;
             orgModel.descripcion_actividad = organizacion.descripcionActividad;
             orgModel.linea_intervencion_id = organizacion.lineaIntervencionId;
+            orgModel.categoria_id = organizacion.categoriaId;
             orgModel.pais = organizacion.pais;
             orgModel.direccion = organizacion.direccion;
             orgModel.persona_contacto = organizacion.personaContacto;
@@ -69,7 +70,7 @@ export class OrganizacionRepository implements IOrganizacionRepository {
             m.tipo_documento_contacto, m.numero_documento_contacto, m.celular_contacto,
             m.link_redes_sociales, m.constituida_legalmente, m.ruc, m.razon_social,
             m.tiene_certificado_donacion, m.descripcion_actividad, m.linea_intervencion_id,
-            m.pais, m.link_web, m.numero_beneficiarios_anual,
+            m.categoria_id, m.pais, m.link_web, m.numero_beneficiarios_anual,
             m.tiene_programa_voluntariado_corporativo, m.estado_validacion,
         );
     }

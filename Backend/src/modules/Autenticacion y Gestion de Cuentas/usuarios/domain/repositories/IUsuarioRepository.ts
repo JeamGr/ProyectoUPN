@@ -34,4 +34,5 @@ export interface IUsuarioRepository {
     bloquearCuenta(usuarioId: number): Promise<void>;
     desbloquearCuenta(usuarioId: number): Promise<void>;
     actualizarPassword(usuarioId: number, passwordHash: string): Promise<void>;
+    crearUsuarioOAuth(correo: string, rolId: number): Promise<Usuario>;
 }
