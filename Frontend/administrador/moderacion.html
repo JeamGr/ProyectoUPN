@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Moderación de oportunidades</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <a href="dashboard.html" class="text-muted small">← Volver al panel</a>
+  <h3 class="fw-bold mt-2 mb-4">Moderación de oportunidades</h3>
+
+  <div id="alertaError" class="alert alert-danger alert-form"></div>
+
+  <div id="listaPendientes"></div>
+  <p class="text-muted text-center mt-4" id="vacioMensaje" style="display:none;">No hay oportunidades pendientes de revisión.</p>
+</div>
+
+<!-- Modal de rechazo -->
+<div class="modal fade" id="modalRechazo" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Motivo del rechazo</h5></div>
+      <div class="modal-body">
+        <textarea class="form-control" id="motivoRechazo" rows="3" placeholder="Explica por qué se rechaza (mínimo 10 caracteres)"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-danger" id="btnConfirmarRechazo">Rechazar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API_BASE_URL = 'http://localhost:3003';
+const token = localStorage.getItem('token');
+if (!token) window.location.href = '../public-auth/login.html';
+const headers = { Authorization: `Bearer ${token}` };
+const headersJSON = { ...headers, 'Content-Type': 'application/json' };
+
+let idParaRechazar = null;
+const modalRechazo = new bootstrap.Modal(document.getElementById('modalRechazo'));
+
+async function cargar() {
+    const resp = await fetch(`${API_BASE_URL}/oportunidades/pendientes/aprobacion`, { headers });
+    const datos = await resp.json();
+    if (!datos.ok) { document.getElementById('alertaError').textContent = datos.mensaje; document.getElementById('alertaError').style.display='block'; return; }
+
+    if (datos.oportunidades.length === 0) {
+        document.getElementById('vacioMensaje').style.display = 'block';
+        return;
+    }
+
+    const cont = document.getElementById('listaPendientes');
+    datos.oportunidades.forEach((o) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-3 shadow-sm p-3 mb-3 d-flex justify-content-between align-items-center';
+        card.innerHTML = `
+            <div>
+                <div class="fw-bold">${o.titulo}</div>
+                <div class="text-muted small">${o.descripcion.substring(0, 120)}...</div>
+                <div class="text-muted small mt-1">${o.modalidad} · ${o.cuposTotales} cupos · ${o.horasAcreditadas}h</div>
+            </div>
+            <div>
+                <button class="btn btn-sm btn-success me-1" onclick="aprobar(${o.id})">Aprobar</button>
+                <button class="btn btn-sm btn-outline-danger" onclick="abrirRechazo(${o.id})">Rechazar</button>
+            </div>
+        `;
+        cont.appendChild(card);
+    });
+}
+
+async function aprobar(id) {
+    const resp = await fetch(`${API_BASE_URL}/oportunidades/${id}/aprobar`, { method: 'POST', headers });
+    const datos = await resp.json();
+    if (!datos.ok) { alert(datos.mensaje); return; }
+    window.location.reload();
+}
+
+function abrirRechazo(id) {
+    idParaRechazar = id;
+    document.getElementById('motivoRechazo').value = '';
+    modalRechazo.show();
+}
+
+document.getElementById('btnConfirmarRechazo').addEventListener('click', async () => {
+    const motivo = document.getElementById('motivoRechazo').value;
+    if (motivo.length < 10) { alert('El motivo debe tener al menos 10 caracteres.'); return; }
+
+    const resp = await fetch(`${API_BASE_URL}/oportunidades/${idParaRechazar}/rechazar`, {
+        method: 'POST', headers: headersJSON, body: JSON.stringify({ motivoRechazo: motivo }),
+    });
+    const datos = await resp.json();
+    if (!datos.ok) { alert(datos.mensaje); return; }
+    window.location.reload();
+});
+
+cargar();
+</script>
+</body>
+</html>

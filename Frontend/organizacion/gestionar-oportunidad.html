@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gestionar oportunidad — Voluntariados UPN</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <a href="mis-oportunidades.html" class="text-muted small">← Volver a mis oportunidades</a>
+  <h3 class="fw-bold mt-2 mb-4">Gestionar oportunidad</h3>
+
+  <ul class="nav nav-tabs mb-3" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabAsistencia">Asistencia</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabEvidencias">Evidencias</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabIncidencias">Incidencias</button></li>
+  </ul>
+
+  <div class="tab-content bg-white rounded-3 shadow-sm p-3">
+
+    <!-- ASISTENCIA -->
+    <div class="tab-pane fade show active" id="tabAsistencia">
+      <div id="alertaAsistencia" class="alert alert-danger alert-form"></div>
+      <table class="table align-middle">
+        <thead class="text-muted small text-uppercase">
+          <tr><th>Voluntario</th><th>Estado</th><th>Acción</th></tr>
+        </thead>
+        <tbody id="tablaInscritos"></tbody>
+      </table>
+    </div>
+
+    <!-- EVIDENCIAS -->
+    <div class="tab-pane fade" id="tabEvidencias">
+      <div id="alertaEvidencia" class="alert alert-form"></div>
+      <form id="formEvidencia" class="row g-2 mb-4" enctype="multipart/form-data">
+        <div class="col-md-4">
+          <label class="form-label">Inscripción (id)</label>
+          <input type="number" class="form-control" id="inscripcionIdEvidencia" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Tipo</label>
+          <select class="form-select" id="tipoEvidencia">
+            <option value="foto">Foto</option>
+            <option value="video">Video</option>
+            <option value="documento">Documento</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Archivo</label>
+          <input type="file" class="form-control" id="archivoEvidencia" required>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="contenidoSensible">
+            <label class="form-check-label small">Contenido sensible</label>
+          </div>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-brand-primary mt-2">Subir evidencia</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- INCIDENCIAS -->
+    <div class="tab-pane fade" id="tabIncidencias">
+      <div id="alertaIncidencia" class="alert alert-form"></div>
+      <form id="formIncidencia" class="row g-2 mb-4">
+        <div class="col-md-4">
+          <label class="form-label">Categoría</label>
+          <input type="text" class="form-control" id="categoriaIncidencia" placeholder="Ej. Seguridad" required>
+        </div>
+        <div class="col-md-8">
+          <label class="form-label">Descripción</label>
+          <input type="text" class="form-control" id="descripcionIncidencia" required>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-outline-secondary mt-2">Reportar incidencia</button>
+        </div>
+      </form>
+      <div id="listaIncidencias"></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API_BASE_URL = 'http://localhost:3003';
+const token = localStorage.getItem('token');
+if (!token) window.location.href = '../public-auth/login.html';
+
+const oportunidadId = new URLSearchParams(window.location.search).get('id');
+const headers = { Authorization: `Bearer ${token}` };
+const headersJSON = { ...headers, 'Content-Type': 'application/json' };
+
+// ---- Asistencia ----
+async function cargarInscritos() {
+    const resp = await fetch(`${API_BASE_URL}/asistencia/inscritos/${oportunidadId}`, { headers });
+    const datos = await resp.json();
+    const tbody = document.getElementById('tablaInscritos');
+    if (!datos.ok) { document.getElementById('alertaAsistencia').textContent = datos.mensaje; document.getElementById('alertaAsistencia').style.display='block'; return; }
+
+    datos.datos.forEach((i) => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+            <td>${i.nombreVoluntario}</td>
+            <td id="estado-${i.inscripcionId}">Sin marcar</td>
+            <td>
+                <button class="btn btn-sm btn-success" onclick="marcar(${i.inscripcionId}, 'presente')">Presente</button>
+                <button class="btn btn-sm btn-outline-danger" onclick="marcar(${i.inscripcionId}, 'ausente')">Ausente</button>
+                <button class="btn btn-sm btn-outline-warning" onclick="marcar(${i.inscripcionId}, 'tardanza')">Tardanza</button>
+            </td>`;
+        tbody.appendChild(fila);
+    });
+}
+
+async function marcar(inscripcionId, estado) {
+    const resp = await fetch(`${API_BASE_URL}/asistencia`, {
+        method: 'POST', headers: headersJSON,
+        body: JSON.stringify({ inscripcionId, estado }),
+    });
+    const datos = await resp.json();
+    if (!datos.ok) { alert(datos.mensaje); return; }
+    document.getElementById(`estado-${inscripcionId}`).textContent = estado;
+}
+
+// ---- Evidencias ----
+document.getElementById('formEvidencia').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('archivo', document.getElementById('archivoEvidencia').files[0]);
+    formData.append('inscripcionId', document.getElementById('inscripcionIdEvidencia').value);
+    formData.append('tipo', document.getElementById('tipoEvidencia').value);
+    formData.append('contenidoSensible', document.getElementById('contenidoSensible').checked);
+
+    const resp = await fetch(`${API_BASE_URL}/asistencia/evidencias/${document.getElementById('inscripcionIdEvidencia').value}`, {
+        method: 'POST', headers, body: formData,
+    });
+    const datos = await resp.json();
+    const alerta = document.getElementById('alertaEvidencia');
+    alerta.className = `alert ${datos.ok ? 'alert-success' : 'alert-danger'}`;
+    alerta.textContent = datos.ok ? 'Evidencia subida correctamente.' : datos.mensaje;
+    alerta.style.display = 'block';
+});
+
+// ---- Incidencias ----
+async function cargarIncidencias() {
+    const resp = await fetch(`${API_BASE_URL}/asistencia/incidencias/oportunidad/${oportunidadId}`, { headers });
+    const datos = await resp.json();
+    const cont = document.getElementById('listaIncidencias');
+    cont.innerHTML = '';
+    (datos.datos || []).forEach((inc) => {
+        const div = document.createElement('div');
+        div.className = 'border rounded-3 p-2 mb-2';
+        div.innerHTML = `<strong>${inc.categoria}</strong> — ${inc.descripcion} <span class="badge bg-secondary float-end">${inc.estado}</span>`;
+        cont.appendChild(div);
+    });
+}
+
+document.getElementById('formIncidencia').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const resp = await fetch(`${API_BASE_URL}/asistencia/incidencias`, {
+        method: 'POST', headers: headersJSON,
+        body: JSON.stringify({
+            oportunidadId: Number(oportunidadId),
+            categoria: document.getElementById('categoriaIncidencia').value,
+            descripcion: document.getElementById('descripcionIncidencia').value,
+        }),
+    });
+    const datos = await resp.json();
+    if (!datos.ok) { alert(datos.mensaje); return; }
+    document.getElementById('formIncidencia').reset();
+    cargarIncidencias();
+});
+
+cargarInscritos();
+cargarIncidencias();
+</script>
+</body>
+</html>
