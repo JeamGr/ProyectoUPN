@@ -142,7 +142,7 @@
     const token = localStorage.getItem('token');
 
     // Guard de autenticación
-    if (!token) window.location.href = '../public-auth/login.html';
+    if (!token) window.location.href = '../public-auth/login-voluntario.html';
     const headers = { 
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -156,28 +156,61 @@
       window.location.href = '../explorar/explorar.html';
     }
 
+    let mapaLineas = {};
+    let mapaUbicaciones = {};
+
+    async function cargarCatalogos() {
+      try {
+        const respLineas = await fetch(`${API_BASE_URL}/administrador/catalogos/lineas-intervencion?soloActivos=true`);
+        const datosLineas = await respLineas.json();
+        (datosLineas.items || []).forEach(l => { mapaLineas[l.id] = l.nombre; });
+      } catch (error) {
+        console.error('Error al cargar líneas de intervención:', error);
+      }
+
+      try {
+        const respUbicaciones = await fetch(`${API_BASE_URL}/administrador/catalogos/ubicaciones?soloActivos=true`);
+        const datosUbicaciones = await respUbicaciones.json();
+        (datosUbicaciones.items || []).forEach(u => { mapaUbicaciones[u.id] = u.nombre; });
+      } catch (error) {
+        console.error('Error al cargar ubicaciones:', error);
+      }
+    }
+
     async function cargarDetalle() {
       try {
         const resp = await fetch(`${API_BASE_URL}/oportunidades/${oportunidadId}`, { headers });
         const datos = await resp.json();
 
         if (!datos) return;
-        const op = datos.data || datos;
+        // El backend responde { ok: true, oportunidad } — no { data } ni el objeto plano
+        const op = datos.oportunidad || datos.data || datos;
 
         // Pintar información principal
         document.getElementById('txtTitulo').textContent = op.titulo || 'Sin título';
-        document.getElementById('txtCategoria').textContent = op.categoria || 'General';
+        document.getElementById('txtCategoria').textContent = mapaLineas[op.lineaIntervencionId] || 'General';
         
         const badgeMod = document.getElementById('txtModalidad');
-        badgeMod.textContent = op.modalidad || 'Presencial';
-        badgeMod.className = `badge ${op.modalidad === 'Presencial' ? 'badge-presencial' : 'badge-virtual'}`;
+        const modalidadTexto = op.modalidad ? op.modalidad.charAt(0).toUpperCase() + op.modalidad.slice(1) : 'Presencial';
+        badgeMod.textContent = modalidadTexto;
+        badgeMod.className = `badge ${op.modalidad === 'presencial' ? 'badge-presencial' : 'badge-virtual'}`;
 
-        document.getElementById('txtOrganizacion').textContent = op.organizacionNombre || op.organizacion?.nombre || 'Organización';
+        // El endpoint GET /oportunidades/:id no trae el nombre de la organización
+        // (solo la búsqueda/listado lo incluye); placeholder hasta que el backend
+        // agregue ese join también aquí.
+        document.getElementById('txtOrganizacion').textContent = op.nombreOrganizacion || 'Organización';
         document.getElementById('txtDescripcion').textContent = op.descripcion || 'Sin descripción disponible.';
-        document.getElementById('txtFecha').textContent = op.fechaTexto || op.fecha || 'Por confirmar';
-        document.getElementById('txtHorario').textContent = op.horario || 'Por confirmar';
-        document.getElementById('txtUbicacion').textContent = op.ubicacion || 'Por confirmar';
-        document.getElementById('txtCupos').textContent = `${op.cuposDisponibles || op.cupos || 0} cupos disponibles`;
+
+        const fechaInicio = op.fechaInicio ? new Date(op.fechaInicio) : null;
+        const fechaFin = op.fechaFin ? new Date(op.fechaFin) : null;
+        document.getElementById('txtFecha').textContent = fechaInicio
+          ? fechaInicio.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })
+          : 'Por confirmar';
+        document.getElementById('txtHorario').textContent = (fechaInicio && fechaFin)
+          ? `${fechaInicio.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })} - ${fechaFin.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`
+          : 'Por confirmar';
+        document.getElementById('txtUbicacion').textContent = mapaUbicaciones[op.ubicacionId] || 'Por confirmar';
+        document.getElementById('txtCupos').textContent = `${op.cuposDisponibles ?? 0} cupos disponibles`;
 
         if (op.imagenUrl) {
           document.getElementById('imgOportunidad').src = op.imagenUrl;
@@ -239,7 +272,7 @@ document.getElementById('btnInscribirme').addEventListener('click', async () => 
 
       if (mensaje.includes('completar tu perfil')) {
         if (confirm(`${mensaje}\n\n¿Deseas ir a tu perfil ahora para completarlo?`)) {
-          window.location.href = '../onboarding/onboarding-voluntario.html';
+          window.location.href = '../onboarding voluntario/onboarding-voluntario.html';
         }
       } else {
         alert(mensaje || 'No se pudo realizar la inscripción.');
@@ -251,7 +284,8 @@ document.getElementById('btnInscribirme').addEventListener('click', async () => 
 });
 
     // Carga inicial al abrir la pantalla
-    cargarDetalle();
+    // Carga inicial al abrir la pantalla
+    cargarCatalogos().then(cargarDetalle);
   </script>
 </body>
 </html>

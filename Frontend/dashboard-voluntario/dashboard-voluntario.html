@@ -177,15 +177,40 @@
 
     // 🔒 Guard de Autenticación
     if (!token) {
-      window.location.href = '../public-auth/login.html';
+      window.location.href = '../public-auth/login-voluntario.html';
     }
 
     const headers = { Authorization: `Bearer ${token}` };
 
+    async function cargarMetricas() {
+      try {
+        const respHoras = await fetch(`${API_BASE_URL}/asistencia/mis-horas`, { headers });
+        if (respHoras.ok) {
+          const datosHoras = await respHoras.json();
+          const horas = datosHoras.horasAcumuladas ?? 0;
+          document.getElementById('mHoras').childNodes[0].textContent = `${horas} `;
+          document.getElementById('mHorasChart').textContent = horas;
+        }
+      } catch (error) {
+        console.error('Error al cargar horas acumuladas:', error);
+      }
+
+      try {
+        const respEventos = await fetch(`${API_BASE_URL}/inscripciones/mis-eventos`, { headers });
+        if (respEventos.ok) {
+          const datosEventos = await respEventos.json();
+          const lista = Array.isArray(datosEventos) ? datosEventos : (datosEventos.data || []);
+          document.getElementById('mCompletadas').textContent = lista.filter(i => i.estado === 'completado').length;
+        }
+      } catch (error) {
+        console.error('Error al cargar oportunidades completadas:', error);
+      }
+    }
+
     async function cargarDashboardVoluntario() {
       try {
         // 1. Obtener perfil e indicadores del voluntario logueado
-        const respPerfil = await fetch(`${API_BASE_URL}/perfil/voluntario`, { headers });
+        const respPerfil = await fetch(`${API_BASE_URL}/perfiles/voluntario/me`, { headers });
         const datosPerfil = await respPerfil.json();
         const perfil = datosPerfil.data || datosPerfil;
 
@@ -195,22 +220,19 @@
           document.getElementById('txtNombreHeader').textContent = `${primerNombre} ${perfil.apellidos ? perfil.apellidos[0] + '.' : ''}`;
           document.getElementById('txtCarreraHeader').textContent = perfil.carrera || 'Estudiante UPN';
 
-          if (perfil.fotoUrl) {
-            document.getElementById('imgAvatarHeader').src = perfil.fotoUrl;
+          if (perfil.foto_url) {
+            document.getElementById('imgAvatarHeader').src = perfil.foto_url;
           }
 
-          const horas = perfil.horasAcumuladas ?? perfil.horas ?? 0;
-          document.getElementById('mHoras').childNodes[0].textContent = `${horas} `;
-          document.getElementById('mHorasChart').textContent = horas;
-          document.getElementById('mCompletadas').textContent = perfil.oportunidadesCompletadas ?? perfil.eventosCompletados ?? 0;
+          cargarMetricas();
         }
 
         // 2. Obtener las inscripciones/eventos del voluntario
-        const respEventos = await fetch(`${API_BASE_URL}/inscripciones/me`, { headers });
+        const respEventos = await fetch(`${API_BASE_URL}/inscripciones/mis-eventos`, { headers });
         const datosEventos = await respEventos.json();
         const listaInscripciones = Array.isArray(datosEventos) ? datosEventos : (datosEventos.data || []);
 
-        const proximos = listaInscripciones.filter(i => !i.estado || i.estado === 'CONFIRMADO' || i.estado === 'PENDIENTE');
+        const proximos = listaInscripciones.filter(i => i.estado === 'confirmado' || i.estado === 'inscrito');
         document.getElementById('mProximos').textContent = proximos.length;
 
         // Renderizado de próximos eventos en el DOM
@@ -229,8 +251,12 @@
 
         proximos.slice(0, 3).forEach(item => {
           const op = item.oportunidad || item;
-          const esPresencial = op.modalidad === 'Presencial';
+          const esPresencial = (op.modalidad || '').toLowerCase() === 'presencial';
           const badgeClass = esPresencial ? 'badge-presencial' : 'badge-virtual';
+          const modalidadTexto = op.modalidad ? op.modalidad.charAt(0).toUpperCase() + op.modalidad.slice(1) : 'Presencial';
+          const fechaTexto = op.fecha
+            ? new Date(op.fecha).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })
+            : 'Por definir';
           const imgDefault = esPresencial 
             ? 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=200'
             : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=200';
@@ -242,11 +268,11 @@
               <img src="${op.imagenUrl || imgDefault}" class="event-img" alt="${op.titulo}">
               <div>
                 <h6 class="fw-bold mb-1">${op.titulo || 'Voluntariado'}</h6>
-                <p class="text-muted small mb-1">${op.organizacionNombre || op.organizacion?.nombre || 'Organización'}</p>
-                <small class="text-muted"><i class="bi bi-clock"></i> ${op.fechaTexto || op.fecha || 'Por definir'} | ${op.horario || 'Por definir'}</small>
+                <p class="text-muted small mb-1">${op.organizacionNombre || 'Organización'}</p>
+                <small class="text-muted"><i class="bi bi-clock"></i> ${fechaTexto}</small>
               </div>
             </div>
-            <span class="badge ${badgeClass} rounded-pill px-3 py-2">${op.modalidad || 'Presencial'}</span>
+            <span class="badge ${badgeClass} rounded-pill px-3 py-2">${modalidadTexto}</span>
           `;
           contenedor.appendChild(div);
         });
@@ -260,7 +286,7 @@
     document.getElementById('btnCerrarSesion').addEventListener('click', (e) => {
       e.preventDefault();
       localStorage.removeItem('token');
-      window.location.href = '../public-auth/login.html';
+      window.location.href = '../public-auth/login-voluntario.html';
     });
 
     cargarDashboardVoluntario();

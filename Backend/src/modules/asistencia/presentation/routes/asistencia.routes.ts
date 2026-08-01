@@ -24,6 +24,11 @@ router.post(
     (req, res, next) => { /* validateBody manual porque multer ya consumió el body como multipart */
         const dto = new SubirEvidenciaDTO();
         Object.assign(dto, req.body);
+        // multer entrega todo como string; sin esta conversión, inscripcionId
+        // llega como texto y contenidoSensible === 'false' se guardaría como
+        // "truthy" en la base de datos.
+        dto.inscripcionId = Number(req.params.inscripcionId);
+        dto.contenidoSensible = req.body.contenidoSensible === 'true';
         req.dto = dto;
         next();
     },

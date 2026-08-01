@@ -68,7 +68,7 @@
     const token = localStorage.getItem('token');
 
     // Guard de autenticación
-    if (!token) window.location.href = '../public-auth/login.html';
+    if (!token) window.location.href = '../public-auth/login-voluntario.html';
     const headers = { Authorization: `Bearer ${token}` };
 
     // Extraer el ID desde la URL (?id=...)
@@ -83,11 +83,13 @@
         const datos = await resp.json();
 
         if (!datos) return;
-        const op = datos.data || datos;
+        const op = datos.oportunidad || datos.data || datos;
 
         document.getElementById('txtTitulo').textContent = op.titulo || 'Oportunidad de Voluntariado';
-        document.getElementById('txtOrganizacion').textContent = op.organizacionNombre || op.organizacion?.nombre || 'Organización';
-        document.getElementById('txtFecha').textContent = op.fechaTexto || op.fecha || 'Por confirmar';
+        document.getElementById('txtOrganizacion').textContent = op.nombreOrganizacion || 'Organización';
+        document.getElementById('txtFecha').textContent = op.fechaInicio
+          ? new Date(op.fechaInicio).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })
+          : 'Por confirmar';
 
       } catch (error) {
         console.error('Error al obtener la información:', error);

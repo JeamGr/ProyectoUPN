@@ -108,28 +108,24 @@
 <script>
 const API_BASE_URL = 'http://localhost:3003';
 
-// RF-025 / M1: mismos 8 intereses sembrados en `lineas_intervencion`.
-// Si en tu BD tienen otros ids, ajusta este arreglo para que coincida.
-const INTERESES = [
-    { id: 1, nombre: 'Educación' },
-    { id: 2, nombre: 'Tecnología' },
-    { id: 3, nombre: 'Salud' },
-    { id: 4, nombre: 'Niños' },
-    { id: 5, nombre: 'Adultos mayores' },
-    { id: 6, nombre: 'Medio ambiente' },
-    { id: 7, nombre: 'Inclusión social' },
-    { id: 8, nombre: 'Protección animal' },
-];
-
 const seleccionados = new Set();
 const grid = document.getElementById('gridIntereses');
 
-INTERESES.forEach((interes) => {
-    const col = document.createElement('div');
-    col.className = 'col';
-    col.innerHTML = `<div class="interes-chip" data-id="${interes.id}">${interes.nombre}</div>`;
-    grid.appendChild(col);
-});
+async function cargarIntereses() {
+    try {
+        const resp = await fetch(`${API_BASE_URL}/administrador/catalogos/lineas-intervencion?soloActivos=true`);
+        const datos = await resp.json();
+        (datos.items || []).forEach((interes) => {
+            const col = document.createElement('div');
+            col.className = 'col';
+            col.innerHTML = `<div class="interes-chip" data-id="${interes.id}">${interes.nombre}</div>`;
+            grid.appendChild(col);
+        });
+    } catch (error) {
+        mostrarError('No se pudieron cargar los intereses. Recarga la página.');
+    }
+}
+cargarIntereses();
 
 grid.addEventListener('click', (e) => {
     const chip = e.target.closest('.interes-chip');

@@ -60,7 +60,7 @@
               <img id="imgAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300" alt="Foto de perfil" class="profile-avatar">
             </div>
             <div>
-              <a href="../onboarding/onboarding.html" class="btn btn-yanantin-outline">
+              <a href="../onboarding voluntario/onboarding-voluntario.html" class="btn btn-yanantin-outline">
                 <i class="bi bi-pencil-square me-1"></i> Editar perfil
               </a>
             </div>
@@ -124,7 +124,7 @@
 
     // 🔒 Guard de autenticación
     if (!token) {
-      window.location.href = '../public-auth/login.html';
+      window.location.href = '../public-auth/login-voluntario.html';
     }
 
     const headers = { Authorization: `Bearer ${token}` };
@@ -132,7 +132,7 @@
     async function cargarPerfil() {
       try {
         // Llama a la ruta que ejecuta PerfilService.obtenerPerfilVoluntario(usuarioId)
-        const resp = await fetch(`${API_BASE_URL}/perfil/voluntario`, { headers });
+        const resp = await fetch(`${API_BASE_URL}/perfiles/voluntario/me`, { headers });
         const datos = await resp.json();
 
         // Extraer objeto recibido (DTO)
@@ -150,18 +150,18 @@
         
         document.getElementById('txtCarrera').textContent = perfil.carrera || 'Estudiante';
         document.getElementById('txtUniversidad').textContent = perfil.universidad || 'Universidad Privada del Norte';
-        document.getElementById('txtDistrito').textContent = perfil.distrito || perfil.ubicacion || 'Lima';
+        document.getElementById('txtDistrito').textContent = perfil.ubicacion || 'Lima';
         document.getElementById('txtCorreo').textContent = perfil.correo || perfil.email || 'Sin correo';
         document.getElementById('txtTelefono').textContent = perfil.telefono || 'Sin teléfono';
         document.getElementById('txtBiografia').textContent = perfil.biografia || perfil.sobreMi || '¡Hola! Soy voluntario universitario en YANANTIN.';
 
         // 2. Pintar métricas
-        document.getElementById('txtHoras').textContent = perfil.horasAcumuladas ?? perfil.horas ?? 0;
-        document.getElementById('txtOportunidades').textContent = perfil.oportunidadesCompletadas ?? perfil.eventosCompletados ?? 0;
+        // 2. Pintar métricas — se piden aparte, el perfil no las trae
+        cargarMetricas();
 
         // 3. Foto de perfil si existe
-        if (perfil.fotoUrl || perfil.avatar) {
-          document.getElementById('imgAvatar').src = perfil.fotoUrl || perfil.avatar;
+        if (perfil.foto_url) {
+          document.getElementById('imgAvatar').src = perfil.foto_url;
         }
 
       } catch (error) {
@@ -169,11 +169,35 @@
       }
     }
 
+    async function cargarMetricas() {
+      try {
+        const respHoras = await fetch(`${API_BASE_URL}/asistencia/mis-horas`, { headers });
+        if (respHoras.ok) {
+          const datosHoras = await respHoras.json();
+          document.getElementById('txtHoras').textContent = datosHoras.horasAcumuladas ?? 0;
+        }
+      } catch (error) {
+        console.error('Error al cargar horas acumuladas:', error);
+      }
+
+      try {
+        const respEventos = await fetch(`${API_BASE_URL}/inscripciones/mis-eventos`, { headers });
+        if (respEventos.ok) {
+          const datosEventos = await respEventos.json();
+          const lista = Array.isArray(datosEventos) ? datosEventos : (datosEventos.data || []);
+          const completadas = lista.filter(i => i.estado === 'completado').length;
+          document.getElementById('txtOportunidades').textContent = completadas;
+        }
+      } catch (error) {
+        console.error('Error al cargar oportunidades completadas:', error);
+      }
+    }
+
     // Cerrar sesión
     document.getElementById('btnCerrarSesion').addEventListener('click', (e) => {
       e.preventDefault();
       localStorage.removeItem('token');
-      window.location.href = '../public-auth/login.html';
+      window.location.href = '../public-auth/login-voluntario.html';
     });
 
     // Carga inicial

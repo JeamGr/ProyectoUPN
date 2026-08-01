@@ -80,11 +80,11 @@
             <div class="row g-3 mb-3">
               <div class="col-md-6">
                 <label class="form-label fw-semibold small">Nombres</label>
-                <input type="text" id="inputNombres" class="form-control" placeholder="Tus nombres" required>
+                <input type="text" id="inputNombres" class="form-control" placeholder="Tus nombres" readonly>
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold small">Apellidos</label>
-                <input type="text" id="inputApellidos" class="form-control" placeholder="Tus apellidos" required>
+                <input type="text" id="inputApellidos" class="form-control" placeholder="Tus apellidos" readonly>
               </div>
             </div>
 
@@ -98,7 +98,7 @@
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold small">Carrera</label>
-                <select id="selectCarrera" class="form-select" required>
+                <select id="selectCarrera" class="form-select" disabled>
                   <option value="" disabled selected>Selecciona tu carrera</option>
                   <option value="Administración y Marketing">Administración y Marketing</option>
                   <option value="Ingeniería de Sistemas Computacionales">Ingeniería de Sistemas Computacionales</option>
@@ -149,7 +149,7 @@
 
     // 🔒 Guard de seguridad
     if (!token) {
-      window.location.href = '../public-auth/login.html';
+      window.location.href = '../public-auth/login-voluntario.html';
     }
 
     const headers = { 
@@ -175,7 +175,7 @@
     // 1. Cargar datos existentes si ya estuvo registrado
     async function cargarDatosOnboarding() {
       try {
-        const resp = await fetch(`${API_BASE_URL}/perfil/voluntario`, { headers });
+        const resp = await fetch(`${API_BASE_URL}/perfiles/voluntario/me`, { headers });
         if (!resp.ok) return;
 
         const datos = await resp.json();
@@ -184,9 +184,9 @@
         if (perfil.nombres) document.getElementById('inputNombres').value = perfil.nombres;
         if (perfil.apellidos) document.getElementById('inputApellidos').value = perfil.apellidos;
         if (perfil.carrera) document.getElementById('selectCarrera').value = perfil.carrera;
-        if (perfil.distrito) document.getElementById('selectDistrito').value = perfil.distrito;
+        if (perfil.ubicacion) document.getElementById('selectDistrito').value = perfil.ubicacion;
         if (perfil.telefono) document.getElementById('inputTelefono').value = perfil.telefono;
-        if (perfil.fotoUrl) avatarPreview.src = perfil.fotoUrl;
+        if (perfil.foto_url) avatarPreview.src = perfil.foto_url;
 
       } catch (error) {
         console.error('Error al precargar datos de onboarding:', error);
@@ -204,16 +204,12 @@
 
       // Estructuramos el DTO esperado por ActualizarPerfilVoluntarioDTO
       const dto = {
-        nombres: document.getElementById('inputNombres').value.trim(),
-        apellidos: document.getElementById('inputApellidos').value.trim(),
-        universidad: 'Universidad Privada del Norte (UPN)',
-        carrera: document.getElementById('selectCarrera').value,
-        distrito: document.getElementById('selectDistrito').value,
-        telefono: document.getElementById('inputTelefono').value.trim()
+        telefono: document.getElementById('inputTelefono').value.trim(),
+        ubicacion: document.getElementById('selectDistrito').value
       };
 
       try {
-        const resp = await fetch(`${API_BASE_URL}/perfil/voluntario`, {
+        const resp = await fetch(`${API_BASE_URL}/perfiles/voluntario/me`, {
           method: 'PUT',
           headers,
           body: JSON.stringify(dto)

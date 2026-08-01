@@ -9,7 +9,7 @@ export class PerfilController {
     // --------------------------------------------------
     obtenerPerfilVoluntario = async (req: Request, res: Response): Promise<void> => {
         try {
-            const usuarioId = (req as any).user.id;
+            const usuarioId = req.jwt!.id;
             const perfil = await this.perfilService.obtenerPerfilVoluntario(usuarioId);
             res.status(200).json({ status: 'success', data: perfil });
         } catch (error: any) {
@@ -19,7 +19,7 @@ export class PerfilController {
 
     actualizarPerfilVoluntario = async (req: Request, res: Response): Promise<void> => {
         try {
-            const usuarioId = (req as any).user.id;
+            const usuarioId = req.jwt!.id;
             const perfilActualizado = await this.perfilService.actualizarPerfilVoluntario(
                 usuarioId,
                 req.body
@@ -35,7 +35,7 @@ export class PerfilController {
     // --------------------------------------------------
     obtenerPerfilOrganizacion = async (req: Request, res: Response): Promise<void> => {
         try {
-            const usuarioId = (req as any).user.id;
+            const usuarioId = req.jwt!.id;
             const perfil = await this.perfilService.obtenerPerfilOrganizacion(usuarioId);
             res.status(200).json({ status: 'success', data: perfil });
         } catch (error: any) {
@@ -45,7 +45,7 @@ export class PerfilController {
 
     actualizarPerfilOrganizacion = async (req: Request, res: Response): Promise<void> => {
         try {
-            const usuarioId = (req as any).user.id;
+            const usuarioId = req.jwt!.id;
             const perfilActualizado = await this.perfilService.actualizarPerfilOrganizacion(
                 usuarioId,
                 req.body
@@ -61,7 +61,7 @@ export class PerfilController {
     // --------------------------------------------------
     obtenerPreferencias = async (req: Request, res: Response): Promise<void> => {
         try {
-            const usuarioId = (req as any).user.id;
+            const usuarioId = req.jwt!.id;
             const preferencias = await this.perfilService.obtenerPreferencias(usuarioId);
             res.status(200).json({ status: 'success', data: preferencias });
         } catch (error: any) {
@@ -71,7 +71,7 @@ export class PerfilController {
 
     actualizarPreferencias = async (req: Request, res: Response): Promise<void> => {
         try {
-            const usuarioId = (req as any).user.id;
+            const usuarioId = req.jwt!.id;
             const preferencias = await this.perfilService.actualizarPreferencias(usuarioId, req.body);
             res.status(200).json({ status: 'success', data: preferencias });
         } catch (error: any) {
@@ -84,7 +84,7 @@ export class PerfilController {
     // --------------------------------------------------
     darDeBajaCuenta = async (req: Request, res: Response): Promise<void> => {
         try {
-            const usuarioId = (req as any).user.id;
+            const usuarioId = req.jwt!.id;
             await this.perfilService.darDeBajaCuenta(usuarioId);
             res.status(200).json({
                 status: 'success',
