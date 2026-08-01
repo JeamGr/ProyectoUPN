@@ -305,6 +305,8 @@ async obtenerInscripcionesPorUsuario(usuarioId: number): Promise<any[]> {
     const filas = await this.inscripcionRepo
         .createQueryBuilder('i')
         .innerJoin(OportunidadModel, 'op', 'op.id = i.oportunidad_id')
+        .leftJoin('organizaciones', 'org', 'org.usuario_id = op.organizacion_id')
+        .leftJoin('ubicaciones', 'ub', 'ub.id = op.ubicacion_id')
         .select([
             'i.id AS id',
             'i.estado AS estado',
@@ -313,8 +315,10 @@ async obtenerInscripcionesPorUsuario(usuarioId: number): Promise<any[]> {
             'op.titulo AS titulo',
             'op.modalidad AS modalidad',
             'op.fecha_inicio AS fecha_inicio',
-            'op.ubicacion AS ubicacion',
-            'op.organizacion_nombre AS organizacion_nombre'
+            'op.fecha_fin AS fecha_fin',
+            'op.imagen_url AS imagen_url',
+            'ub.nombre AS ubicacion',
+            'org.nombre_ong AS organizacion_nombre'
         ])
         .where('i.usuario_id = :usuarioId', { usuarioId })
         .orderBy('i.fecha_inscripcion', 'DESC')
@@ -329,9 +333,10 @@ async obtenerInscripcionesPorUsuario(usuarioId: number): Promise<any[]> {
             titulo: f.titulo,
             modalidad: f.modalidad,
             fecha: f.fecha_inicio,
+            fechaFin: f.fecha_fin,
+            imagenUrl: f.imagen_url,
             ubicacion: f.ubicacion,
             organizacionNombre: f.organizacion_nombre
         }
     }));
-}
-}
+}}

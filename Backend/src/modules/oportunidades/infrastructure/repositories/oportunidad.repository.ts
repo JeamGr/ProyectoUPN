@@ -19,9 +19,20 @@ export class OportunidadRepository implements IOportunidadRepository {
         this.repo = AppDataSource.getRepository(OportunidadModel);
     }
 
-    async buscarPorId(id: number): Promise<Oportunidad | null> {
-        const model = await this.repo.findOne({ where: { id } });
-        return model ? OportunidadMapping.toDomain(model) : null;
+    async buscarPorId(id: number): Promise<OportunidadConOrganizacion | null> {
+        const qb = this.repo
+            .createQueryBuilder('o')
+            .leftJoin('organizaciones', 'org', 'org.usuario_id = o.organizacion_id')
+            .addSelect('org.nombre_ong', 'nombre_organizacion')
+            .where('o.id = :id', { id });
+
+        const { entities, raw } = await qb.getRawAndEntities();
+        if (entities.length === 0) return null;
+
+        return {
+            ...OportunidadMapping.toDomain(entities[0]),
+            nombreOrganizacion: raw[0].nombre_organizacion,
+        } as OportunidadConOrganizacion;
     }
 
     async crear(oportunidad: Oportunidad): Promise<Oportunidad> {

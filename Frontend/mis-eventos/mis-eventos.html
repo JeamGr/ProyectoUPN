@@ -126,7 +126,7 @@
 
     // 🔒 Guard de Autenticación
     if (!token) {
-      window.location.href = '../public-auth/login.html';
+      window.location.href = '../public-auth/login-voluntario.html';
     }
 
     const headers = { Authorization: `Bearer ${token}` };
@@ -194,11 +194,8 @@
     // Función principal para obtener inscripciones
     async function cargarMisEventos() {
       try {
-        // Petición a la API (Prueba con /inscripciones/mis-eventos o /inscripciones/me)
-        let resp = await fetch(`${API_BASE_URL}/inscripciones/mis-eventos`, { headers });
-        if (!resp.ok) {
-          resp = await fetch(`${API_BASE_URL}/inscripciones/me`, { headers });
-        }
+        // Petición a la API
+        const resp = await fetch(`${API_BASE_URL}/inscripciones/mis-eventos`, { headers });
 
         const resData = await resp.json();
         const lista = Array.isArray(resData) ? resData : (resData.data || []);
@@ -214,20 +211,33 @@
         contCompletados.innerHTML = '';
         contCancelados.innerHTML = '';
 
-        // Filtrado exacto con los literales minúsculas de MysqlInscripcionRepository
+        // Clasificación con los 6 estados reales del enum
+        // ('inscrito','confirmado','completado','no_asistio','cancelado','rechazado')
+        // y "en curso" calculado por fecha, ya que no existe ese estado en la BD.
+        const hoy = new Date();
+
+        function estaEnCurso(op) {
+          if (!op.fecha) return false;
+          const inicio = new Date(op.fecha);
+          const fin = op.fechaFin ? new Date(op.fechaFin) : inicio;
+          return hoy >= inicio && hoy <= fin;
+        }
+
         const listProximos = lista.filter(i => {
           const e = (i.estado || '').toLowerCase();
-          return e === 'inscrito' || e === 'confirmado' || e === 'pendiente';
+          const op = i.oportunidad || i;
+          return (e === 'inscrito' || e === 'confirmado') && !estaEnCurso(op);
         });
 
         const listEnCurso = lista.filter(i => {
           const e = (i.estado || '').toLowerCase();
-          return e === 'en_curso';
+          const op = i.oportunidad || i;
+          return e === 'confirmado' && estaEnCurso(op);
         });
 
         const listCompletados = lista.filter(i => {
           const e = (i.estado || '').toLowerCase();
-          return e === 'completado' || e === 'finalizado';
+          return e === 'completado' || e === 'no_asistio';
         });
 
         const listCancelados = lista.filter(i => {
@@ -300,7 +310,7 @@
     document.getElementById('btnCerrarSesion').addEventListener('click', (e) => {
       e.preventDefault();
       localStorage.removeItem('token');
-      window.location.href = '../public-auth/login.html';
+      window.location.href = '../public-auth/login-voluntario.html';
     });
 
     // Carga inicial

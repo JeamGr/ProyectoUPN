@@ -73,12 +73,9 @@
       </div>
 
       <!-- Chips de Categorías -->
-      <div class="d-flex gap-2 flex-wrap mb-4">
-        <button class="category-chip active" data-categoria=""><i class="bi bi-grid-fill"></i> Todos</button>
-        <button class="category-chip" data-categoria="Medio ambiente"><i class="bi bi-tree"></i> Medio ambiente</button>
-        <button class="category-chip" data-categoria="Educación"><i class="bi bi-book"></i> Educación</button>
-        <button class="category-chip" data-categoria="Salud"><i class="bi bi-heart-pulse"></i> Salud</button>
-        <button class="category-chip" data-categoria="Inclusión social"><i class="bi bi-people"></i> Inclusión social</button>
+      <!-- Chips de Categorías (se llenan dinámicamente desde el catálogo real) -->
+      <div class="d-flex gap-2 flex-wrap mb-4" id="contenedorChips">
+        <button class="category-chip active" data-linea=""><i class="bi bi-grid-fill"></i> Todos</button>
       </div>
 
       <!-- Rejilla de Oportunidades (Contenedor Dinámico) -->
@@ -106,16 +103,50 @@
     const token = localStorage.getItem('token');
     
     // Guard de autenticación
-    if (!token) window.location.href = '../public-auth/login.html';
+    if (!token) window.location.href = '../public-auth/login-voluntario.html';
     const headers = { Authorization: `Bearer ${token}` };
 
-    let categoriaActual = '';
+    let lineaActual = '';
+    let mapaUbicaciones = {};
 
-    async function cargarOportunidades(query = '', categoria = '') {
+    async function cargarCatalogos() {
+      try {
+        const respLineas = await fetch(`${API_BASE_URL}/administrador/catalogos/lineas-intervencion?soloActivos=true`);
+        const datosLineas = await respLineas.json();
+        const contenedorChips = document.getElementById('contenedorChips');
+        (datosLineas.items || []).forEach(linea => {
+          const btn = document.createElement('button');
+          btn.className = 'category-chip';
+          btn.dataset.linea = linea.id;
+          btn.innerHTML = `<i class="bi bi-tag"></i> ${linea.nombre}`;
+          btn.addEventListener('click', () => seleccionarChip(btn));
+          contenedorChips.appendChild(btn);
+        });
+      } catch (error) {
+        console.error('Error al cargar líneas de intervención:', error);
+      }
+
+      try {
+        const respUbicaciones = await fetch(`${API_BASE_URL}/administrador/catalogos/ubicaciones?soloActivos=true`);
+        const datosUbicaciones = await respUbicaciones.json();
+        (datosUbicaciones.items || []).forEach(u => { mapaUbicaciones[u.id] = u.nombre; });
+      } catch (error) {
+        console.error('Error al cargar ubicaciones:', error);
+      }
+    }
+
+    function seleccionarChip(chip) {
+      document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      lineaActual = chip.dataset.linea || '';
+      cargarOportunidades(inputBusqueda ? inputBusqueda.value : '', lineaActual);
+    }
+
+    async function cargarOportunidades(query = '', lineaIntervencionId = '') {
       try {
         let url = `${API_BASE_URL}/oportunidades?`;
-        if (query) url += `q=${encodeURIComponent(query)}&`;
-        if (categoria) url += `categoria=${encodeURIComponent(categoria)}`;
+        if (query) url += `texto=${encodeURIComponent(query)}&`;
+        if (lineaIntervencionId) url += `lineaIntervencionId=${encodeURIComponent(lineaIntervencionId)}`;
 
         const resp = await fetch(url, { headers });
         const datos = await resp.json();
@@ -140,24 +171,28 @@
           const col = document.createElement('div');
           col.className = 'col-md-6 col-lg-4';
 
-          const esPresencial = item.modalidad === 'Presencial';
+          const esPresencial = item.modalidad === 'presencial';
           const badgeModalidad = esPresencial ? 'badge-presencial' : 'badge-virtual';
           const imgDefault = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=400';
+          const fechaTexto = item.fechaInicio
+            ? new Date(item.fechaInicio).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })
+            : 'Por confirmar';
+          const modalidadTexto = item.modalidad ? item.modalidad.charAt(0).toUpperCase() + item.modalidad.slice(1) : 'Presencial';
 
           col.innerHTML = `
             <div class="opportunity-card">
               <img src="${item.imagenUrl || imgDefault}" class="card-banner" alt="${item.titulo}">
               <div class="p-3 d-flex flex-column flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="badge ${badgeModalidad} px-2.5 py-1.5 rounded-pill">${item.modalidad || 'Presencial'}</span>
-                  <small class="text-muted"><i class="bi bi-people-fill text-primary"></i> ${item.cuposDisponibles || item.cupos || 0} cupos</small>
+                  <span class="badge ${badgeModalidad} px-2.5 py-1.5 rounded-pill">${modalidadTexto}</span>
+                  <small class="text-muted"><i class="bi bi-people-fill text-primary"></i> ${item.cuposDisponibles ?? 0} cupos</small>
                 </div>
                 <h6 class="fw-bold mb-1">${item.titulo}</h6>
-                <p class="text-muted small mb-2"><i class="bi bi-building"></i> ${item.organizacionNombre || item.organizacion?.nombre || 'Organización'}</p>
+                <p class="text-muted small mb-2"><i class="bi bi-building"></i> ${item.nombreOrganizacion || 'Organización'}</p>
                 
                 <div class="small text-muted mb-3">
-                  <p class="mb-1"><i class="bi bi-calendar3 me-1"></i> ${item.fechaTexto || item.fecha || 'Por confirmar'}</p>
-                  <p class="mb-0"><i class="bi bi-geo-alt me-1"></i> ${item.ubicacion || 'Lima'}</p>
+                  <p class="mb-1"><i class="bi bi-calendar3 me-1"></i> ${fechaTexto}</p>
+                  <p class="mb-0"><i class="bi bi-geo-alt me-1"></i> ${mapaUbicaciones[item.ubicacionId] || 'Lima'}</p>
                 </div>
 
                 <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
@@ -178,19 +213,13 @@
     const inputBusqueda = document.getElementById('inputBusqueda');
     if (inputBusqueda) {
       inputBusqueda.addEventListener('input', (e) => {
-        cargarOportunidades(e.target.value, categoriaActual);
+        cargarOportunidades(e.target.value, lineaActual);
       });
     }
 
-    // Chips de filtro por Categoría
-    document.querySelectorAll('.category-chip').forEach((chip) => {
-      chip.addEventListener('click', function() {
-        document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
-        this.classList.add('active');
-
-        categoriaActual = this.dataset.categoria || '';
-        cargarOportunidades(inputBusqueda ? inputBusqueda.value : '', categoriaActual);
-      });
+    // El chip "Todos" ya existe en el HTML; los demás se agregan en cargarCatalogos()
+    document.querySelector('.category-chip[data-linea=""]').addEventListener('click', function() {
+      seleccionarChip(this);
     });
 
     // Cerrar Sesión
@@ -199,11 +228,12 @@
       btnCerrar.addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.removeItem('token');
-        window.location.href = '../public-auth/login.html';
+        window.location.href = '../public-auth/login-voluntario.html';
       });
     }
 
     // Carga inicial
+    cargarCatalogos();
     cargarOportunidades();
   </script>
 </body>

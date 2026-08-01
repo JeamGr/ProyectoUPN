@@ -34,16 +34,7 @@
       <label class="form-label">Descripción</label>
       <textarea class="form-control mb-3" id="descripcion" rows="4" placeholder="Describe los objetivos, actividades y el impacto que se espera lograr..."></textarea>
       <label class="form-label">Línea de intervención</label>
-      <select class="form-select mb-3" id="lineaIntervencionId">
-        <option value="1">Educación</option>
-        <option value="2">Tecnología</option>
-        <option value="3">Salud</option>
-        <option value="4">Niños</option>
-        <option value="5">Adultos mayores</option>
-        <option value="6">Medio ambiente</option>
-        <option value="7">Inclusión social</option>
-        <option value="8">Protección animal</option>
-      </select>
+      <select class="form-select mb-3" id="lineaIntervencionId"></select>
     </div>
 
     <!-- PASO 2 -->
@@ -59,7 +50,7 @@
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label">Ubicación</label>
-          <input type="text" class="form-control" id="ubicacion" placeholder="Ej. Lurín, Lima">
+          <select class="form-select" id="ubicacionId"></select>
         </div>
       </div>
       <div class="row">
@@ -119,6 +110,37 @@ const token = localStorage.getItem('token');
 if (!token) window.location.href = '../public-auth/login-organizacion.html';
 const headers = { Authorization: `Bearer ${token}` };
 
+async function cargarCatalogos() {
+  try {
+    const respLineas = await fetch(`${API_BASE_URL}/administrador/catalogos/lineas-intervencion?soloActivos=true`);
+    const datosLineas = await respLineas.json();
+    const selectLinea = document.getElementById('lineaIntervencionId');
+    (datosLineas.items || []).forEach(l => {
+      const opt = document.createElement('option');
+      opt.value = l.id;
+      opt.textContent = l.nombre;
+      selectLinea.appendChild(opt);
+    });
+  } catch (error) {
+    console.error('Error al cargar líneas de intervención:', error);
+  }
+
+  try {
+    const respUbicaciones = await fetch(`${API_BASE_URL}/administrador/catalogos/ubicaciones?soloActivos=true`);
+    const datosUbicaciones = await respUbicaciones.json();
+    const selectUbicacion = document.getElementById('ubicacionId');
+    (datosUbicaciones.items || []).forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.id;
+      opt.textContent = u.nombre;
+      selectUbicacion.appendChild(opt);
+    });
+  } catch (error) {
+    console.error('Error al cargar ubicaciones:', error);
+  }
+}
+cargarCatalogos();
+
 let pasoActual = 1;
 let oportunidadIdCreada = null;
 
@@ -137,7 +159,7 @@ function mostrarPaso(n) {
         document.getElementById('resumen').innerHTML = `
             <p><strong>${document.getElementById('titulo').value}</strong></p>
             <p class="text-muted small">${document.getElementById('descripcion').value}</p>
-            <p class="small">${document.getElementById('modalidad').value} · ${document.getElementById('ubicacion').value} · ${document.getElementById('horasAcreditadas').value}h · ${document.getElementById('cuposTotales').value} cupos</p>
+            <p class="small">${document.getElementById('modalidad').value} · ${document.getElementById('ubicacionId').selectedOptions[0]?.textContent || ''} · ${document.getElementById('horasAcreditadas').value}h · ${document.getElementById('cuposTotales').value} cupos</p>
         `;
     }
 }
@@ -163,7 +185,7 @@ function armarDTO() {
         descripcion: document.getElementById('descripcion').value,
         lineaIntervencionId: Number(document.getElementById('lineaIntervencionId').value),
         modalidad: document.getElementById('modalidad').value,
-        ubicacion: document.getElementById('ubicacion').value,
+        ubicacionId: Number(document.getElementById('ubicacionId').value),
         fechaInicio: document.getElementById('fechaInicio').value,
         fechaFin: document.getElementById('fechaFin').value,
         horasAcreditadas: Number(document.getElementById('horasAcreditadas').value),
