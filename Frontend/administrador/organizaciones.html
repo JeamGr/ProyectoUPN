@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Validación de organizaciones — YANANTIN</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/css/adminlte.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+
+<div class="app-wrapper">
+  <div id="contenido">
+
+    <div class="app-content-header">
+      <div class="container-fluid">
+        <h1 class="mb-0 fs-4 fw-bold">Validación de organizaciones</h1>
+        <p class="text-muted mb-0 small">
+          Una organización solo puede enviar oportunidades a revisión cuando está aprobada.
+        </p>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="container-fluid">
+
+        <div id="alertaError" class="alert alert-danger alert-form"></div>
+
+        <!-- Filtros por estado -->
+        <ul class="nav nav-pills mb-3" id="tabs">
+          <li class="nav-item">
+            <button class="nav-link active" data-estado="pendiente_validacion">
+              Pendientes <span class="badge text-bg-warning ms-1" id="cPend">0</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-estado="aprobado">
+              Aprobadas <span class="badge text-bg-success ms-1" id="cApro">0</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-estado="rechazado">
+              Rechazadas <span class="badge text-bg-danger ms-1" id="cRech">0</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-estado="">Todas</button>
+          </li>
+        </ul>
+
+        <div id="lista"></div>
+
+        <div class="estado-vacio d-none" id="vacio">
+          <i class="fa-regular fa-folder-open"></i>
+          <p class="mb-0">No hay organizaciones en este estado.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal de detalle -->
+<div class="modal fade" id="modalDetalle" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content" style="border-radius: var(--radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title">Ficha de la organización</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="cuerpoDetalle"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de rechazo -->
+<div class="modal fade" id="modalRechazo" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius: var(--radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title">Motivo del rechazo</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="small text-muted">
+          El motivo se envía por correo a la organización. Mínimo 10 caracteres.
+        </p>
+        <textarea class="form-control" id="motivoRechazo" rows="4"
+                  placeholder="Ej. El RUC ingresado no coincide con la razón social declarada."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-brand-outline" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-danger" id="btnConfirmarRechazo">Rechazar organización</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/auth-guard.js"
+        data-rol="ADMINISTRADOR,SUPER_ADMINISTRADOR"
+        data-login="../public-auth/login-admin.html"></script>
+<script src="../assets/js/shell.js" data-panel="admin" data-activo="organizaciones"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/js/adminlte.min.js"></script>
+<script>
+let estadoActual = 'pendiente_validacion';
+let idParaRechazar = null;
+let cache = {};
+let modalRechazo, modalDetalle;
+
+function error(msg) {
+    const a = document.getElementById('alertaError');
+    a.textContent = msg;
+    a.style.display = 'block';
+}
+
+async function cargarResumen() {
+    const datos = await YN.api('/administrador/organizaciones/resumen');
+    if (!datos.ok) return;
+    document.getElementById('cPend').textContent = datos.resumen.pendiente_validacion || 0;
+    document.getElementById('cApro').textContent = datos.resumen.aprobado || 0;
+    document.getElementById('cRech').textContent = datos.resumen.rechazado || 0;
+    shellContador('pendientesOrg', datos.resumen.pendiente_validacion || 0);
+}
+
+function acciones(o) {
+    const botones = [];
+    if (o.estadoValidacion !== 'aprobado') {
+        botones.push(`<button class="btn btn-sm btn-success" onclick="aprobar(${o.usuarioId})">
+            <i class="fa-solid fa-check me-1"></i>Aprobar</button>`);
+    }
+    if (o.estadoValidacion !== 'rechazado') {
+        botones.push(`<button class="btn btn-sm btn-outline-danger" onclick="abrirRechazo(${o.usuarioId})">
+            <i class="fa-solid fa-xmark me-1"></i>Rechazar</button>`);
+    }
+    botones.push(`<button class="btn btn-sm btn-brand-outline" onclick="verDetalle(${o.usuarioId})">
+        <i class="fa-regular fa-eye me-1"></i>Ver ficha</button>`);
+    return botones.join(' ');
+}
+
+function tarjeta(o) {
+    return `
+    <div class="panel mb-3">
+      <div class="panel-body">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+          <div style="min-width: 260px;">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h3 class="h6 fw-bold mb-0">${YN.esc(o.nombreOng)}</h3>
+              <span class="badge-estado ${o.estadoValidacion}">${o.estadoValidacion.replace(/_/g, ' ')}</span>
+            </div>
+            <p class="text-muted small mb-2">
+              ${YN.esc(o.razonSocial)} · RUC ${YN.esc(o.ruc)}
+            </p>
+            <div class="d-flex flex-wrap gap-3 small text-muted">
+              <span><i class="fa-regular fa-envelope me-1"></i>${YN.esc(o.correo)}</span>
+              <span><i class="fa-solid fa-user me-1"></i>${YN.esc(o.personaContacto)}</span>
+              <span><i class="fa-solid fa-phone me-1"></i>${YN.esc(o.celularContacto)}</span>
+              <span><i class="fa-regular fa-calendar me-1"></i>${YN.fecha(o.fechaRegistro)}</span>
+              <span><i class="fa-solid fa-rectangle-list me-1"></i>${o.totalOportunidades} oportunidades</span>
+            </div>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">${acciones(o)}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function cargar() {
+    const cont = document.getElementById('lista');
+    cont.innerHTML = '<div class="panel mb-3"><div class="panel-body"><div class="sk">cargando</div></div></div>'.repeat(3);
+
+    const query = estadoActual ? `?estado=${estadoActual}` : '';
+    const datos = await YN.api(`/administrador/organizaciones${query}`);
+
+    if (!datos.ok) { cont.innerHTML = ''; error(datos.mensaje); return; }
+
+    cache = {};
+    datos.organizaciones.forEach((o) => { cache[o.usuarioId] = o; });
+
+    if (datos.organizaciones.length === 0) {
+        cont.innerHTML = '';
+        document.getElementById('vacio').classList.remove('d-none');
+        return;
+    }
+    document.getElementById('vacio').classList.add('d-none');
+    cont.innerHTML = datos.organizaciones.map(tarjeta).join('');
+}
+
+async function aprobar(id) {
+    if (!confirm('¿Aprobar esta organización? Podrá publicar oportunidades de inmediato.')) return;
+    const datos = await YN.api(`/administrador/organizaciones/${id}/aprobar`, { method: 'POST' });
+    if (!datos.ok) { alert(datos.mensaje); return; }
+    YN.toast(datos.mensaje || 'Organización aprobada.');
+    await cargarResumen();
+    await cargar();
+}
+
+function abrirRechazo(id) {
+    idParaRechazar = id;
+    document.getElementById('motivoRechazo').value = '';
+    modalRechazo.show();
+}
+
+function verDetalle(id) {
+    const o = cache[id];
+    if (!o) return;
+    const fila = (etiqueta, valor) => `
+        <div class="col-sm-6 mb-3">
+          <div class="text-muted" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">${etiqueta}</div>
+          <div>${YN.esc(valor) || '—'}</div>
+        </div>`;
+
+    document.getElementById('cuerpoDetalle').innerHTML = `
+        <div class="row">
+          ${fila('Nombre de la ONG', o.nombreOng)}
+          ${fila('Razón social', o.razonSocial)}
+          ${fila('RUC', o.ruc)}
+          ${fila('Constituida legalmente', o.constituidaLegalmente)}
+          ${fila('Línea de intervención', o.lineaIntervencion)}
+          ${fila('País', o.pais)}
+          ${fila('Dirección', o.direccion)}
+          ${fila('Correo de la cuenta', o.correo)}
+          ${fila('Persona de contacto', o.personaContacto)}
+          ${fila('Documento', `${o.tipoDocumentoContacto} ${o.numeroDocumentoContacto}`)}
+          ${fila('Celular', o.celularContacto)}
+          ${fila('Sitio web', o.linkWeb)}
+          ${fila('Redes sociales', o.linkRedesSociales)}
+          ${fila('Estado de la cuenta', o.estadoCuenta)}
+        </div>
+        <div class="mt-2">
+          <div class="text-muted" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Descripción de la actividad</div>
+          <p class="mb-0">${YN.esc(o.descripcionActividad) || '—'}</p>
+        </div>`;
+    modalDetalle.show();
+}
+
+document.addEventListener('yn:shell-listo', () => {
+    modalRechazo = new bootstrap.Modal(document.getElementById('modalRechazo'));
+    modalDetalle = new bootstrap.Modal(document.getElementById('modalDetalle'));
+
+    document.querySelectorAll('#tabs button').forEach((b) => {
+        b.addEventListener('click', () => {
+            document.querySelectorAll('#tabs button').forEach((x) => x.classList.remove('active'));
+            b.classList.add('active');
+            estadoActual = b.dataset.estado;
+            cargar();
+        });
+    });
+
+    document.getElementById('btnConfirmarRechazo').addEventListener('click', async () => {
+        const motivo = document.getElementById('motivoRechazo').value.trim();
+        if (motivo.length < 10) { alert('El motivo debe tener al menos 10 caracteres.'); return; }
+
+        const datos = await YN.api(`/administrador/organizaciones/${idParaRechazar}/rechazar`, {
+            method: 'POST',
+            body: JSON.stringify({ motivoRechazo: motivo }),
+        });
+        if (!datos.ok) { alert(datos.mensaje); return; }
+        modalRechazo.hide();
+        YN.toast('Organización rechazada y notificada.', 'warning');
+        await cargarResumen();
+        await cargar();
+    });
+
+    cargarResumen();
+    cargar();
+});
+</script>
+</body>
+</html>

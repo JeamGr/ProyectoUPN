@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Iniciar sesión como voluntario — YANANTIN</title>
+<title>Iniciar sesión — YANANTIN</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="../assets/css/styles.css">
@@ -13,29 +13,52 @@
 <div class="auth-shell">
   <div class="auth-card">
     <div class="row g-0">
-      <div class="col-lg-6 p-4 p-md-5">
-        <a href="../index.html" class="brand-logo fs-4 mb-4 d-inline-block">YANANTIN</a>
 
-        <span class="badge rounded-pill mb-3" style="background: rgba(224,36,122,.1); color: var(--color-primary); font-weight: 600;">
-          <i class="fa-solid fa-graduation-cap me-1"></i> Portal del voluntario
+      <!-- ------------------------ FORMULARIO ------------------------ -->
+      <div class="col-lg-6 p-4 p-md-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <a href="../index.html" class="brand-logo fs-5">
+            <span class="brand-mark"><i class="fa-solid fa-hands-holding-circle"></i></span>
+            YANANTIN
+          </a>
+          <button class="yn-volver" onclick="YN.volver('../index.html')">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+          </button>
+        </div>
+
+        <span class="auth-badge voluntario">
+          <i class="fa-solid fa-graduation-cap"></i> Portal del voluntario
         </span>
 
-        <h2 class="fw-bold mb-1">Bienvenido de vuelta</h2>
+        <h2 class="fw-bold mb-1" style="font-size: 1.75rem;">Bienvenido de vuelta</h2>
         <p class="text-muted mb-4">Inicia sesión para continuar con tu voluntariado.</p>
 
         <div id="alertaError" class="alert alert-danger alert-form" role="alert"></div>
+        <div id="alertaInfo" class="alert alert-warning alert-form" role="alert"></div>
 
         <form id="formLogin" novalidate>
           <div class="mb-3">
-            <label class="form-label">Correo electrónico</label>
-            <input type="email" class="form-control" id="correo" placeholder="ejemplo@correo.com" required>
-          </div>
-          <div class="mb-2">
-            <label class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="password" required>
+            <label class="form-label" for="correo">Correo electrónico</label>
+            <div class="input-icon">
+              <i class="fa-regular fa-envelope"></i>
+              <input type="email" class="form-control" id="correo" autocomplete="username"
+                     placeholder="ejemplo@correo.com" required>
+            </div>
           </div>
 
-          <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="mb-2">
+            <label class="form-label" for="password">Contraseña</label>
+            <div class="input-icon">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" class="form-control" id="password" autocomplete="current-password"
+                     placeholder="••••••••" required>
+              <button type="button" class="btn-ojo" id="btnOjo" aria-label="Mostrar contraseña">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="recordarme">
               <label class="form-check-label small text-muted" for="recordarme">Recordarme</label>
@@ -53,12 +76,12 @@
 
         <div class="row g-2">
           <div class="col-6">
-            <button class="social-btn w-100" id="btnGoogle">
+            <button class="social-btn w-100" id="btnGoogle" type="button">
               <i class="fa-brands fa-google"></i> Google
             </button>
           </div>
           <div class="col-6">
-            <button class="social-btn w-100 disabled" disabled title="Próximamente">
+            <button class="social-btn w-100 disabled" disabled title="Próximamente" type="button">
               <i class="fa-brands fa-microsoft"></i> Microsoft
             </button>
           </div>
@@ -67,37 +90,88 @@
         <p class="text-center text-muted small mt-4 mb-1">
           ¿No tienes cuenta? <a href="registro-voluntario.html" class="link-brand">Regístrate como voluntario</a>
         </p>
-        <p class="text-center text-muted small mb-0">
-          ¿Eres una organización? <a href="login-organizacion.html" class="link-brand">Inicia sesión aquí</a>
+        <p class="text-center small mb-0" style="color: var(--color-text-muted);">
+          ¿Eres una organización?
+          <a href="../paginas/organizaciones.html" class="link-brand">Entra por el portal de organizaciones</a>
         </p>
       </div>
 
-      <div class="col-lg-6 d-none d-lg-block auth-panel-side">
-        <h3 class="fw-bold mb-4">Conectamos personas,<br>impulsamos voluntariado,<br>transformamos comunidades.</h3>
-        <p class="opacity-75">Únete a la comunidad que conecta estudiantes de la UPN con organizaciones que generan impacto social real.</p>
+      <!-- --------------------- PANEL DECORATIVO --------------------- -->
+      <div class="col-lg-6 d-none d-lg-flex auth-panel-side">
+        <div>
+          <h3 class="fw-bold mb-4" style="font-size: 1.6rem; line-height: 1.3;">
+            Conectamos personas,<br>impulsamos voluntariado,<br>transformamos comunidades.
+          </h3>
+          <p class="mb-4" style="color: rgba(255,255,255,.8);">
+            Únete a la comunidad que conecta estudiantes de la UPN con organizaciones que
+            generan impacto social real.
+          </p>
+
+          <div class="check-item"><i class="fa-solid fa-circle-check"></i><span>Descubre oportunidades que te apasionen</span></div>
+          <div class="check-item"><i class="fa-solid fa-circle-check"></i><span>Registra tus horas de voluntariado</span></div>
+          <div class="check-item"><i class="fa-solid fa-circle-check"></i><span>Obtén certificados digitales verificables</span></div>
+
+          <div class="row g-2 mt-4">
+            <div class="col-4"><div class="auth-stat"><div class="v">2K+</div><div class="l">Horas</div></div></div>
+            <div class="col-4"><div class="auth-stat"><div class="v">150+</div><div class="l">Organizaciones</div></div></div>
+            <div class="col-4"><div class="auth-stat"><div class="v">300+</div><div class="l">Oportunidades</div></div></div>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 </div>
 
+<script src="../assets/js/config.js"></script>
 <script>
-const API_BASE_URL = 'http://localhost:3003';
-
 const form = document.getElementById('formLogin');
 const alerta = document.getElementById('alertaError');
+const alertaInfo = document.getElementById('alertaInfo');
 const btn = document.getElementById('btnLogin');
 const btnTexto = document.getElementById('btnLoginTexto');
 const btnSpinner = document.getElementById('btnLoginSpinner');
 
+// Al llegar a esta pantalla se limpia cualquier resto de sesión previa.
+// Sin esto, un token de otro rol seguiría vivo en localStorage y el
+// botón "Atrás" podría devolver al panel de la cuenta anterior.
+YN.limpiarSesion();
+
+// Mensaje contextual si auth-guard nos redirigió hasta aquí.
+(function () {
+    const motivo = new URLSearchParams(location.search).get('motivo')
+        || new URLSearchParams(location.search).get('sesion');
+    const textos = {
+        'sesion-expirada': 'Tu sesión expiró. Vuelve a iniciar sesión.',
+        'expirada': 'Tu sesión expiró. Vuelve a iniciar sesión.',
+        'rol-incorrecto': 'Esa página pertenece a otro tipo de cuenta. Inicia sesión con tu cuenta de voluntario.',
+        'sesion-cerrada': 'Cerraste sesión en otra pestaña.',
+        'sin-sesion': 'Necesitas iniciar sesión para continuar.',
+    };
+    if (motivo && textos[motivo]) {
+        alertaInfo.textContent = textos[motivo];
+        alertaInfo.style.display = 'block';
+    }
+})();
+
+document.getElementById('btnOjo').addEventListener('click', () => {
+    const input = document.getElementById('password');
+    const esTexto = input.type === 'text';
+    input.type = esTexto ? 'password' : 'text';
+    document.getElementById('btnOjo').innerHTML = esTexto
+        ? '<i class="fa-regular fa-eye"></i>'
+        : '<i class="fa-regular fa-eye-slash"></i>';
+});
+
 function mostrarError(mensaje) {
+    alertaInfo.style.display = 'none';
     alerta.textContent = mensaje;
     alerta.style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function ponerCargando(cargando) {
     btn.disabled = cargando;
-    btnTexto.textContent = cargando ? 'Ingresando...' : 'Iniciar sesión';
+    btnTexto.textContent = cargando ? 'Ingresando…' : 'Iniciar sesión';
     btnSpinner.classList.toggle('d-none', !cargando);
 }
 
@@ -111,7 +185,7 @@ form.addEventListener('submit', async (e) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                correo: document.getElementById('correo').value,
+                correo: document.getElementById('correo').value.trim(),
                 password: document.getElementById('password').value,
             }),
         });
@@ -119,25 +193,23 @@ form.addEventListener('submit', async (e) => {
 
         if (!datos.ok) {
             if (datos.usuarioId) {
-                window.location.href = `verificar-correo.html?usuarioId=${datos.usuarioId}&tipo=voluntario`;
+                location.href = `verificar-correo.html?usuarioId=${datos.usuarioId}&tipo=voluntario`;
                 return;
             }
             mostrarError(datos.mensaje);
             return;
         }
 
-        // Este login es SOLO para voluntarios. Si la cuenta es de otro rol
-        // (una organización que se equivocó de puerta, por ejemplo), se
-        // rechaza aquí mismo y no se guarda token ni se redirige a ningún
-        // dashboard — así los dos flujos nunca se mezclan.
+        // Puerta exclusiva de voluntarios: si la cuenta es de otro rol no
+        // se guarda token ni se redirige, así los flujos nunca se mezclan.
         if (datos.usuario.rol !== 'VOLUNTARIO') {
-            mostrarError('Esta cuenta no pertenece a un voluntario. Si representas una organización, inicia sesión desde el portal de organizaciones.');
+            mostrarError('Esta cuenta no pertenece a un voluntario. Si representas una organización, ingresa desde el portal de organizaciones.');
             return;
         }
 
-        localStorage.setItem('token', datos.token);
-        localStorage.setItem('rol', datos.usuario.rol);
-        window.location.href = '../dashboard-voluntario/dashboard-voluntario.html';
+        YN.guardarSesion(datos.token, datos.usuario);
+        // replace(): la pantalla de login NO queda en el historial.
+        location.replace('../dashboard-voluntario/dashboard-voluntario.html');
     } catch (error) {
         mostrarError('No se pudo conectar con el servidor. Intenta de nuevo.');
     } finally {

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Catálogos — YANANTIN</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/css/adminlte.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+
+<div class="app-wrapper">
+  <div id="contenido">
+
+    <div class="app-content-header">
+      <div class="container-fluid">
+        <h1 class="mb-0 fs-4 fw-bold">Catálogos administrables</h1>
+        <p class="text-muted mb-0 small">
+          RF-057 — Líneas de intervención, categorías de organización y ubicaciones.
+          Alimentan los combos de registro y de creación de oportunidades.
+        </p>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="container-fluid">
+
+        <ul class="nav nav-pills mb-3" id="tabs">
+          <li class="nav-item">
+            <button class="nav-link active" data-cat="lineas-intervencion" data-icono="true">
+              <i class="fa-solid fa-diagram-project me-1"></i> Líneas de intervención
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-cat="categorias-organizacion">
+              <i class="fa-solid fa-tags me-1"></i> Categorías de organización
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-cat="ubicaciones">
+              <i class="fa-solid fa-location-dot me-1"></i> Ubicaciones
+            </button>
+          </li>
+        </ul>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h5 id="tituloCatalogo">Líneas de intervención</h5>
+            <div class="d-flex gap-2 align-items-center">
+              <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" id="soloActivos">
+                <label class="form-check-label small text-muted" for="soloActivos">Solo activos</label>
+              </div>
+              <button class="btn btn-sm btn-brand-primary" id="btnNuevo">
+                <i class="fa-solid fa-plus me-1"></i>Nuevo
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th class="ps-3" style="width:70px;">ID</th>
+                  <th>Nombre</th>
+                  <th class="col-icono">Icono</th>
+                  <th style="width:110px;">Estado</th>
+                  <th class="text-end pe-3" style="width:220px;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla"></tbody>
+            </table>
+          </div>
+          <div class="estado-vacio d-none" id="vacio">
+            <i class="fa-regular fa-folder-open"></i>
+            <p class="mb-0">Este catálogo está vacío. Agrega el primer elemento.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal fade" id="modalItem" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius: var(--radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tituloModal">Nuevo elemento</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="campoNombre" maxlength="150">
+        </div>
+        <div class="mb-0 campo-icono">
+          <label class="form-label">Icono <span class="text-muted fw-normal">(clase Font Awesome, opcional)</span></label>
+          <input type="text" class="form-control" id="campoIcono" maxlength="255" placeholder="fa-solid fa-leaf">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-brand-outline" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-brand-primary" id="btnGuardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/auth-guard.js"
+        data-rol="ADMINISTRADOR,SUPER_ADMINISTRADOR"
+        data-login="../public-auth/login-admin.html"></script>
+<script src="../assets/js/shell.js" data-panel="admin" data-activo="catalogos"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/js/adminlte.min.js"></script>
+<script>
+let catalogo = 'lineas-intervencion';
+let usaIcono = true;
+let editandoId = null;
+let modalItem;
+
+const TITULOS = {
+    'lineas-intervencion': 'Líneas de intervención',
+    'categorias-organizacion': 'Categorías de organización',
+    'ubicaciones': 'Ubicaciones',
+};
+
+function ruta(sufijo) {
+    return `/administrador/catalogos/${catalogo}${sufijo || ''}`;
+}
+
+function alternarColumnaIcono() {
+    document.querySelectorAll('.col-icono, .campo-icono').forEach((el) => {
+        el.classList.toggle('d-none', !usaIcono);
+    });
+}
+
+function fila(i) {
+    const activo = i.estado === 'activo';
+    return `
+    <tr>
+      <td class="ps-3 text-muted">${i.id}</td>
+      <td class="fw-semibold">${YN.esc(i.nombre)}</td>
+      <td class="col-icono">${i.icono ? `<i class="${YN.esc(i.icono)}"></i> <span class="small text-muted">${YN.esc(i.icono)}</span>` : '<span class="text-muted">—</span>'}</td>
+      <td><span class="badge-estado ${activo ? 'aprobado' : 'cerrado'}">${i.estado}</span></td>
+      <td class="text-end pe-3">
+        <button class="btn btn-sm btn-brand-outline" onclick="editar(${i.id})">
+          <i class="fa-regular fa-pen-to-square"></i>
+        </button>
+        <button class="btn btn-sm ${activo ? 'btn-outline-secondary' : 'btn-outline-success'}"
+                onclick="cambiarEstado(${i.id}, ${activo})">
+          ${activo ? '<i class="fa-solid fa-ban me-1"></i>Desactivar' : '<i class="fa-solid fa-check me-1"></i>Activar'}
+        </button>
+      </td>
+    </tr>`;
+}
+
+let cache = {};
+
+async function cargar() {
+    const soloActivos = document.getElementById('soloActivos').checked;
+    const datos = await YN.api(ruta(`?soloActivos=${soloActivos}`));
+    const tbody = document.getElementById('tabla');
+
+    if (!datos.ok) { tbody.innerHTML = ''; YN.toast(datos.mensaje, 'danger'); return; }
+
+    cache = {};
+    datos.items.forEach((i) => { cache[i.id] = i; });
+
+    if (datos.items.length === 0) {
+        tbody.innerHTML = '';
+        document.getElementById('vacio').classList.remove('d-none');
+        return;
+    }
+    document.getElementById('vacio').classList.add('d-none');
+    tbody.innerHTML = datos.items.map(fila).join('');
+    alternarColumnaIcono();
+}
+
+function abrirModal(id) {
+    editandoId = id ?? null;
+    document.getElementById('tituloModal').textContent = id ? 'Editar elemento' : 'Nuevo elemento';
+    document.getElementById('campoNombre').value = id ? cache[id].nombre : '';
+    document.getElementById('campoIcono').value = id ? (cache[id].icono || '') : '';
+    alternarColumnaIcono();
+    modalItem.show();
+}
+
+function editar(id) { abrirModal(id); }
+
+async function cambiarEstado(id, estaActivo) {
+    const accion = estaActivo ? 'desactivar' : 'activar';
+    const datos = await YN.api(ruta(`/${id}/${accion}`), { method: 'PATCH' });
+    if (!datos.ok) { YN.toast(datos.mensaje, 'danger'); return; }
+    YN.toast(`Elemento ${estaActivo ? 'desactivado' : 'activado'}.`);
+    cargar();
+}
+
+document.addEventListener('yn:shell-listo', () => {
+    modalItem = new bootstrap.Modal(document.getElementById('modalItem'));
+
+    document.querySelectorAll('#tabs button').forEach((b) => {
+        b.addEventListener('click', () => {
+            document.querySelectorAll('#tabs button').forEach((x) => x.classList.remove('active'));
+            b.classList.add('active');
+            catalogo = b.dataset.cat;
+            usaIcono = b.dataset.icono === 'true';
+            document.getElementById('tituloCatalogo').textContent = TITULOS[catalogo];
+            alternarColumnaIcono();
+            cargar();
+        });
+    });
+
+    document.getElementById('soloActivos').addEventListener('change', cargar);
+    document.getElementById('btnNuevo').addEventListener('click', () => abrirModal(null));
+
+    document.getElementById('btnGuardar').addEventListener('click', async () => {
+        const nombre = document.getElementById('campoNombre').value.trim();
+        if (!nombre) { alert('El nombre es obligatorio.'); return; }
+
+        const cuerpo = { nombre };
+        // El backend ignora "icono" en los catálogos que no lo soportan,
+        // pero se evita enviarlo para no ensuciar la petición.
+        if (usaIcono) {
+            const icono = document.getElementById('campoIcono').value.trim();
+            if (icono) cuerpo.icono = icono;
+        }
+
+        const datos = editandoId
+            ? await YN.api(ruta(`/${editandoId}`), { method: 'PUT', body: JSON.stringify(cuerpo) })
+            : await YN.api(ruta(), { method: 'POST', body: JSON.stringify(cuerpo) });
+
+        if (!datos.ok) { alert(datos.mensaje || 'No se pudo guardar.'); return; }
+        modalItem.hide();
+        YN.toast('Guardado correctamente.');
+        cargar();
+    });
+
+    alternarColumnaIcono();
+    cargar();
+});
+</script>
+</body>
+</html>

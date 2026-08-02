@@ -5,108 +5,139 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Mis oportunidades — YANANTIN</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/css/adminlte.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body class="bg-light">
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold mb-0">Mis oportunidades</h3>
-    <a href="crear-oportunidad.html" class="btn btn-brand-primary">+ Nueva oportunidad</a>
-  </div>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
 
-  <div id="alertaError" class="alert alert-danger alert-form"></div>
+<div class="app-wrapper">
+  <div id="contenido">
 
-  <div class="table-responsive bg-white rounded-3 shadow-sm">
-    <table class="table align-middle mb-0">
-      <thead>
-        <tr class="text-muted small text-uppercase">
-          <th class="ps-3">Título</th>
-          <th>Estado</th>
-          <th>Cupos</th>
-          <th>Fecha inicio</th>
-          <th class="text-end pe-3">Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="tablaOportunidades"></tbody>
-    </table>
+    <div class="app-content-header">
+      <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+          <h1 class="mb-0 fs-4 fw-bold">Mis oportunidades</h1>
+          <p class="text-muted mb-0 small">Estados, cupos y acciones disponibles.</p>
+        </div>
+        <a href="crear-oportunidad.html" class="btn btn-brand-primary">
+          <i class="fa-solid fa-plus me-1"></i>Nueva oportunidad
+        </a>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="container-fluid">
+        <div id="alertaError" class="alert alert-danger alert-form"></div>
+
+        <div class="panel">
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th class="ps-3">Título</th>
+                  <th style="width:170px;">Estado</th>
+                  <th style="width:110px;">Cupos</th>
+                  <th style="width:150px;">Fecha inicio</th>
+                  <th class="text-end pe-3" style="width:300px;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla"></tbody>
+            </table>
+          </div>
+          <div class="estado-vacio d-none" id="vacio">
+            <i class="fa-regular fa-rectangle-list"></i>
+            <p class="mb-0">Aún no has creado ninguna oportunidad.</p>
+          </div>
+        </div>
+
+        <div class="alert alert-info d-flex gap-3 small mt-3">
+          <i class="fa-solid fa-circle-info mt-1"></i>
+          <div>
+            <strong>Flujo de estados:</strong>
+            <code>borrador</code> → <em>Enviar a revisión</em> → <code>pendiente_aprobacion</code>
+            → un administrador la aprueba → <code>publicado</code>.
+            Si tu organización todavía no está aprobada, el botón "Enviar a revisión"
+            devolverá un error: es la validación esperada, no un fallo.
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <p class="text-muted text-center mt-4" id="vacioMensaje" style="display:none;">Aún no has creado ninguna oportunidad.</p>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/auth-guard.js"
+        data-rol="ORGANIZACION"
+        data-login="../public-auth/login-organizacion.html"></script>
+<script src="../assets/js/shell.js" data-panel="organizacion" data-activo="mis-oportunidades"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/js/adminlte.min.js"></script>
 <script>
-const API_BASE_URL = 'http://localhost:3003';
-const token = localStorage.getItem('token');
-if (!token) window.location.href = '../public-auth/login-organizacion.html';
-
-const BADGES = {
-    borrador: 'secondary', pendiente_aprobacion: 'warning', publicado: 'success',
-    pausado: 'secondary', cerrado: 'dark', cancelado: 'danger', rechazado: 'danger',
-};
 const ACCIONES = {
-    borrador: [{ accion: 'enviar-revision', texto: 'Enviar a revisión' }],
-    rechazado: [{ accion: 'enviar-revision', texto: 'Reenviar a revisión' }],
+    borrador: [{ accion: 'enviar-revision', texto: 'Enviar a revisión', clase: 'btn-brand-primary' }],
+    rechazado: [{ accion: 'enviar-revision', texto: 'Reenviar a revisión', clase: 'btn-brand-primary' }],
     publicado: [
-        { accion: 'pausar', texto: 'Pausar' },
-        { accion: 'cerrar', texto: 'Cerrar' },
-        { accion: 'gestionar', texto: 'Gestionar' },
+        { accion: 'gestionar', texto: 'Gestionar', clase: 'btn-brand-outline' },
+        { accion: 'pausar', texto: 'Pausar', clase: 'btn-outline-secondary' },
+        { accion: 'cerrar', texto: 'Cerrar', clase: 'btn-outline-secondary' },
     ],
-    pausado: [{ accion: 'reanudar', texto: 'Reanudar' }],
+    pausado: [{ accion: 'reanudar', texto: 'Reanudar', clase: 'btn-brand-outline' }],
+    pendiente_aprobacion: [],
 };
+
+function fila(o) {
+    const botones = (ACCIONES[o.estado] || [])
+        .map((a) => `<button class="btn btn-sm ${a.clase} ms-1" onclick="ejecutar(${o.id}, '${a.accion}')">${a.texto}</button>`)
+        .join('');
+
+    const sinAcciones = botones === ''
+        ? '<span class="text-muted small">En revisión…</span>'
+        : botones;
+
+    return `
+    <tr>
+      <td class="ps-3 fw-semibold">${YN.esc(o.titulo)}</td>
+      <td><span class="badge-estado ${o.estado}">${o.estado.replace(/_/g, ' ')}</span></td>
+      <td>${o.cuposDisponibles}/${o.cuposTotales}</td>
+      <td>${YN.fecha(o.fechaInicio)}</td>
+      <td class="text-end pe-3">${sinAcciones}</td>
+    </tr>`;
+}
 
 async function cargar() {
-    try {
-        const resp = await fetch(`${API_BASE_URL}/oportunidades/me/mias`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        const datos = await resp.json();
-        if (!datos.ok) {
-            document.getElementById('alertaError').textContent = datos.mensaje;
-            document.getElementById('alertaError').style.display = 'block';
-            return;
-        }
+    const datos = await YN.api('/oportunidades/me/mias');
+    const tbody = document.getElementById('tabla');
 
-        const tbody = document.getElementById('tablaOportunidades');
-        if (datos.oportunidades.length === 0) {
-            document.getElementById('vacioMensaje').style.display = 'block';
-            return;
-        }
-
-        datos.oportunidades.forEach((o) => {
-            const acciones = (ACCIONES[o.estado] || [])
-                .map((a) => `<button class="btn btn-sm btn-outline-secondary ms-1" onclick="ejecutar(${o.id}, '${a.accion}')">${a.texto}</button>`)
-                .join('');
-
-            const fila = document.createElement('tr');
-            fila.innerHTML = `
-                <td class="ps-3 fw-semibold">${o.titulo}</td>
-                <td><span class="badge bg-${BADGES[o.estado] || 'secondary'}">${o.estado.replace('_', ' ')}</span></td>
-                <td>${o.cuposDisponibles}/${o.cuposTotales}</td>
-                <td>${new Date(o.fechaInicio).toLocaleDateString('es-PE')}</td>
-                <td class="text-end pe-3">${acciones}</td>
-            `;
-            tbody.appendChild(fila);
-        });
-    } catch (e) {
-        document.getElementById('alertaError').textContent = 'No se pudo conectar con el servidor.';
-        document.getElementById('alertaError').style.display = 'block';
+    if (!datos.ok) {
+        const a = document.getElementById('alertaError');
+        a.textContent = datos.mensaje;
+        a.style.display = 'block';
+        return;
     }
+
+    if (datos.oportunidades.length === 0) {
+        tbody.innerHTML = '';
+        document.getElementById('vacio').classList.remove('d-none');
+        return;
+    }
+    document.getElementById('vacio').classList.add('d-none');
+    tbody.innerHTML = datos.oportunidades.map(fila).join('');
 }
 
 async function ejecutar(id, accion) {
     if (accion === 'gestionar') {
-        window.location.href = `gestionar-oportunidad.html?id=${id}`;
+        location.href = `gestionar-oportunidad.html?id=${id}`;
         return;
     }
-    const resp = await fetch(`${API_BASE_URL}/oportunidades/${id}/${accion}`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    });
-    const datos = await resp.json();
+    const datos = await YN.api(`/oportunidades/${id}/${accion}`, { method: 'POST' });
     if (!datos.ok) { alert(datos.mensaje); return; }
-    window.location.reload();
+    YN.toast('Acción aplicada correctamente.');
+    cargar();
 }
 
-cargar();
+document.addEventListener('yn:shell-listo', cargar);
 </script>
 </body>
 </html>

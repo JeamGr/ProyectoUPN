@@ -16,6 +16,7 @@ import { createInscripcionRouter } from './modules/inscripciones y gestion de cu
 import { crearCatalogoRouter } from './modules/administrador/presentation/routes/catalogo.routes';
 import { crearParametroRouter } from './modules/administrador/presentation/routes/parametro.routes';
 import { crearRolPermisoRouter } from './modules/administrador/presentation/routes/rol-permiso.routes';
+import { crearOrganizacionAdminRouter } from './modules/administrador/presentation/routes/organizacion-admin.routes';
 import asistenciaRoutes from './modules/asistencia/presentation/routes/asistencia.routes';
 
 const app = express();
@@ -28,6 +29,11 @@ app.use('/auth', authRoutes);
 app.use('/organizacion', organizacionRoutes);
 app.use('/perfiles', createPerfilRouter(AppDataSource, authHandler()));
 app.use('/inscripciones', createInscripcionRouter(AppDataSource, authHandler));
+
+// M12 — RF-011 / RF-060: moderación de organizaciones (aprobar / rechazar).
+// Va ANTES de administradorRoutes para que no haya ambigüedad de prefijos.
+app.use('/administrador/organizaciones', crearOrganizacionAdminRouter());
+
 app.use('/administrador', administradorRoutes);
 // M12 — RF-057: catálogos administrables
 app.use('/administrador/catalogos/lineas-intervencion', crearCatalogoRouter('linea_intervencion'));

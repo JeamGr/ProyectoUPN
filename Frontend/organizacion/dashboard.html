@@ -2,60 +2,148 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Dashboard — Organización</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panel de organización — YANANTIN</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/css/adminlte.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body class="bg-light">
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h3 class="fw-bold mb-0" id="saludo">¡Hola!</h3>
-      <p class="text-muted mb-0">Aquí tienes el resumen de tu organización.</p>
-    </div>
-    <div>
-      <a href="mis-oportunidades.html" class="btn btn-outline-secondary me-2">Mis oportunidades</a>
-      <a href="crear-oportunidad.html" class="btn btn-brand-primary">+ Nueva oportunidad</a>
-    </div>
-  </div>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
 
-  <div class="row g-3 mb-4">
-    <div class="col-md-4">
-      <div class="bg-white rounded-3 shadow-sm p-3 text-center">
-        <div class="fs-2 fw-bold" style="color: var(--color-primary);" id="mOportunidades">–</div>
-        <div class="text-muted small">Oportunidades activas</div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="bg-white rounded-3 shadow-sm p-3 text-center">
-        <div class="fs-2 fw-bold" style="color: var(--color-secondary);" id="mInscritos">–</div>
-        <div class="text-muted small">Voluntarios inscritos</div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="bg-white rounded-3 shadow-sm p-3 text-center">
-        <div class="fs-2 fw-bold" style="color: var(--color-accent);" id="mHoras">–</div>
-        <div class="text-muted small">Horas generadas</div>
-      </div>
-    </div>
-  </div>
+<div class="app-wrapper">
+  <div id="contenido">
 
-  <div class="bg-white rounded-3 shadow-sm p-3">
-    <h5 class="fw-bold mb-3">Próximas actividades</h5>
-    <div id="listaActividades" class="list-group list-group-flush"></div>
-    <p class="text-muted text-center my-3" id="vacioMensaje" style="display:none;">Aún no tienes oportunidades publicadas.</p>
+    <div class="app-content-header">
+      <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+          <h1 class="mb-0 fs-4 fw-bold" id="saludo">¡Hola!</h1>
+          <p class="text-muted mb-0 small">Aquí tienes el resumen de tu organización.</p>
+        </div>
+        <a href="crear-oportunidad.html" class="btn btn-brand-primary">
+          <i class="fa-solid fa-plus me-1"></i>Nueva oportunidad
+        </a>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="container-fluid">
+
+        <!-- Aviso de estado de validación de la organización -->
+        <div id="avisoValidacion"></div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background: var(--yn-magenta-soft); color: var(--yn-magenta);">
+                <i class="fa-solid fa-rectangle-list"></i>
+              </div>
+              <div>
+                <div class="kpi-valor" id="mOportunidades">—</div>
+                <div class="kpi-label">Oportunidades activas</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background: var(--yn-morado-soft); color: var(--yn-morado);">
+                <i class="fa-solid fa-users"></i>
+              </div>
+              <div>
+                <div class="kpi-valor" id="mInscritos">—</div>
+                <div class="kpi-label">Voluntarios inscritos</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background: var(--yn-amarillo-soft); color: #B87E00;">
+                <i class="fa-regular fa-clock"></i>
+              </div>
+              <div>
+                <div class="kpi-valor" id="mHoras">—</div>
+                <div class="kpi-label">Horas generadas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h5>Próximas actividades publicadas</h5>
+            <a href="mis-oportunidades.html" class="btn btn-sm btn-brand-outline">Ver todas</a>
+          </div>
+          <div class="list-group list-group-flush" id="listaActividades"></div>
+          <div class="estado-vacio d-none" id="vacio">
+            <i class="fa-regular fa-calendar-plus"></i>
+            <p class="mb-0">Aún no tienes oportunidades publicadas.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/auth-guard.js"
+        data-rol="ORGANIZACION"
+        data-login="../public-auth/login-organizacion.html"></script>
+<script src="../assets/js/shell.js" data-panel="organizacion" data-activo="dashboard"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/js/adminlte.min.js"></script>
 <script>
-const API_BASE_URL = 'http://localhost:3003';
-const token = localStorage.getItem('token');
-if (!token) window.location.href = '../public-auth/login-organizacion.html';
-const headers = { Authorization: `Bearer ${token}` };
+async function cargarPerfil() {
+    const datos = await YN.api('/perfiles/organizacion/me');
+    if (!datos.ok) return;
+
+    const perfil = datos.perfil || datos.organizacion || datos.data || {};
+    const nombre = perfil.nombreOng || perfil.nombre_ong || perfil.razonSocial;
+    if (nombre) {
+        document.getElementById('saludo').textContent = `¡Hola, ${nombre}!`;
+        localStorage.setItem('organizacionNombre', nombre);
+    }
+
+    const estado = perfil.estadoValidacion || perfil.estado_validacion;
+    pintarAviso(estado);
+}
+
+// Este aviso es la respuesta directa al problema que reportaste:
+// creaste la oportunidad, quedó en borrador, y no había forma de saber
+// desde el panel que faltaba la aprobación de la organización.
+function pintarAviso(estado) {
+    const cont = document.getElementById('avisoValidacion');
+    if (estado === 'aprobado') {
+        cont.innerHTML = `
+          <div class="alert alert-success d-flex gap-3 small">
+            <i class="fa-solid fa-circle-check mt-1"></i>
+            <div>Tu organización está <strong>aprobada</strong>. Puedes publicar oportunidades
+            y enviarlas a revisión.</div>
+          </div>`;
+    } else if (estado === 'rechazado') {
+        cont.innerHTML = `
+          <div class="alert alert-danger d-flex gap-3 small">
+            <i class="fa-solid fa-circle-xmark mt-1"></i>
+            <div>Tu registro fue <strong>rechazado</strong>. Revisa el correo que te enviamos
+            con el motivo y actualiza tus datos antes de volver a solicitar la validación.</div>
+          </div>`;
+    } else {
+        cont.innerHTML = `
+          <div class="alert alert-warning d-flex gap-3 small">
+            <i class="fa-solid fa-hourglass-half mt-1"></i>
+            <div>
+              Tu organización está <strong>pendiente de validación</strong>. Puedes crear
+              oportunidades y guardarlas como <em>borrador</em>, pero
+              <strong>no podrás enviarlas a revisión</strong> hasta que un administrador
+              apruebe tu registro. Te avisaremos por correo.
+            </div>
+          </div>`;
+    }
+}
 
 async function cargarMetricas() {
-    const resp = await fetch(`${API_BASE_URL}/oportunidades/me/metricas`, { headers });
-    const datos = await resp.json();
+    const datos = await YN.api('/oportunidades/me/metricas');
     if (!datos.ok) return;
     document.getElementById('mOportunidades').textContent = datos.oportunidadesActivas;
     document.getElementById('mInscritos').textContent = datos.voluntariosInscritos;
@@ -63,37 +151,36 @@ async function cargarMetricas() {
 }
 
 async function cargarActividades() {
-    const resp = await fetch(`${API_BASE_URL}/oportunidades/me/mias`, { headers });
-    const datos = await resp.json();
+    const datos = await YN.api('/oportunidades/me/mias');
     if (!datos.ok) return;
 
     const proximas = datos.oportunidades.filter((o) => o.estado === 'publicado');
     const cont = document.getElementById('listaActividades');
 
     if (proximas.length === 0) {
-        document.getElementById('vacioMensaje').style.display = 'block';
+        document.getElementById('vacio').classList.remove('d-none');
         return;
     }
 
-    proximas.forEach((o) => {
-        const item = document.createElement('div');
-        item.className = 'list-group-item d-flex justify-content-between align-items-center';
-        item.innerHTML = `
-            <div>
-                <div class="fw-semibold">${o.titulo}</div>
-                <div class="text-muted small">${new Date(o.fechaInicio).toLocaleDateString('es-PE')} · ${o.modalidad}</div>
+    cont.innerHTML = proximas.map((o) => `
+        <div class="list-group-item d-flex justify-content-between align-items-center gap-3">
+          <div>
+            <div class="fw-semibold">${YN.esc(o.titulo)}</div>
+            <div class="text-muted small">
+              ${YN.fecha(o.fechaInicio)} · ${YN.esc(o.modalidad)} · ${o.horasAcreditadas} h
             </div>
-            <span class="badge bg-secondary">${o.cuposTotales - o.cuposDisponibles}/${o.cuposTotales} inscritos</span>
-        `;
-        cont.appendChild(item);
-    });
+          </div>
+          <span class="badge text-bg-light border">
+            ${o.cuposTotales - o.cuposDisponibles}/${o.cuposTotales} inscritos
+          </span>
+        </div>`).join('');
 }
 
-const rol = localStorage.getItem('rol');
-document.getElementById('saludo').textContent = '¡Hola!';
-
-cargarMetricas();
-cargarActividades();
+document.addEventListener('yn:shell-listo', () => {
+    cargarPerfil();
+    cargarMetricas();
+    cargarActividades();
+});
 </script>
 </body>
 </html>
