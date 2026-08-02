@@ -29,10 +29,14 @@ export class OportunidadRepository implements IOportunidadRepository {
         const { entities, raw } = await qb.getRawAndEntities();
         if (entities.length === 0) return null;
 
-        return {
-            ...OportunidadMapping.toDomain(entities[0]),
-            nombreOrganizacion: raw[0].nombre_organizacion,
-        } as OportunidadConOrganizacion;
+        // OJO: NO usar { ...toDomain(...) }. El spread copia solo las
+        // propiedades propias y DESCARTA el prototipo, con lo que se pierden
+        // los metodos de dominio (puedeTransicionarA, tieneCuposDisponibles...).
+        // El `as` hacia OportunidadConOrganizacion enganaba al compilador y el
+        // fallo solo aparecia en runtime al llamar a esos metodos.
+        const oportunidad = OportunidadMapping.toDomain(entities[0]) as OportunidadConOrganizacion;
+        oportunidad.nombreOrganizacion = raw[0].nombre_organizacion;
+        return oportunidad;
     }
 
     async crear(oportunidad: Oportunidad): Promise<Oportunidad> {
@@ -160,10 +164,13 @@ export class OportunidadRepository implements IOportunidadRepository {
         const total = await qb.getCount();
         const { entities, raw } = await qb.getRawAndEntities();
 
-        const datos: OportunidadConOrganizacion[] = entities.map((e, i) => ({
-            ...OportunidadMapping.toDomain(e),
-            nombreOrganizacion: raw[i].nombre_organizacion,
-        })) as OportunidadConOrganizacion[];
+       const datos: OportunidadConOrganizacion[] = entities.map((e, i) => {
+            // Igual que en buscarPorId: se conserva la instancia de dominio
+            // (con sus metodos) en vez de aplanarla con spread.
+            const dominio = OportunidadMapping.toDomain(e) as OportunidadConOrganizacion;
+            dominio.nombreOrganizacion = raw[i].nombre_organizacion;
+            return dominio;
+        });
 
         return { datos, total };
     }
@@ -192,10 +199,13 @@ export class OportunidadRepository implements IOportunidadRepository {
             .orderBy('o.fecha_inicio', 'ASC');
 
         const { entities, raw } = await qb.getRawAndEntities();
-        return entities.map((e, i) => ({
-            ...OportunidadMapping.toDomain(e),
-            nombreOrganizacion: raw[i].nombre_organizacion,
-        })) as OportunidadConOrganizacion[];
+        return entities.map((e, i) => {
+            // Igual que en buscarPorId: se conserva la instancia de dominio
+            // (con sus metodos) en vez de aplanarla con spread.
+            const dominio = OportunidadMapping.toDomain(e) as OportunidadConOrganizacion;
+            dominio.nombreOrganizacion = raw[i].nombre_organizacion;
+            return dominio;
+        });
     }
 
     async buscarPorOrganizacion(organizacionId: number): Promise<Oportunidad[]> {

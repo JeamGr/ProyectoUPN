@@ -5,7 +5,7 @@ import {
 
 export class RegistroVoluntarioDTO {
     @IsNotEmpty({ message: 'El código de estudiante es obligatorio' })
-    @Matches(/^UPN\d{4}-\d{4,6}$/, { message: 'El código de estudiante no tiene el formato esperado' })
+    @Matches(/^N00\d{6}$/, { message: 'El código de estudiante debe empezar con N00 seguido de 6 dígitos (ej. N00123456)' })
     codigoEstudiante!: string;
 
     @IsNotEmpty({ message: 'Los nombres son obligatorios' })

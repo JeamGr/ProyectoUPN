@@ -14,6 +14,10 @@ import { authHandler } from '../../../../../shared/middlewares/auth.handler';
 const router = Router();
 const controller = new AuthController();
 
+// NUEVO — verificación de sesión del lado del servidor.
+// Es lo que usa auth-guard.js en el frontend para no confiar en localStorage.
+router.get('/me', authHandler({}), controller.me);
+
 router.post('/google', validateBody(LoginGoogleDTO), controller.loginGoogle);
 router.post('/logout', authHandler({}), controller.logout);
 router.post('/registro', validateBody(RegistroVoluntarioDTO), controller.registrar);

@@ -91,7 +91,12 @@ export class UsuarioRepository implements IUsuarioRepository {
         await manager.update(UsuarioModel, { id: usuario.id }, { password_hash: usuario.passwordHash });
 
         const perfilModel = PerfilVoluntarioMapping.toModel(perfil);
-        await manager.save(PerfilVoluntarioModel, perfilModel); // upsert por PK (usuario_id)
+        const perfilExistente = await manager.findOneBy(PerfilVoluntarioModel, { usuario_id: usuario.id! });
+        if (perfilExistente) {
+            await manager.update(PerfilVoluntarioModel, { usuario_id: usuario.id! }, perfilModel);
+        } else {
+            await manager.save(PerfilVoluntarioModel, perfilModel);
+        }
 
         // Reemplaza los intereses viejos por los nuevos que mandó en este intento
         await manager.delete(UsuarioInteresModel, { usuario_id: usuario.id });

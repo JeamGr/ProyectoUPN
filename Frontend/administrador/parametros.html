@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Parámetros del sistema — YANANTIN</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/css/adminlte.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+
+<div class="app-wrapper">
+  <div id="contenido">
+
+    <div class="app-content-header">
+      <div class="container-fluid">
+        <h1 class="mb-0 fs-4 fw-bold">Parámetros del sistema</h1>
+        <p class="text-muted mb-0 small">
+          RF-058 — Valores operativos que gobiernan plazos, límites y tiempos de expiración.
+        </p>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="container-fluid">
+
+        <div class="alert alert-warning d-flex gap-3 small">
+          <i class="fa-solid fa-triangle-exclamation mt-1"></i>
+          <div>
+            Cambiar estos valores afecta el comportamiento de toda la plataforma de inmediato.
+            El seed trae dos claves duplicadas conceptualmente
+            (<code>max_intentos_login_fallidos</code> vs <code>max_intentos_fallidos_login</code>,
+            <code>expiracion_sesion_horas</code> vs <code>tiempo_expiracion_sesion_horas</code>);
+            edita la que realmente lee tu código.
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h5>Configuración vigente</h5>
+            <div class="d-flex gap-2">
+              <input type="search" class="form-control form-control-sm" id="buscador"
+                     placeholder="Filtrar por clave…" style="width: 220px;">
+              <button class="btn btn-sm btn-brand-primary" id="btnNuevo">
+                <i class="fa-solid fa-plus me-1"></i>Nueva clave
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th class="ps-3">Clave</th>
+                  <th style="width:140px;">Valor</th>
+                  <th>Descripción</th>
+                  <th style="width:150px;">Actualizado</th>
+                  <th class="text-end pe-3" style="width:110px;">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tabla"></tbody>
+            </table>
+          </div>
+          <div class="estado-vacio d-none" id="vacio">
+            <i class="fa-solid fa-sliders"></i>
+            <p class="mb-0">No hay parámetros registrados.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal fade" id="modalParam" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius: var(--radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tituloModal">Editar parámetro</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Clave</label>
+          <input type="text" class="form-control" id="campoClave" maxlength="100">
+          <div class="form-text">Identificador técnico. No usar espacios ni mayúsculas.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Valor</label>
+          <input type="text" class="form-control" id="campoValor" maxlength="500">
+        </div>
+        <div class="mb-0">
+          <label class="form-label">Descripción</label>
+          <textarea class="form-control" id="campoDescripcion" rows="2" maxlength="300"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-brand-outline" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-brand-primary" id="btnGuardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/auth-guard.js"
+        data-rol="ADMINISTRADOR,SUPER_ADMINISTRADOR"
+        data-login="../public-auth/login-admin.html"></script>
+<script src="../assets/js/shell.js" data-panel="admin" data-activo="parametros"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/js/adminlte.min.js"></script>
+<script>
+let parametros = [];
+let modalParam;
+let esNuevo = false;
+
+function fila(p) {
+    return `
+    <tr data-clave="${YN.esc(p.clave)}">
+      <td class="ps-3"><code>${YN.esc(p.clave)}</code></td>
+      <td><span class="badge text-bg-light border fw-semibold">${YN.esc(p.valor)}</span></td>
+      <td class="small text-muted">${YN.esc(p.descripcion) || '—'}</td>
+      <td class="small text-muted">${p.fechaActualizacion ? YN.fecha(p.fechaActualizacion) : '—'}</td>
+      <td class="text-end pe-3">
+        <button class="btn btn-sm btn-brand-outline" onclick="editar('${YN.esc(p.clave)}')">
+          <i class="fa-regular fa-pen-to-square me-1"></i>Editar
+        </button>
+      </td>
+    </tr>`;
+}
+
+function pintar(filtro) {
+    const tbody = document.getElementById('tabla');
+    const lista = filtro
+        ? parametros.filter((p) => p.clave.toLowerCase().includes(filtro.toLowerCase()))
+        : parametros;
+
+    if (lista.length === 0) {
+        tbody.innerHTML = '';
+        document.getElementById('vacio').classList.remove('d-none');
+        return;
+    }
+    document.getElementById('vacio').classList.add('d-none');
+    tbody.innerHTML = lista.map(fila).join('');
+}
+
+async function cargar() {
+    const datos = await YN.api('/administrador/parametros');
+    if (!datos.ok) { YN.toast(datos.mensaje, 'danger'); return; }
+    parametros = datos.parametros || [];
+    pintar(document.getElementById('buscador').value);
+}
+
+function editar(clave) {
+    const p = parametros.find((x) => x.clave === clave);
+    if (!p) return;
+    esNuevo = false;
+    document.getElementById('tituloModal').textContent = 'Editar parámetro';
+    document.getElementById('campoClave').value = p.clave;
+    document.getElementById('campoClave').readOnly = true;
+    document.getElementById('campoValor').value = p.valor;
+    document.getElementById('campoDescripcion').value = p.descripcion || '';
+    modalParam.show();
+}
+
+document.addEventListener('yn:shell-listo', () => {
+    modalParam = new bootstrap.Modal(document.getElementById('modalParam'));
+
+    document.getElementById('buscador').addEventListener('input', (e) => pintar(e.target.value));
+
+    document.getElementById('btnNuevo').addEventListener('click', () => {
+        esNuevo = true;
+        document.getElementById('tituloModal').textContent = 'Nueva clave';
+        document.getElementById('campoClave').value = '';
+        document.getElementById('campoClave').readOnly = false;
+        document.getElementById('campoValor').value = '';
+        document.getElementById('campoDescripcion').value = '';
+        modalParam.show();
+    });
+
+    document.getElementById('btnGuardar').addEventListener('click', async () => {
+        const clave = document.getElementById('campoClave').value.trim();
+        const valor = document.getElementById('campoValor').value.trim();
+        if (!clave || !valor) { alert('Clave y valor son obligatorios.'); return; }
+
+        // PUT /:clave hace upsert (así está implementado en ParametroService),
+        // por eso crear y editar usan el mismo endpoint.
+        const datos = await YN.api(`/administrador/parametros/${encodeURIComponent(clave)}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                valor,
+                descripcion: document.getElementById('campoDescripcion').value.trim() || undefined,
+            }),
+        });
+
+        if (!datos.ok) { alert(datos.mensaje || 'No se pudo guardar.'); return; }
+        modalParam.hide();
+        YN.toast('Parámetro guardado.');
+        cargar();
+    });
+
+    cargar();
+});
+</script>
+</body>
+</html>

@@ -62,6 +62,31 @@ export class AuthController {
         return res.status(resultado.ok ? 200 : 401).json(resultado);
     };
 
+    // -----------------------------------------------------------------
+    // GET /auth/me  (RNF-01, fix de seguridad)
+    // El frontend no puede confiar en localStorage para decidir si hay
+    // sesion: un token expirado, revocado por logout o de OTRO rol sigue
+    // "existiendo" en localStorage. Este endpoint es la unica fuente de
+    // verdad: pasa por authHandler (verifica firma, expiracion y lista de
+    // tokens invalidados) y devuelve la identidad real del portador.
+    // -----------------------------------------------------------------
+    me = async (req: Request, res: Response) => {
+        const usuario = await this.usuarioRepository.buscarPorId(req.jwt!.id);
+        if (!usuario || usuario.estado === 'eliminado' || usuario.estado === 'bloqueado') {
+            return res.status(401).json({ ok: false, mensaje: 'Sesion no valida' });
+        }
+
+        return res.status(200).json({
+            ok: true,
+            usuario: {
+                id: usuario.id,
+                correo: usuario.correo,
+                rol: req.jwt!.rol,
+                estado: usuario.estado,
+            },
+        });
+    };
+
     logout = async (req: Request, res: Response) => {
         const token = req.headers.authorization!.split(' ')[1];
         const resultado = await this.logoutService.cerrarSesion(token);
