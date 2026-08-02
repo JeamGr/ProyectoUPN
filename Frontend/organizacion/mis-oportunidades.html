@@ -5,139 +5,229 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Mis oportunidades — YANANTIN</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/css/adminlte.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<body>
 
-<div class="app-wrapper">
+<div class="org-shell">
   <div id="contenido">
 
-    <div class="app-content-header">
-      <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <div>
-          <h1 class="mb-0 fs-4 fw-bold">Mis oportunidades</h1>
-          <p class="text-muted mb-0 small">Estados, cupos y acciones disponibles.</p>
-        </div>
-        <a href="crear-oportunidad.html" class="btn btn-brand-primary">
-          <i class="fa-solid fa-plus me-1"></i>Nueva oportunidad
-        </a>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+      <div>
+        <h1 class="fs-4 fw-bold mb-1">Mis oportunidades</h1>
+        <p class="text-muted mb-0 small">Estados, cupos y acciones disponibles.</p>
+      </div>
+      <a href="crear-oportunidad.html" class="btn btn-brand-primary">
+        <i class="fa-solid fa-plus me-1"></i>Nueva oportunidad
+      </a>
+    </div>
+
+    <div id="alertaError" class="alert alert-danger alert-form"></div>
+
+    <!-- Filtro por estado -->
+    <ul class="nav nav-pills mb-3" id="filtros">
+      <li class="nav-item">
+        <button class="nav-link active" data-estado="">Todas <span class="badge text-bg-light ms-1" id="cTodas">0</span></button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-estado="borrador">Borradores <span class="badge text-bg-light ms-1" id="cBorrador">0</span></button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-estado="pendiente_aprobacion">En revisión <span class="badge text-bg-light ms-1" id="cRevision">0</span></button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-estado="publicado">Publicadas <span class="badge text-bg-light ms-1" id="cPublicado">0</span></button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-estado="rechazado">Rechazadas <span class="badge text-bg-light ms-1" id="cRechazado">0</span></button>
+      </li>
+    </ul>
+
+    <div class="panel">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th class="ps-3">Título</th>
+              <th style="width:160px;">Estado</th>
+              <th style="width:130px;">Ocupación</th>
+              <th style="width:140px;">Fecha inicio</th>
+              <th class="text-end pe-3" style="width:330px;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla"></tbody>
+        </table>
+      </div>
+      <div class="estado-vacio d-none" id="vacio">
+        <i class="fa-regular fa-rectangle-list"></i>
+        <p class="mb-2">Aún no has creado ninguna oportunidad.</p>
+        <a href="crear-oportunidad.html" class="btn btn-brand-primary btn-sm">Crear la primera</a>
       </div>
     </div>
 
-    <div class="app-content">
-      <div class="container-fluid">
-        <div id="alertaError" class="alert alert-danger alert-form"></div>
-
-        <div class="panel">
-          <div class="table-responsive">
-            <table class="table align-middle mb-0">
-              <thead>
-                <tr>
-                  <th class="ps-3">Título</th>
-                  <th style="width:170px;">Estado</th>
-                  <th style="width:110px;">Cupos</th>
-                  <th style="width:150px;">Fecha inicio</th>
-                  <th class="text-end pe-3" style="width:300px;">Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="tabla"></tbody>
-            </table>
-          </div>
-          <div class="estado-vacio d-none" id="vacio">
-            <i class="fa-regular fa-rectangle-list"></i>
-            <p class="mb-0">Aún no has creado ninguna oportunidad.</p>
-          </div>
-        </div>
-
-        <div class="alert alert-info d-flex gap-3 small mt-3">
-          <i class="fa-solid fa-circle-info mt-1"></i>
-          <div>
-            <strong>Flujo de estados:</strong>
-            <code>borrador</code> → <em>Enviar a revisión</em> → <code>pendiente_aprobacion</code>
-            → un administrador la aprueba → <code>publicado</code>.
-            Si tu organización todavía no está aprobada, el botón "Enviar a revisión"
-            devolverá un error: es la validación esperada, no un fallo.
-          </div>
-        </div>
+    <div class="alert alert-info d-flex gap-3 small mt-3">
+      <i class="fa-solid fa-circle-info mt-1"></i>
+      <div>
+        <strong>Flujo de estados:</strong>
+        <code>borrador</code> → <em>Enviar a revisión</em> → <code>pendiente_aprobacion</code>
+        → un administrador la aprueba → <code>publicado</code>.
+        Si tu organización todavía no está aprobada, "Enviar a revisión" devolverá un aviso:
+        es la validación esperada, no un fallo.
       </div>
     </div>
 
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/auth-guard.js"
         data-rol="ORGANIZACION"
         data-login="../public-auth/login-organizacion.html"></script>
-<script src="../assets/js/shell.js" data-panel="organizacion" data-activo="mis-oportunidades"></script>
-<script src="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/js/adminlte.min.js"></script>
+<script src="../assets/js/shell-org.js" data-activo="mis-oportunidades"></script>
 <script>
+let todas = [];
+let filtroActual = '';
+
+// Acciones válidas por estado. Se declaran aquí y no en el HTML porque
+// dependen de las transiciones que permite el dominio (Oportunidad.puedeTransicionarA).
 const ACCIONES = {
-    borrador: [{ accion: 'enviar-revision', texto: 'Enviar a revisión', clase: 'btn-brand-primary' }],
-    rechazado: [{ accion: 'enviar-revision', texto: 'Reenviar a revisión', clase: 'btn-brand-primary' }],
-    publicado: [
-        { accion: 'gestionar', texto: 'Gestionar', clase: 'btn-brand-outline' },
-        { accion: 'pausar', texto: 'Pausar', clase: 'btn-outline-secondary' },
-        { accion: 'cerrar', texto: 'Cerrar', clase: 'btn-outline-secondary' },
+    borrador: [
+        { accion: 'enviar-revision', texto: 'Enviar a revisión', clase: 'btn-brand-primary', icono: 'fa-paper-plane' },
     ],
-    pausado: [{ accion: 'reanudar', texto: 'Reanudar', clase: 'btn-brand-outline' }],
+    rechazado: [
+        { accion: 'enviar-revision', texto: 'Reenviar', clase: 'btn-brand-primary', icono: 'fa-rotate-right' },
+    ],
+    publicado: [
+        { accion: 'gestionar', texto: 'Gestionar', clase: 'btn-brand-outline', icono: 'fa-users' },
+        { accion: 'pausar', texto: 'Pausar', clase: 'btn-outline-secondary', icono: 'fa-pause' },
+        { accion: 'cerrar', texto: 'Cerrar', clase: 'btn-outline-secondary', icono: 'fa-lock' },
+    ],
+    pausado: [
+        { accion: 'reanudar', texto: 'Reanudar', clase: 'btn-brand-outline', icono: 'fa-play' },
+    ],
+    cerrado: [
+        { accion: 'gestionar', texto: 'Ver inscritos', clase: 'btn-brand-outline', icono: 'fa-users' },
+    ],
     pendiente_aprobacion: [],
 };
 
 function fila(o) {
-    const botones = (ACCIONES[o.estado] || [])
-        .map((a) => `<button class="btn btn-sm ${a.clase} ms-1" onclick="ejecutar(${o.id}, '${a.accion}')">${a.texto}</button>`)
+    const acciones = (ACCIONES[o.estado] || [])
+        .map((a) => `<button class="btn btn-sm ${a.clase} ms-1" onclick="ejecutar(${o.id}, '${a.accion}')">
+                       <i class="fa-solid ${a.icono} me-1"></i>${a.texto}</button>`)
         .join('');
 
-    const sinAcciones = botones === ''
-        ? '<span class="text-muted small">En revisión…</span>'
-        : botones;
+    const ocupados = o.cuposTotales - o.cuposDisponibles;
+    const pct = o.cuposTotales > 0 ? Math.round((ocupados / o.cuposTotales) * 100) : 0;
+
+    const motivo = o.estado === 'rechazado' && o.motivoRechazo
+        ? `<div class="text-danger mt-1" style="font-size:.76rem;">
+             <i class="fa-solid fa-circle-exclamation me-1"></i>${YN.esc(o.motivoRechazo)}
+           </div>`
+        : '';
 
     return `
     <tr>
-      <td class="ps-3 fw-semibold">${YN.esc(o.titulo)}</td>
+      <td class="ps-3">
+        <div class="fw-semibold">${YN.esc(o.titulo)}</div>
+        <div class="text-muted" style="font-size:.78rem;">${o.horasAcreditadas} h · ${YN.esc(o.modalidad)}</div>
+        ${motivo}
+      </td>
       <td><span class="badge-estado ${o.estado}">${o.estado.replace(/_/g, ' ')}</span></td>
-      <td>${o.cuposDisponibles}/${o.cuposTotales}</td>
-      <td>${YN.fecha(o.fechaInicio)}</td>
-      <td class="text-end pe-3">${sinAcciones}</td>
+      <td>
+        <div class="small mb-1">${ocupados}/${o.cuposTotales}</div>
+        <div class="progress" style="height:5px;border-radius:999px;">
+          <div class="progress-bar" style="background: var(--grad-marca); width:${pct}%;"></div>
+        </div>
+      </td>
+      <td class="small">${YN.fecha(o.fechaInicio)}</td>
+      <td class="text-end pe-3">
+        ${acciones || '<span class="text-muted small"><i class="fa-solid fa-hourglass-half me-1"></i>En revisión…</span>'}
+      </td>
     </tr>`;
 }
 
-async function cargar() {
-    const datos = await YN.api('/oportunidades/me/mias');
+function pintar() {
+    const lista = filtroActual ? todas.filter((o) => o.estado === filtroActual) : todas;
     const tbody = document.getElementById('tabla');
 
-    if (!datos.ok) {
-        const a = document.getElementById('alertaError');
-        a.textContent = datos.mensaje;
-        a.style.display = 'block';
-        return;
-    }
-
-    if (datos.oportunidades.length === 0) {
+    if (lista.length === 0) {
         tbody.innerHTML = '';
         document.getElementById('vacio').classList.remove('d-none');
         return;
     }
     document.getElementById('vacio').classList.add('d-none');
-    tbody.innerHTML = datos.oportunidades.map(fila).join('');
+    tbody.innerHTML = lista.map(fila).join('');
+}
+
+function pintarContadores() {
+    const contar = (e) => todas.filter((o) => o.estado === e).length;
+    document.getElementById('cTodas').textContent = todas.length;
+    document.getElementById('cBorrador').textContent = contar('borrador');
+    document.getElementById('cRevision').textContent = contar('pendiente_aprobacion');
+    document.getElementById('cPublicado').textContent = contar('publicado');
+    document.getElementById('cRechazado').textContent = contar('rechazado');
+}
+
+async function cargar() {
+    const datos = await YN.api('/oportunidades/me/mias');
+
+    if (!datos.ok) {
+        const a = document.getElementById('alertaError');
+        a.textContent = datos.mensaje || 'No se pudieron cargar tus oportunidades.';
+        a.style.display = 'block';
+        return;
+    }
+
+    todas = datos.oportunidades || [];
+    pintarContadores();
+    pintar();
 }
 
 async function ejecutar(id, accion) {
     if (accion === 'gestionar') {
-        location.href = `gestionar-oportunidad.html?id=${id}`;
+        location.href = `gestion.html?oportunidad=${id}`;
         return;
     }
+
+    const confirmaciones = {
+        'enviar-revision': ['¿Enviar a revisión?', 'Un administrador la revisará antes de publicarla. No podrás editarla mientras esté en revisión.'],
+        pausar: ['¿Pausar la oportunidad?', 'Dejará de aparecer en el catálogo público. Los inscritos actuales se mantienen.'],
+        cerrar: ['¿Cerrar la oportunidad?', 'No se aceptarán más inscripciones. Esta acción no se puede deshacer.'],
+        reanudar: ['¿Reanudar la oportunidad?', 'Volverá a aparecer en el catálogo público.'],
+    };
+
+    const texto = confirmaciones[accion];
+    if (texto) {
+        const ok = await YN.confirmar(texto[0], texto[1], 'Sí, continuar');
+        if (!ok) return;
+    }
+
     const datos = await YN.api(`/oportunidades/${id}/${accion}`, { method: 'POST' });
-    if (!datos.ok) { alert(datos.mensaje); return; }
+
+    if (!datos.ok) {
+        // El caso más frecuente: la organización sigue pendiente de validación.
+        await YN.alerta('No se pudo completar', datos.mensaje || 'Intenta de nuevo.', 'error');
+        return;
+    }
+
     YN.toast('Acción aplicada correctamente.');
     cargar();
 }
 
-document.addEventListener('yn:shell-listo', cargar);
+document.addEventListener('yn:shell-listo', () => {
+    document.getElementById('filtros').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-estado]');
+        if (!btn) return;
+        document.querySelectorAll('#filtros .nav-link').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        filtroActual = btn.dataset.estado;
+        pintar();
+    });
+
+    cargar();
+});
 </script>
 </body>
 </html>

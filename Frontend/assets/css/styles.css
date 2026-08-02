@@ -520,3 +520,354 @@ a { text-decoration: none; }
     .auth-panel-side { display: none; }
     .lp-hero { padding: 3.5rem 0 4rem; }
 }
+/* =====================================================================
+   PARCHE v2 — Correcciones de la auditoría
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   ADMINLTE 4 — CORRECCIÓN DE SELECTORES
+   AdminLTE 4 renombró `.nav-sidebar` a `.sidebar-menu`. Todas las reglas
+   del bloque anterior apuntaban a la clase de la v3, así que NUNCA se
+   aplicaron: por eso veías el tema por defecto sin contraste.
+   --------------------------------------------------------------------- */
+.app-sidebar,
+.app-sidebar.bg-body-secondary {
+    background: var(--yn-azul) !important;
+}
+
+.app-sidebar .sidebar-brand {
+    background: rgba(0, 0, 0, .22);
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+
+.app-sidebar .sidebar-menu > .nav-item > .nav-link,
+.app-sidebar .nav-sidebar > .nav-item > .nav-link {
+    color: rgba(255, 255, 255, .78) !important;
+    border-radius: var(--radius-sm);
+    margin: .15rem .6rem;
+    font-size: .9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+.app-sidebar .sidebar-menu > .nav-item > .nav-link:hover,
+.app-sidebar .nav-sidebar > .nav-item > .nav-link:hover {
+    background: rgba(255, 255, 255, .10);
+    color: #fff !important;
+}
+.app-sidebar .sidebar-menu > .nav-item > .nav-link.active,
+.app-sidebar .nav-sidebar > .nav-item > .nav-link.active {
+    background: var(--grad-marca);
+    color: #fff !important;
+    box-shadow: 0 6px 16px rgba(255, 20, 120, .32);
+}
+.app-sidebar .sidebar-menu .nav-icon { width: 1.2rem; text-align: center; }
+.app-sidebar .sidebar-menu .nav-link p { margin: 0; display: flex; align-items: center; width: 100%; }
+
+.app-sidebar .nav-header {
+    color: rgba(255, 255, 255, .42) !important;
+    font-size: .68rem;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 1.15rem 1.25rem .4rem;
+}
+
+/* Header: forzar texto legible sobre fondo blanco */
+.app-header {
+    background: #fff !important;
+    border-bottom: 1px solid var(--color-border);
+}
+.app-header .nav-link { color: var(--yn-azul) !important; }
+.app-header .nav-link:hover { color: var(--yn-magenta) !important; }
+
+/* Footer: antes quedaba texto oscuro sobre fondo oscuro = ilegible */
+.app-footer {
+    background: #fff !important;
+    color: var(--color-text-muted) !important;
+    border-top: 1px solid var(--color-border);
+    padding: 1rem 1.25rem;
+    font-size: .85rem;
+}
+.app-footer strong { color: var(--yn-azul); }
+
+.app-main { background: var(--color-bg); }
+
+/* Pills de filtro (usadas en moderación, catálogos, mis eventos) */
+.nav-pills .nav-link {
+    color: var(--color-text-muted);
+    font-weight: 600;
+    font-size: .9rem;
+    border-radius: 999px;
+    padding: .45rem 1.1rem;
+}
+.nav-pills .nav-link:hover { background: var(--yn-morado-soft); color: var(--yn-morado); }
+.nav-pills .nav-link.active { background: var(--grad-marca) !important; color: #fff !important; }
+
+/* ---------------------------------------------------------------------
+   MODALES PROPIOS (sustituyen a alert/confirm del navegador)
+   --------------------------------------------------------------------- */
+.yn-overlay {
+    position: fixed; inset: 0; z-index: 20000;
+    background: rgba(26, 17, 71, .55);
+    backdrop-filter: blur(3px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.25rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity .18s ease;
+}
+.yn-overlay.visible { opacity: 1; pointer-events: auto; }
+
+.yn-modal {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    max-width: 440px; width: 100%;
+    padding: 2rem 1.75rem 1.5rem;
+    text-align: center;
+    transform: translateY(14px) scale(.97);
+    transition: transform .22s cubic-bezier(.2, .9, .3, 1.2);
+}
+.yn-overlay.visible .yn-modal { transform: translateY(0) scale(1); }
+
+.yn-modal-icono {
+    width: 66px; height: 66px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem; margin: 0 auto 1.1rem;
+}
+.yn-modal-icono.exito { background: #E4F7EC; color: #10794A; }
+.yn-modal-icono.error { background: #FDE7EC; color: #B3123A; }
+.yn-modal-icono.aviso { background: var(--yn-morado-soft); color: var(--yn-morado); }
+.yn-modal-icono.pregunta { background: var(--yn-amarillo-soft); color: #B87E00; }
+
+.yn-modal-titulo { font-size: 1.25rem; font-weight: 800; margin-bottom: .5rem; color: var(--yn-azul); }
+.yn-modal-texto { color: var(--color-text-muted); font-size: .93rem; margin-bottom: 1.1rem; }
+.yn-modal-detalle {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: .9rem 1rem;
+    text-align: left; font-size: .88rem;
+    margin-bottom: 1.2rem;
+}
+.yn-modal-acciones { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; }
+.yn-modal-acciones .btn { min-width: 130px; }
+
+/* ---------------------------------------------------------------------
+   TOASTS
+   --------------------------------------------------------------------- */
+#yn-toasts {
+    position: fixed; top: 1.25rem; right: 1.25rem; z-index: 21000;
+    display: flex; flex-direction: column; gap: .6rem;
+}
+.yn-toast {
+    display: flex; align-items: center; gap: .7rem;
+    min-width: 280px; max-width: 380px;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--yn-morado);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: .85rem 1rem;
+    font-size: .9rem; font-weight: 500;
+    animation: yn-toast-in .25s ease;
+}
+.yn-toast.saliendo { animation: yn-toast-out .25s ease forwards; }
+.yn-toast.success { border-left-color: #10794A; } .yn-toast.success i { color: #10794A; }
+.yn-toast.danger  { border-left-color: #B3123A; } .yn-toast.danger  i { color: #B3123A; }
+.yn-toast.warning { border-left-color: #B87E00; } .yn-toast.warning i { color: #B87E00; }
+.yn-toast.info    { border-left-color: var(--yn-morado); } .yn-toast.info i { color: var(--yn-morado); }
+
+@keyframes yn-toast-in  { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes yn-toast-out { to { opacity: 0; transform: translateX(28px); } }
+
+/* ---------------------------------------------------------------------
+   PESTAÑAS DE DETALLE (tanda B)
+   --------------------------------------------------------------------- */
+.yn-tabs {
+    display: flex; gap: .25rem;
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-bottom: 1.5rem;
+}
+.yn-tabs::-webkit-scrollbar { display: none; }
+.yn-tab {
+    background: none; border: 0;
+    border-bottom: 3px solid transparent;
+    padding: .75rem 1.05rem;
+    font-size: .9rem; font-weight: 600;
+    color: var(--color-text-muted);
+    white-space: nowrap; cursor: pointer;
+    transition: color .15s ease, border-color .15s ease;
+}
+.yn-tab:hover { color: var(--yn-morado); }
+.yn-tab.activa { color: var(--yn-magenta); border-bottom-color: var(--yn-magenta); }
+.yn-panel-tab { display: none; }
+.yn-panel-tab.activo { display: block; animation: yn-fade .22s ease; }
+@keyframes yn-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* Chip de dato clave */
+.yn-dato {
+    display: flex; align-items: center; gap: .7rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: .75rem .9rem;
+}
+.yn-dato .ico {
+    width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--yn-morado-soft); color: var(--yn-morado);
+}
+.yn-dato .et { font-size: .72rem; color: var(--color-text-muted); display: block; }
+.yn-dato .va { font-size: .88rem; font-weight: 600; }
+
+/* Lista con viñeta de marca */
+.yn-lista { list-style: none; padding: 0; margin: 0; }
+.yn-lista li { position: relative; padding-left: 1.6rem; margin-bottom: .6rem; color: var(--color-text-muted); }
+.yn-lista li::before {
+    content: ""; position: absolute; left: 0; top: .45rem;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--grad-marca);
+}
+
+/* Botones de compartir */
+.yn-share { display: flex; gap: .5rem; flex-wrap: wrap; }
+.yn-share a {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    transition: all .15s ease;
+}
+.yn-share a:hover { border-color: var(--yn-morado); color: var(--yn-morado); background: var(--yn-morado-soft); }
+/* =====================================================================
+   SHELL DE ORGANIZACIÓN — sidebar claro (mockup)
+   Layout propio, sin AdminLTE: el panel de organización usa fondo blanco
+   con el ítem activo en lila suave, mientras que el de administración
+   mantiene el tema oscuro de AdminLTE.
+   ===================================================================== */
+.org-shell { display: flex; min-height: 100vh; }
+
+.org-sidebar {
+    width: 258px; flex-shrink: 0;
+    background: #fff;
+    border-right: 1px solid var(--color-border);
+    display: flex; flex-direction: column;
+    padding: 1.1rem .9rem;
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto;
+}
+.org-sidebar .org-marca {
+    display: flex; align-items: center; gap: .7rem;
+    padding: .4rem .5rem 1.1rem;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: .9rem;
+}
+.org-sidebar .org-marca .avatar {
+    width: 42px; height: 42px; border-radius: 13px; flex-shrink: 0;
+    background: var(--grad-marca); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+}
+.org-sidebar .org-marca .nombre { font-weight: 700; font-size: .9rem; line-height: 1.2; }
+.org-sidebar .org-marca .rol { font-size: .74rem; color: var(--color-text-muted); }
+
+.org-nav { display: flex; flex-direction: column; gap: .12rem; flex: 1; }
+.org-nav a {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .62rem .8rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    font-size: .89rem; font-weight: 500;
+    transition: all .15s ease;
+}
+.org-nav a i { width: 1.15rem; text-align: center; font-size: .95rem; }
+.org-nav a:hover { background: var(--color-bg); color: var(--yn-morado); }
+.org-nav a.activo { background: var(--yn-morado-soft); color: var(--yn-morado); font-weight: 600; }
+.org-nav .separador {
+    font-size: .67rem; letter-spacing: .12em; text-transform: uppercase;
+    color: #A9A4BE; font-weight: 700; padding: 1rem .8rem .35rem;
+}
+
+.org-salir {
+    border-top: 1px solid var(--color-border);
+    padding-top: .8rem; margin-top: .8rem;
+}
+.org-salir button {
+    width: 100%; text-align: left;
+    display: flex; align-items: center; gap: .75rem;
+    padding: .62rem .8rem; border: 0; background: none;
+    border-radius: var(--radius-sm);
+    color: #B3123A; font-size: .89rem; font-weight: 500; cursor: pointer;
+}
+.org-salir button:hover { background: #FDE7EC; }
+
+.org-main { flex: 1; min-width: 0; background: var(--color-bg); }
+.org-topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--color-border);
+    padding: .85rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    position: sticky; top: 0; z-index: 900;
+}
+.org-contenido { padding: 1.5rem; }
+
+.org-burger { display: none; background: none; border: 0; font-size: 1.2rem; color: var(--yn-azul); }
+
+@media (max-width: 991.98px) {
+    .org-sidebar {
+        position: fixed; z-index: 1200; left: -280px;
+        transition: left .22s ease; box-shadow: var(--shadow-lg);
+    }
+    .org-sidebar.abierto { left: 0; }
+    .org-burger { display: block; }
+    .org-backdrop {
+        position: fixed; inset: 0; background: rgba(26,17,71,.45);
+        z-index: 1150; display: none;
+    }
+    .org-backdrop.visible { display: block; }
+}
+
+/* Donut con conic-gradient: evita cargar Chart.js solo para un gráfico */
+.org-donut {
+    width: 168px; height: 168px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto; position: relative;
+}
+.org-donut::after {
+    content: ""; position: absolute;
+    width: 108px; height: 108px; border-radius: 50%; background: #fff;
+}
+.org-donut .centro { position: relative; z-index: 1; text-align: center; }
+.org-donut .centro .v { font-size: 1.6rem; font-weight: 800; color: var(--yn-azul); line-height: 1; }
+.org-donut .centro .l { font-size: .72rem; color: var(--color-text-muted); }
+
+.org-leyenda { display: flex; flex-direction: column; gap: .55rem; font-size: .84rem; }
+.org-leyenda .fila { display: flex; align-items: center; gap: .55rem; }
+.org-leyenda .punto { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* Accesos rápidos */
+.org-acceso {
+    display: flex; flex-direction: column; align-items: center; gap: .65rem;
+    padding: 1.25rem .75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: #fff; text-align: center; height: 100%;
+    color: var(--color-text); font-size: .84rem; font-weight: 600;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.org-acceso:hover { transform: translateY(-4px); box-shadow: var(--shadow); color: var(--yn-morado); }
+.org-acceso .ico {
+    width: 46px; height: 46px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
+}
+
+/* Avatar circular de listado */
+.org-avatar {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    background: var(--yn-morado-soft); color: var(--yn-morado);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .82rem;
+}

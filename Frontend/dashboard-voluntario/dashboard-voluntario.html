@@ -266,7 +266,7 @@
           div.className = 'd-flex align-items-center justify-content-between p-3 border rounded-3 mb-3';
           div.innerHTML = `
             <div class="d-flex align-items-center gap-3">
-              <img src="${op.imagenUrl || imgDefault}" class="event-img" alt="${op.titulo}">
+              <img src="${YN.img(op.imagenUrl, imgDefault)}" class="event-img" alt="${YN.esc(op.titulo)}">
               <div>
                 <h6 class="fw-bold mb-1">${op.titulo || 'Voluntariado'}</h6>
                 <p class="text-muted small mb-1">${op.organizacionNombre || 'Organización'}</p>

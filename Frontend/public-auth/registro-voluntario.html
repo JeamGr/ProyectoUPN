@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Crear cuenta como voluntario — YANANTIN</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
@@ -13,7 +14,20 @@
   <div class="auth-card">
     <div class="row g-0">
       <div class="col-lg-7 p-4 p-md-5">
-        <div class="brand-logo fs-4 mb-4">YANANTIN</div>
+
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <a href="../index.html" class="brand-logo fs-5">
+            <span class="brand-mark"><i class="fa-solid fa-hands-holding-circle"></i></span>
+            YANANTIN
+          </a>
+          <button class="yn-volver" onclick="YN.volver('../index.html')">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+          </button>
+        </div>
+
+        <span class="auth-badge voluntario">
+          <i class="fa-solid fa-graduation-cap"></i> Portal del voluntario
+        </span>
 
         <h2 class="fw-bold mb-1">Crear cuenta como voluntario</h2>
         <p class="text-muted mb-4">Únete a YANANTIN y empieza a generar impacto.</p>
@@ -36,10 +50,27 @@
 
           <div class="mb-3">
             <label class="form-label">Correo institucional UPN</label>
-            <input type="email" class="form-control" id="correo" placeholder="ejemplo@upn.edu.pe" required>
+            <div class="input-icon">
+              <i class="fa-regular fa-envelope"></i>
+              <input type="email" class="form-control" id="correo" placeholder="ejemplo@upn.edu.pe" required>
+            </div>
           </div>
 
           <p class="text-uppercase text-muted small fw-bold mb-2 mt-2">Información académica</p>
+
+          <!-- Universidad fija: YANANTIN es exclusivo de la UPN, así que
+               dejar el campo libre solo generaba variantes escritas a mano
+               ("UPN", "U. Privada del Norte"...) que rompían los reportes. -->
+          <div class="mb-3">
+            <label class="form-label">Universidad</label>
+            <div class="input-icon">
+              <i class="fa-solid fa-building-columns"></i>
+              <input type="text" class="form-control" id="universidad"
+                     value="Universidad Privada del Norte" readonly disabled>
+            </div>
+            <div class="form-text">Por ahora la plataforma es exclusiva para estudiantes de la UPN.</div>
+          </div>
+
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Código de estudiante</label>
@@ -47,32 +78,45 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Ciclo</label>
-              <input type="number" min="1" max="12" class="form-control" id="ciclo" placeholder="Ej. 6" required>
+              <select class="form-select" id="ciclo" required>
+                <option value="" disabled selected>Selecciona tu ciclo</option>
+              </select>
             </div>
           </div>
+
+          <!-- Carrera como lista cerrada: las 41 carreras de pregrado UPN,
+               agrupadas por facultad para que sea rápido encontrarlas. -->
           <div class="mb-3">
             <label class="form-label">Carrera</label>
-            <input type="text" class="form-control" id="carrera" placeholder="Ej. Ingeniería de Sistemas" required>
+            <select class="form-select" id="carrera" required></select>
           </div>
 
           <p class="text-uppercase text-muted small fw-bold mb-2 mt-2">Seguridad</p>
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Contraseña <span class="text-muted fw-normal">(mín. 8 caracteres)</span></label>
-              <input type="password" class="form-control" id="password" minlength="8" required>
+              <div class="input-icon">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" class="form-control" id="password" minlength="8" required>
+                <button type="button" class="btn-ojo" id="btnOjo" aria-label="Mostrar contraseña">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Confirmar contraseña</label>
-              <input type="password" class="form-control" id="confirmarPassword" required>
+              <div class="input-icon">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" class="form-control" id="confirmarPassword" required>
+              </div>
             </div>
           </div>
 
           <p class="text-uppercase text-muted small fw-bold mb-2 mt-2">Intereses de voluntariado</p>
           <p class="text-muted small mb-2">Selecciona las áreas que más te interesan para recibir recomendaciones personalizadas.</p>
-          <div class="row row-cols-4 g-2 mb-3" id="gridIntereses">
+          <div class="row row-cols-2 row-cols-md-4 g-2 mb-3" id="gridIntereses">
             <!-- se llena por JS con las lineas_intervencion reales -->
           </div>
-          <input type="hidden" id="interesesSeleccionados" value="">
 
           <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" id="aceptaTerminos" required>
@@ -87,30 +131,85 @@
           </button>
         </form>
 
-        <p class="text-center text-muted small mt-4 mb-0">
+        <p class="text-center text-muted small mt-4 mb-1">
           ¿Ya tienes cuenta? <a href="login-voluntario.html" class="link-brand">Inicia sesión</a>
+        </p>
+        <p class="text-center small mb-0" style="color: var(--color-text-muted);">
+          ¿Eres una organización?
+          <a href="../paginas/organizaciones.html" class="link-brand">Regístrala por su portal</a>
         </p>
       </div>
 
       <div class="col-lg-5 d-none d-lg-flex auth-panel-side">
         <div>
           <h4 class="fw-bold mb-4">Al registrarte como voluntario podrás:</h4>
-          <div class="check-item"><i class="bi">✓</i> Descubrir oportunidades que te apasionen</div>
-          <div class="check-item"><i class="bi">✓</i> Conectar con organizaciones increíbles</div>
-          <div class="check-item"><i class="bi">✓</i> Registrar tus horas de voluntariado</div>
-          <div class="check-item"><i class="bi">✓</i> Obtener certificados digitales</div>
+          <div class="check-item"><i class="fa-solid fa-circle-check"></i><span>Descubrir oportunidades que te apasionen</span></div>
+          <div class="check-item"><i class="fa-solid fa-circle-check"></i><span>Conectar con organizaciones increíbles</span></div>
+          <div class="check-item"><i class="fa-solid fa-circle-check"></i><span>Registrar tus horas de voluntariado</span></div>
+          <div class="check-item"><i class="fa-solid fa-circle-check"></i><span>Obtener certificados digitales verificables</span></div>
+
+          <div class="row g-2 mt-4">
+            <div class="col-4"><div class="auth-stat"><div class="v">2K+</div><div class="l">Horas</div></div></div>
+            <div class="col-4"><div class="auth-stat"><div class="v">150+</div><div class="l">Organizaciones</div></div></div>
+            <div class="col-4"><div class="auth-stat"><div class="v">300+</div><div class="l">Oportunidades</div></div></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/carreras.js"></script>
 <script>
-const API_BASE_URL = 'http://localhost:3003';
+// API_BASE_URL ya lo declara config.js. Volver a declararlo aquí con `const`
+// provocaba "Identifier 'API_BASE_URL' has already been declared".
 
 const seleccionados = new Set();
 const grid = document.getElementById('gridIntereses');
+const form = document.getElementById('formRegistro');
+const alerta = document.getElementById('alertaError');
+const btn = document.getElementById('btnRegistro');
+const btnTexto = document.getElementById('btnTexto');
+const btnSpinner = document.getElementById('btnSpinner');
 
+function mostrarError(mensaje) {
+    alerta.textContent = mensaje;
+    alerta.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function ponerCargando(cargando) {
+    btn.disabled = cargando;
+    btnTexto.textContent = cargando ? 'Creando cuenta...' : 'Crear cuenta';
+    btnSpinner.classList.toggle('d-none', !cargando);
+}
+
+// ---- Carrera: lista cerrada de 41 carreras UPN (carreras.js) ----
+llenarSelectCarreras('carrera');
+
+// ---- Ciclos 1 a 10 ----
+(function () {
+    const sel = document.getElementById('ciclo');
+    for (let i = 1; i <= 10; i++) {
+        const o = document.createElement('option');
+        o.value = i;
+        o.textContent = `Ciclo ${i}`;
+        sel.appendChild(o);
+    }
+})();
+
+// ---- Mostrar/ocultar contraseña ----
+document.getElementById('btnOjo').addEventListener('click', () => {
+    const input = document.getElementById('password');
+    const esTexto = input.type === 'text';
+    input.type = esTexto ? 'password' : 'text';
+    document.getElementById('btnOjo').innerHTML = esTexto
+        ? '<i class="fa-regular fa-eye"></i>'
+        : '<i class="fa-regular fa-eye-slash"></i>';
+});
+
+// ---- Intereses ----
 async function cargarIntereses() {
     try {
         const resp = await fetch(`${API_BASE_URL}/administrador/catalogos/lineas-intervencion?soloActivos=true`);
@@ -118,7 +217,7 @@ async function cargarIntereses() {
         (datos.items || []).forEach((interes) => {
             const col = document.createElement('div');
             col.className = 'col';
-            col.innerHTML = `<div class="interes-chip" data-id="${interes.id}">${interes.nombre}</div>`;
+            col.innerHTML = `<div class="interes-chip" data-id="${interes.id}">${YN.esc(interes.nombre)}</div>`;
             grid.appendChild(col);
         });
     } catch (error) {
@@ -140,28 +239,21 @@ grid.addEventListener('click', (e) => {
     }
 });
 
-const form = document.getElementById('formRegistro');
-const alerta = document.getElementById('alertaError');
-const btn = document.getElementById('btnRegistro');
-const btnTexto = document.getElementById('btnTexto');
-const btnSpinner = document.getElementById('btnSpinner');
-
-function mostrarError(mensaje) {
-    alerta.textContent = mensaje;
-    alerta.style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function ponerCargando(cargando) {
-    btn.disabled = cargando;
-    btnTexto.textContent = cargando ? 'Creando cuenta...' : 'Crear cuenta';
-    btnSpinner.classList.toggle('d-none', !cargando);
-}
-
+// ---- Envío ----
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
     alerta.style.display = 'none';
 
+    const carrera = document.getElementById('carrera').value;
+    const ciclo = document.getElementById('ciclo').value;
+
+    if (!carrera) { mostrarError('Selecciona tu carrera.'); return; }
+    if (!ciclo) { mostrarError('Selecciona tu ciclo.'); return; }
+
+    if (document.getElementById('password').value !== document.getElementById('confirmarPassword').value) {
+        mostrarError('Las contraseñas no coinciden.');
+        return;
+    }
     if (seleccionados.size === 0) {
         mostrarError('Selecciona al menos un interés de voluntariado.');
         return;
@@ -177,12 +269,12 @@ form.addEventListener('submit', async (e) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                nombres: document.getElementById('nombres').value,
-                apellidos: document.getElementById('apellidos').value,
-                correo: document.getElementById('correo').value,
-                codigoEstudiante: document.getElementById('codigoEstudiante').value,
-                carrera: document.getElementById('carrera').value,
-                ciclo: Number(document.getElementById('ciclo').value),
+                nombres: document.getElementById('nombres').value.trim(),
+                apellidos: document.getElementById('apellidos').value.trim(),
+                correo: document.getElementById('correo').value.trim(),
+                codigoEstudiante: document.getElementById('codigoEstudiante').value.trim(),
+                carrera: carrera,
+                ciclo: Number(ciclo),
                 password: document.getElementById('password').value,
                 confirmarPassword: document.getElementById('confirmarPassword').value,
                 intereses: Array.from(seleccionados),
