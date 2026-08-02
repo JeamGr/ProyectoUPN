@@ -65,7 +65,7 @@
               <img id="imgAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300" alt="Foto de perfil" class="profile-avatar">
             </div>
             <div>
-              <a href="../onboarding voluntario/onboarding-voluntario.html" class="btn btn-yanantin-outline">
+              <a href="perfil-editar.html" class="btn btn-yanantin-outline">
                 <i class="bi bi-pencil-square me-1"></i> Editar perfil
               </a>
             </div>
@@ -163,8 +163,9 @@
         cargarMetricas();
 
         // 3. Foto de perfil si existe
+        // YN.img() antepone API_BASE_URL: foto_url viene como ruta relativa.
         if (perfil.foto_url) {
-          document.getElementById('imgAvatar').src = perfil.foto_url;
+          document.getElementById('imgAvatar').src = YN.img(perfil.foto_url);
         }
 
       } catch (error) {

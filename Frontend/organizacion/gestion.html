@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inscritos y asistencia — YANANTIN</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+
+<div class="org-shell">
+  <div id="contenido">
+
+    <div class="mb-4">
+      <h1 class="fs-4 fw-bold mb-1">Inscritos y asistencia</h1>
+      <p class="text-muted mb-0 small">Gestiona voluntarios, registra asistencia y sube evidencias.</p>
+    </div>
+
+    <div class="panel mb-3">
+      <div class="panel-body">
+        <label class="form-label">Oportunidad</label>
+        <select class="form-select" id="selectOportunidad"></select>
+        <div class="row g-2 mt-3" id="resumenOp"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <nav class="yn-tabs" id="tabs">
+          <button class="yn-tab activa" data-tab="inscritos">Inscritos</button>
+          <button class="yn-tab" data-tab="solicitudes">Solicitudes</button>
+          <button class="yn-tab" data-tab="asistencia">Asistencia</button>
+          <button class="yn-tab" data-tab="evidencias">Evidencias</button>
+          <button class="yn-tab" data-tab="incidencias">Incidencias</button>
+        </nav>
+
+        <!-- INSCRITOS -->
+        <section class="yn-panel-tab activo" data-panel="inscritos">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h2 class="h6 fw-bold mb-0">Voluntarios inscritos</h2>
+            <button class="btn btn-sm btn-brand-outline" id="btnExportar">
+              <i class="fa-solid fa-file-csv me-1"></i>Exportar CSV
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead><tr><th class="ps-3">Voluntario</th><th>Correo</th><th style="width:150px;">Estado</th></tr></thead>
+              <tbody id="tablaInscritos"></tbody>
+            </table>
+          </div>
+          <div class="estado-vacio d-none" id="vacioInscritos">
+            <i class="fa-regular fa-user"></i><p class="mb-0">Todavía no hay inscritos.</p>
+          </div>
+        </section>
+
+        <!-- SOLICITUDES -->
+        <section class="yn-panel-tab" data-panel="solicitudes">
+          <h2 class="h6 fw-bold mb-3">Solicitudes por aprobar</h2>
+          <div id="listaSolicitudes"></div>
+          <div class="estado-vacio d-none" id="vacioSolicitudes">
+            <i class="fa-regular fa-circle-check"></i><p class="mb-0">No hay solicitudes pendientes.</p>
+          </div>
+          <div class="alert alert-info small mt-3 mb-0">
+            <i class="fa-solid fa-circle-info me-1"></i>
+            Solo aparecen aquí si la oportunidad se creó con <strong>aprobación manual</strong>.
+            Si es automática, los voluntarios pasan directo a confirmados.
+          </div>
+        </section>
+
+        <!-- ASISTENCIA -->
+        <section class="yn-panel-tab" data-panel="asistencia">
+          <h2 class="h6 fw-bold mb-3">Registro de asistencia</h2>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead><tr><th class="ps-3">Voluntario</th><th style="width:130px;">Estado</th><th class="text-end pe-3" style="width:330px;">Marcar</th></tr></thead>
+              <tbody id="tablaAsistencia"></tbody>
+            </table>
+          </div>
+          <div class="estado-vacio d-none" id="vacioAsistencia">
+            <i class="fa-regular fa-clipboard"></i><p class="mb-0">No hay voluntarios para registrar.</p>
+          </div>
+        </section>
+
+        <!-- EVIDENCIAS -->
+        <section class="yn-panel-tab" data-panel="evidencias">
+          <h2 class="h6 fw-bold mb-3">Evidencias de la actividad</h2>
+          <form id="formEvidencia" class="row g-2 align-items-end mb-4">
+            <div class="col-md-4">
+              <label class="form-label">Voluntario</label>
+              <select class="form-select" id="selectVoluntarioEvidencia"></select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Tipo</label>
+              <select class="form-select" id="tipoEvidencia">
+                <option value="foto">Foto</option>
+                <option value="video">Video</option>
+                <option value="documento">Documento</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Archivo</label>
+              <input type="file" class="form-control" id="archivoEvidencia" required>
+            </div>
+            <div class="col-md-2">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="contenidoSensible">
+                <label class="form-check-label small">Sensible</label>
+              </div>
+              <button type="submit" class="btn btn-brand-primary w-100 btn-sm">Subir</button>
+            </div>
+          </form>
+          <div class="row g-3" id="galeriaEvidencias"></div>
+          <div class="estado-vacio d-none" id="vacioEvidencias">
+            <i class="fa-regular fa-images"></i><p class="mb-0">Aún no hay evidencias cargadas.</p>
+          </div>
+        </section>
+
+        <!-- INCIDENCIAS -->
+        <section class="yn-panel-tab" data-panel="incidencias">
+          <h2 class="h6 fw-bold mb-3">Incidencias reportadas</h2>
+          <form id="formIncidencia" class="row g-2 align-items-end mb-4">
+            <div class="col-md-4">
+              <label class="form-label">Categoría</label>
+              <input type="text" class="form-control" id="categoriaIncidencia" placeholder="Ej. Seguridad" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Descripción</label>
+              <input type="text" class="form-control" id="descripcionIncidencia" required>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-brand-outline w-100">Reportar</button>
+            </div>
+          </form>
+          <div id="listaIncidencias"></div>
+          <div class="estado-vacio d-none" id="vacioIncidencias">
+            <i class="fa-regular fa-flag"></i><p class="mb-0">Sin incidencias registradas.</p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/auth-guard.js"
+        data-rol="ORGANIZACION"
+        data-login="../public-auth/login-organizacion.html"></script>
+<script src="../assets/js/shell-org.js" data-activo="gestion"></script>
+<script>
+let opActual = null;
+let inscritosCache = [];
+
+const ESTADO_BADGE = {
+    inscrito: 'pendiente_aprobacion', confirmado: 'aprobado', completado: 'publicado',
+    cancelado: 'cancelado', rechazado: 'rechazado', no_asistio: 'cerrado',
+};
+
+function nombreDe(i) {
+    return i.nombre_voluntario || i.nombreVoluntario || i.nombres || 'Voluntario';
+}
+
+async function cargarOportunidades() {
+    const d = await YN.api('/oportunidades/me/mias');
+    const sel = document.getElementById('selectOportunidad');
+    if (!d.ok || d.oportunidades.length === 0) {
+        sel.innerHTML = '<option>No tienes oportunidades creadas</option>';
+        sel.disabled = true;
+        return;
+    }
+
+    sel.innerHTML = d.oportunidades
+        .map((o) => `<option value="${o.id}">${YN.esc(o.titulo)} — ${o.estado.replace(/_/g, ' ')}</option>`)
+        .join('');
+
+    // Permite llegar directo con ?oportunidad=12 desde el dashboard.
+    const pedida = new URLSearchParams(location.search).get('oportunidad');
+    if (pedida && d.oportunidades.some((o) => String(o.id) === pedida)) sel.value = pedida;
+
+    opActual = d.oportunidades.find((o) => String(o.id) === sel.value);
+    pintarResumen();
+    recargarTodo();
+}
+
+function pintarResumen() {
+    if (!opActual) return;
+    const ocupados = opActual.cuposTotales - opActual.cuposDisponibles;
+    document.getElementById('resumenOp').innerHTML = `
+      <div class="col-6 col-md-3"><div class="yn-dato"><div class="ico"><i class="fa-regular fa-calendar"></i></div>
+        <div><span class="et">Inicio</span><span class="va">${YN.fecha(opActual.fechaInicio)}</span></div></div></div>
+      <div class="col-6 col-md-3"><div class="yn-dato"><div class="ico"><i class="fa-solid fa-users"></i></div>
+        <div><span class="et">Ocupación</span><span class="va">${ocupados}/${opActual.cuposTotales}</span></div></div></div>
+      <div class="col-6 col-md-3"><div class="yn-dato"><div class="ico"><i class="fa-regular fa-clock"></i></div>
+        <div><span class="et">Horas</span><span class="va">${opActual.horasAcreditadas} h</span></div></div></div>
+      <div class="col-6 col-md-3"><div class="yn-dato"><div class="ico"><i class="fa-solid fa-signal"></i></div>
+        <div><span class="et">Estado</span><span class="va text-capitalize">${opActual.estado.replace(/_/g, ' ')}</span></div></div></div>`;
+}
+
+async function cargarInscritos() {
+    const r = await YN.api(`/inscripciones/oportunidad/${opActual.id}`);
+    inscritosCache = (r && r.data) || [];
+
+    const tbody = document.getElementById('tablaInscritos');
+    document.getElementById('vacioInscritos').classList.toggle('d-none', inscritosCache.length > 0);
+    tbody.innerHTML = inscritosCache.map((i) => `
+        <tr>
+          <td class="ps-3"><div class="d-flex align-items-center gap-2">
+            <span class="org-avatar">${YN.esc(nombreDe(i).charAt(0).toUpperCase())}</span>
+            <span class="fw-semibold">${YN.esc(nombreDe(i))}</span></div></td>
+          <td class="text-muted small">${YN.esc(i.correo || '—')}</td>
+          <td><span class="badge-estado ${ESTADO_BADGE[i.estado] || 'borrador'}">${YN.esc((i.estado || '').replace(/_/g, ' '))}</span></td>
+        </tr>`).join('');
+
+    // Solicitudes = inscritos aún sin aprobar
+    const pendientes = inscritosCache.filter((i) => (i.estado || '').toLowerCase() === 'inscrito');
+    document.getElementById('vacioSolicitudes').classList.toggle('d-none', pendientes.length > 0);
+    document.getElementById('listaSolicitudes').innerHTML = pendientes.map((i) => `
+        <div class="panel mb-2"><div class="panel-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
+          <div class="d-flex align-items-center gap-2">
+            <span class="org-avatar">${YN.esc(nombreDe(i).charAt(0).toUpperCase())}</span>
+            <div><div class="fw-semibold small">${YN.esc(nombreDe(i))}</div>
+            <div class="text-muted" style="font-size:.78rem;">${YN.esc(i.correo || '')}</div></div>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-success" onclick="decidir(${i.id}, 'aprobar')">
+              <i class="fa-solid fa-check me-1"></i>Aprobar</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="decidir(${i.id}, 'rechazar')">
+              <i class="fa-solid fa-xmark me-1"></i>Rechazar</button>
+          </div>
+        </div></div>`).join('');
+
+    // Combo de evidencias
+    document.getElementById('selectVoluntarioEvidencia').innerHTML = inscritosCache
+        .map((i) => `<option value="${i.id}">${YN.esc(nombreDe(i))}</option>`).join('')
+        || '<option value="">Sin inscritos</option>';
+}
+
+async function decidir(inscripcionId, accion) {
+    const ok = await YN.confirmar(
+        accion === 'aprobar' ? '¿Aprobar esta solicitud?' : '¿Rechazar esta solicitud?',
+        accion === 'aprobar'
+            ? 'El voluntario quedará confirmado y ocupará un cupo.'
+            : 'El voluntario recibirá la notificación de rechazo y se liberará su cupo.',
+        accion === 'aprobar' ? 'Sí, aprobar' : 'Sí, rechazar',
+    );
+    if (!ok) return;
+
+    const r = await YN.api(`/inscripciones/${inscripcionId}/${accion}`, { method: 'PATCH' });
+    if (r.status === 'success' || r.ok) {
+        YN.toast(accion === 'aprobar' ? 'Solicitud aprobada.' : 'Solicitud rechazada.', accion === 'aprobar' ? 'success' : 'warning');
+        recargarTodo();
+    } else {
+        YN.alerta('No se pudo procesar', r.message || r.mensaje || 'Intenta de nuevo.', 'error');
+    }
+}
+
+async function cargarAsistencia() {
+    const r = await YN.api(`/asistencia/inscritos/${opActual.id}`);
+    const lista = (r && r.datos) || [];
+    document.getElementById('vacioAsistencia').classList.toggle('d-none', lista.length > 0);
+
+    // Estados ya registrados, para no pintar "Sin marcar" sobre datos reales
+    const previos = {};
+    const ra = await YN.api(`/asistencia/oportunidad/${opActual.id}`);
+    ((ra && ra.datos) || []).forEach((a) => { previos[a.inscripcionId] = a.estado; });
+
+    document.getElementById('tablaAsistencia').innerHTML = lista.map((i) => `
+        <tr>
+          <td class="ps-3"><div class="d-flex align-items-center gap-2">
+            <span class="org-avatar">${YN.esc((i.nombreVoluntario || 'V').charAt(0).toUpperCase())}</span>
+            <span class="fw-semibold">${YN.esc(i.nombreVoluntario || 'Voluntario')}</span></div></td>
+          <td><span class="badge-estado ${previos[i.inscripcionId] ? 'aprobado' : 'borrador'}"
+                    id="estado-${i.inscripcionId}">${previos[i.inscripcionId] || 'Sin marcar'}</span></td>
+          <td class="text-end pe-3">
+            <button class="btn btn-sm btn-success" onclick="marcar(${i.inscripcionId},'presente')">Presente</button>
+            <button class="btn btn-sm btn-outline-warning" onclick="marcar(${i.inscripcionId},'tardanza')">Tardanza</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="marcar(${i.inscripcionId},'ausente')">Ausente</button>
+          </td>
+        </tr>`).join('');
+}
+
+async function marcar(inscripcionId, estado) {
+    const r = await YN.api('/asistencia', { method: 'POST', body: JSON.stringify({ inscripcionId, estado }) });
+    if (!r.ok) { YN.alerta('No se pudo registrar', r.mensaje || 'Intenta de nuevo.', 'error'); return; }
+    const badge = document.getElementById(`estado-${inscripcionId}`);
+    badge.textContent = estado;
+    badge.className = 'badge-estado aprobado';
+    YN.toast(`Asistencia registrada: ${estado}.`);
+}
+
+async function cargarEvidencias() {
+    const r = await YN.api(`/asistencia/evidencias/oportunidad/${opActual.id}/completa`);
+    const lista = (r && r.datos) || [];
+    document.getElementById('vacioEvidencias').classList.toggle('d-none', lista.length > 0);
+
+    document.getElementById('galeriaEvidencias').innerHTML = lista.map((e) => {
+        const esImagen = (e.tipo || '') === 'foto';
+        return `
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="op-card">
+            <div class="op-img" style="height:130px;">
+              ${esImagen
+                ? `<img src="${YN.img(e.archivoUrl || e.url)}" alt="" style="width:100%;height:100%;object-fit:cover;">`
+                : `<div class="d-flex align-items-center justify-content-center h-100 text-white opacity-50"><i class="fa-solid fa-file fa-2x"></i></div>`}
+              ${e.contenidoSensible ? '<span class="op-tag" style="background:#FDE7EC;color:#B3123A;">Sensible</span>' : ''}
+            </div>
+            <div class="op-body py-2">
+              <div class="small text-truncate">${YN.esc(e.nombreVoluntario || 'Evidencia')}</div>
+              <div class="text-muted" style="font-size:.72rem;">${YN.fecha(e.fecha || e.fechaSubida)}</div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+}
+
+async function cargarIncidencias() {
+    const r = await YN.api(`/asistencia/incidencias/oportunidad/${opActual.id}`);
+    const lista = (r && r.datos) || [];
+    document.getElementById('vacioIncidencias').classList.toggle('d-none', lista.length > 0);
+    document.getElementById('listaIncidencias').innerHTML = lista.map((inc) => `
+        <div class="panel mb-2"><div class="panel-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
+          <div><strong class="small">${YN.esc(inc.categoria)}</strong>
+            <div class="text-muted small">${YN.esc(inc.descripcion)}</div></div>
+          <span class="badge-estado ${inc.estado === 'resuelta' ? 'aprobado' : 'pendiente_aprobacion'}">${YN.esc(inc.estado)}</span>
+        </div></div>`).join('');
+}
+
+function recargarTodo() {
+    if (!opActual) return;
+    cargarInscritos();
+    cargarAsistencia();
+    cargarEvidencias();
+    cargarIncidencias();
+}
+
+// ---- Eventos ----
+document.addEventListener('yn:shell-listo', () => {
+    cargarOportunidades();
+
+    document.getElementById('selectOportunidad').addEventListener('change', async (e) => {
+        const d = await YN.api('/oportunidades/me/mias');
+        opActual = d.oportunidades.find((o) => String(o.id) === e.target.value);
+        pintarResumen();
+        recargarTodo();
+    });
+
+    document.getElementById('tabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.yn-tab');
+        if (!btn) return;
+        document.querySelectorAll('.yn-tab').forEach((t) => t.classList.remove('activa'));
+        btn.classList.add('activa');
+        document.querySelectorAll('.yn-panel-tab').forEach((p) => {
+            p.classList.toggle('activo', p.dataset.panel === btn.dataset.tab);
+        });
+    });
+
+    // Pestaña inicial desde ?tab=evidencias
+    const tabPedida = new URLSearchParams(location.search).get('tab');
+    if (tabPedida) {
+        const btn = document.querySelector(`.yn-tab[data-tab="${tabPedida}"]`);
+        if (btn) btn.click();
+    }
+
+    document.getElementById('btnExportar').addEventListener('click', async () => {
+        if (!opActual) return;
+        // El endpoint responde un CSV con Content-Disposition, no JSON:
+        // por eso se descarga con fetch + blob en vez de YN.api().
+        const resp = await fetch(`${API_BASE_URL}/inscripciones/oportunidad/${opActual.id}/exportar`,
+            { headers: YN.headers() });
+        if (!resp.ok) { YN.alerta('No se pudo exportar', 'Intenta de nuevo.', 'error'); return; }
+        const blob = await resp.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `inscritos-${opActual.id}.csv`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        YN.toast('Archivo descargado.');
+    });
+
+    document.getElementById('formEvidencia').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const inscripcionId = document.getElementById('selectVoluntarioEvidencia').value;
+        if (!inscripcionId) { YN.alerta('Falta el voluntario', 'Selecciona a quién corresponde la evidencia.', 'aviso'); return; }
+
+        const fd = new FormData();
+        fd.append('archivo', document.getElementById('archivoEvidencia').files[0]);
+        fd.append('tipo', document.getElementById('tipoEvidencia').value);
+        fd.append('contenidoSensible', document.getElementById('contenidoSensible').checked);
+
+        const r = await YN.api(`/asistencia/evidencias/${inscripcionId}`, { method: 'POST', body: fd });
+        if (r.ok) { YN.toast('Evidencia subida.'); e.target.reset(); cargarEvidencias(); }
+        else YN.alerta('No se pudo subir', r.mensaje || 'Revisa el formato y el tamaño.', 'error');
+    });
+
+    document.getElementById('formIncidencia').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const r = await YN.api('/asistencia/incidencias', {
+            method: 'POST',
+            body: JSON.stringify({
+                oportunidadId: Number(opActual.id),
+                categoria: document.getElementById('categoriaIncidencia').value,
+                descripcion: document.getElementById('descripcionIncidencia').value,
+            }),
+        });
+        if (r.ok) { YN.toast('Incidencia reportada.'); e.target.reset(); cargarIncidencias(); }
+        else YN.alerta('No se pudo reportar', r.mensaje || 'Intenta de nuevo.', 'error');
+    });
+});
+</script>
+</body>
+</html>

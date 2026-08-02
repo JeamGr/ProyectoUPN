@@ -34,6 +34,9 @@ export const uploadEvidencia = crearUploader(
 
 // Solo imagenes para la portada de oportunidad
 export const uploadImagenOportunidad = crearUploader('oportunidades', ['image/jpeg', 'image/png'], 5);
+// Foto de perfil del voluntario. 2MB basta para un avatar y evita que
+// alguien suba una imagen de 5MB que luego hay que reescalar en el cliente.
+export const uploadFotoPerfil = crearUploader('perfiles', ['image/jpeg', 'image/png', 'image/webp'], 2);
 
 // Envuelve un middleware .single(campo) de multer para responder 400 con un
 // mensaje claro (formato no permitido, archivo muy pesado, etc.) en vez de

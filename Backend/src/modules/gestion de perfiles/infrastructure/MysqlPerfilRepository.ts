@@ -59,6 +59,9 @@ export class MysqlPerfilRepository implements PerfilRepository {
         if (dto.habilidades !== undefined) perfil.habilidades = dto.habilidades;
         if (dto.disponibilidad !== undefined) perfil.disponibilidad = dto.disponibilidad;
         if (dto.foto_url !== undefined) perfil.foto_url = dto.foto_url;
+        // RF-012: la carrera y el ciclo también son editables desde el perfil.
+        if (dto.carrera !== undefined) perfil.carrera = dto.carrera;
+        if (dto.ciclo !== undefined) perfil.ciclo = dto.ciclo;
 
         // Actualizar relación Muchos a Muchos (usuario_intereses)
         if (dto.intereses_ids !== undefined) {

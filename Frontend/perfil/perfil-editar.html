@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YANANTIN - Editar mi perfil</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+
+<header class="lp-navbar">
+  <div class="container d-flex justify-content-between align-items-center">
+    <button class="yn-volver" onclick="YN.volver('perfil.html')">
+      <i class="bi bi-arrow-left"></i> Volver a mi perfil
+    </button>
+    <a href="../dashboard-voluntario/dashboard-voluntario.html" class="brand-logo fs-6">
+      <span class="brand-mark"><i class="fa-solid fa-hands-holding-circle"></i></span>
+      YANANTIN
+    </a>
+  </div>
+</header>
+
+<main class="container my-4" style="max-width: 860px;">
+  <div class="mb-4">
+    <div class="seccion-kicker">Mi cuenta</div>
+    <h1 class="seccion-titulo mb-1">Editar mi perfil</h1>
+    <p class="text-muted mb-0">Mantén tus datos al día para recibir mejores recomendaciones.</p>
+  </div>
+
+  <!-- FOTO -->
+  <div class="panel mb-3">
+    <div class="panel-head"><h5>Foto de perfil</h5></div>
+    <div class="panel-body d-flex align-items-center gap-4 flex-wrap">
+      <img id="avatarPreview" alt="Foto de perfil"
+           style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--color-border);">
+      <div>
+        <input type="file" id="fotoInput" accept="image/jpeg,image/png,image/webp" class="d-none">
+        <button class="btn btn-brand-outline btn-sm" id="btnElegirFoto">
+          <i class="fa-solid fa-camera me-1"></i>Cambiar foto
+        </button>
+        <p class="text-muted small mb-0 mt-2">JPG, PNG o WEBP. Máximo 2 MB.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATOS -->
+  <form id="formPerfil">
+    <div class="panel mb-3">
+      <div class="panel-head"><h5>Datos académicos</h5></div>
+      <div class="panel-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Nombres</label>
+            <input type="text" class="form-control" id="inputNombres" readonly>
+            <div class="form-text">Este dato proviene de tu registro y no es editable.</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Apellidos</label>
+            <input type="text" class="form-control" id="inputApellidos" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Universidad</label>
+            <input type="text" class="form-control" id="inputUniversidad"
+                   value="Universidad Privada del Norte" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Código de estudiante</label>
+            <input type="text" class="form-control" id="inputCodigo" readonly>
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">Carrera <span class="text-danger">*</span></label>
+            <select class="form-select" id="selectCarrera" required></select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Ciclo</label>
+            <select class="form-select" id="selectCiclo">
+              <option value="">—</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel mb-3">
+      <div class="panel-head"><h5>Contacto y disponibilidad</h5></div>
+      <div class="panel-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Teléfono</label>
+            <input type="tel" class="form-control" id="inputTelefono" placeholder="987 654 321">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Distrito de residencia</label>
+            <input type="text" class="form-control" id="inputUbicacion" placeholder="Ej. Santiago de Surco">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Disponibilidad</label>
+            <select class="form-select" id="selectDisponibilidad">
+              <option value="">Sin especificar</option>
+              <option value="Mañanas">Mañanas</option>
+              <option value="Tardes">Tardes</option>
+              <option value="Noches">Noches</option>
+              <option value="Fines de semana">Fines de semana</option>
+              <option value="Flexible">Flexible</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Habilidades</label>
+            <textarea class="form-control" id="inputHabilidades" rows="3"
+                      placeholder="Ej. Diseño gráfico, primeros auxilios, quechua básico…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel mb-3">
+      <div class="panel-head">
+        <h5>Intereses</h5>
+        <span class="text-muted small">Definen tus recomendaciones</span>
+      </div>
+      <div class="panel-body">
+        <div class="row g-2" id="gridIntereses"></div>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-end mb-5">
+      <button type="button" class="btn btn-brand-outline" onclick="YN.volver('perfil.html')">Cancelar</button>
+      <button type="submit" class="btn btn-brand-primary" id="btnGuardar">Guardar cambios</button>
+    </div>
+  </form>
+</main>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/auth-guard.js"
+        data-rol="VOLUNTARIO"
+        data-login="../public-auth/login-voluntario.html"></script>
+<script src="../assets/js/carreras.js"></script>
+<script>
+const AVATAR_DEFECTO = 'https://ui-avatars.com/api/?background=6D28D9&color=fff&name=Y';
+let interesesSeleccionados = new Set();
+
+// Ciclos 1..10
+(function () {
+    const sel = document.getElementById('selectCiclo');
+    for (let i = 1; i <= 10; i++) {
+        const o = document.createElement('option');
+        o.value = i; o.textContent = `Ciclo ${i}`;
+        sel.appendChild(o);
+    }
+})();
+
+async function cargarIntereses(seleccionados) {
+    try {
+        const r = await fetch(`${API_BASE_URL}/administrador/catalogos/lineas-intervencion?soloActivos=true`);
+        const d = await r.json();
+        document.getElementById('gridIntereses').innerHTML = (d.items || []).map((i) => `
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="interes-chip ${seleccionados.includes(i.id) ? 'activo' : ''}" data-id="${i.id}">
+                ${YN.esc(i.nombre)}
+              </div>
+            </div>`).join('');
+
+        seleccionados.forEach((id) => interesesSeleccionados.add(id));
+
+        document.querySelectorAll('.interes-chip').forEach((chip) => {
+            chip.addEventListener('click', () => {
+                const id = Number(chip.dataset.id);
+                if (interesesSeleccionados.has(id)) { interesesSeleccionados.delete(id); chip.classList.remove('activo'); }
+                else { interesesSeleccionados.add(id); chip.classList.add('activo'); }
+            });
+        });
+    } catch (e) {
+        document.getElementById('gridIntereses').innerHTML =
+            '<p class="text-muted small mb-0">No se pudieron cargar los intereses.</p>';
+    }
+}
+
+async function cargar() {
+    const datos = await YN.api('/perfiles/voluntario/me');
+    const p = datos.data || datos;
+    if (!p || !p.usuario_id) { YN.toast('No se pudo cargar tu perfil.', 'danger'); return; }
+
+    document.getElementById('inputNombres').value = p.nombres || '';
+    document.getElementById('inputApellidos').value = p.apellidos || '';
+    document.getElementById('inputCodigo').value = p.codigo_estudiante || '';
+    document.getElementById('inputTelefono').value = p.telefono || '';
+    document.getElementById('inputUbicacion').value = p.ubicacion || '';
+    document.getElementById('inputHabilidades').value = p.habilidades || '';
+    document.getElementById('selectDisponibilidad').value = p.disponibilidad || '';
+    document.getElementById('selectCiclo').value = p.ciclo || '';
+    document.getElementById('avatarPreview').src = YN.img(p.foto_url, AVATAR_DEFECTO);
+
+    llenarSelectCarreras('selectCarrera', p.carrera);
+    await cargarIntereses((p.intereses || []).map((i) => i.id));
+}
+
+// ---- Subida de foto ----
+document.getElementById('btnElegirFoto').addEventListener('click', () => document.getElementById('fotoInput').click());
+
+document.getElementById('fotoInput').addEventListener('change', async (e) => {
+    const archivo = e.target.files[0];
+    if (!archivo) return;
+
+    if (archivo.size > 2 * 1024 * 1024) {
+        YN.alerta('Imagen muy pesada', 'La foto no puede superar los 2 MB.', 'error');
+        e.target.value = '';
+        return;
+    }
+
+    // Preview inmediato para que la interfaz no se sienta congelada.
+    const lector = new FileReader();
+    lector.onload = (ev) => { document.getElementById('avatarPreview').src = ev.target.result; };
+    lector.readAsDataURL(archivo);
+
+    const formData = new FormData();
+    formData.append('foto', archivo);
+
+    const datos = await YN.api('/perfiles/voluntario/me/foto', { method: 'POST', body: formData });
+    if (datos.status === 'success') {
+        document.getElementById('avatarPreview').src = YN.img((datos.data || {}).foto_url, AVATAR_DEFECTO);
+        YN.toast('Foto actualizada.');
+    } else {
+        YN.alerta('No se pudo subir', datos.message || datos.mensaje || 'Intenta con otra imagen.', 'error');
+        cargar();
+    }
+});
+
+// ---- Guardar ----
+document.getElementById('formPerfil').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btnGuardar');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Guardando…';
+
+    const dto = {
+        telefono: document.getElementById('inputTelefono').value.trim(),
+        ubicacion: document.getElementById('inputUbicacion').value.trim(),
+        habilidades: document.getElementById('inputHabilidades').value.trim(),
+        disponibilidad: document.getElementById('selectDisponibilidad').value,
+        carrera: document.getElementById('selectCarrera').value,
+        intereses_ids: Array.from(interesesSeleccionados),
+    };
+    const ciclo = document.getElementById('selectCiclo').value;
+    if (ciclo) dto.ciclo = Number(ciclo);
+
+    const datos = await YN.api('/perfiles/voluntario/me', { method: 'PUT', body: JSON.stringify(dto) });
+
+    btn.disabled = false;
+    btn.textContent = 'Guardar cambios';
+
+    if (datos.status === 'success') {
+        await YN.alerta('Perfil actualizado', 'Tus cambios se guardaron correctamente.', 'exito');
+        location.href = 'perfil.html';
+    } else {
+        YN.alerta('No se pudo guardar', datos.message || datos.mensaje || 'Revisa los datos e intenta de nuevo.', 'error');
+    }
+});
+
+document.addEventListener('yn:sesion-lista', cargar);
+</script>
+</body>
+</html>

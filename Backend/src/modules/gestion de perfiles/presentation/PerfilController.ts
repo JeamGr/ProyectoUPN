@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { PerfilService } from '../application/PerfilService';
+import fs from 'fs';
+import path from 'path';
 
 export class PerfilController {
     constructor(private readonly perfilService: PerfilService) {}
@@ -92,6 +94,36 @@ export class PerfilController {
             });
         } catch (error: any) {
             res.status(400).json({ status: 'error', message: error.message });
+        }
+    };
+    // POST /perfiles/voluntario/me/foto  (RF-012)
+    // Antes NO existía ningún endpoint para subir la foto: el DTO solo
+    // aceptaba `foto_url` como texto, así que el <input type="file"> del
+    // onboarding hacía un preview con FileReader y nunca enviaba nada.
+    subirFotoVoluntario = async (req: any, res: any) => {
+        if (!req.file) {
+            return res.status(400).json({ status: 'error', message: 'No se recibió ninguna imagen' });
+        }
+
+        const url = `/uploads/perfiles/${req.file.filename}`;
+
+        try {
+            const anterior = await this.perfilService.obtenerPerfilVoluntario(req.jwt.id);
+            const perfil = await this.perfilService.actualizarPerfilVoluntario(req.jwt.id, { foto_url: url });
+
+            // Se borra la foto anterior para no acumular huérfanos en disco.
+            if (anterior?.foto_url && anterior.foto_url.startsWith('/uploads/perfiles/')) {
+                const ruta = path.join(process.cwd(), anterior.foto_url.replace(/^\//, ''));
+                fs.promises.unlink(ruta).catch(() => { /* ya no existía */ });
+            }
+
+            return res.status(200).json({ status: 'success', data: perfil });
+        } catch (error) {
+            // Si el negocio falla, se limpia el archivo recién escrito por multer.
+            fs.promises
+                .unlink(path.join(process.cwd(), 'uploads', 'perfiles', req.file.filename))
+                .catch(() => {});
+            throw error;
         }
     };
 }

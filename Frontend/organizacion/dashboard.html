@@ -5,181 +5,287 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Panel de organización — YANANTIN</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/css/adminlte.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<body>
 
-<div class="app-wrapper">
+<div class="org-shell">
   <div id="contenido">
 
-    <div class="app-content-header">
-      <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <div>
-          <h1 class="mb-0 fs-4 fw-bold" id="saludo">¡Hola!</h1>
-          <p class="text-muted mb-0 small">Aquí tienes el resumen de tu organización.</p>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+      <div>
+        <h1 class="fs-4 fw-bold mb-1" id="saludo">¡Hola!</h1>
+        <p class="text-muted mb-0 small">Aquí tienes el resumen de tu organización.</p>
+      </div>
+      <a href="crear-oportunidad.html" class="btn btn-brand-primary">
+        <i class="fa-solid fa-plus me-1"></i>Nueva oportunidad
+      </a>
+    </div>
+
+    <div id="avisoValidacion"></div>
+
+    <!-- KPIs -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-xl-3">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: var(--yn-magenta-soft); color: var(--yn-magenta);">
+            <i class="fa-solid fa-rectangle-list"></i>
+          </div>
+          <div><div class="kpi-valor" id="mOportunidades">—</div><div class="kpi-label">Oportunidades activas</div></div>
         </div>
-        <a href="crear-oportunidad.html" class="btn btn-brand-primary">
-          <i class="fa-solid fa-plus me-1"></i>Nueva oportunidad
-        </a>
+      </div>
+      <div class="col-6 col-xl-3">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: var(--yn-morado-soft); color: var(--yn-morado);">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div><div class="kpi-valor" id="mInscritos">—</div><div class="kpi-label">Voluntarios inscritos</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-3">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: var(--yn-amarillo-soft); color: #B87E00;">
+            <i class="fa-regular fa-clock"></i>
+          </div>
+          <div><div class="kpi-valor" id="mHoras">—</div><div class="kpi-label">Horas generadas</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-3">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(26,17,71,.08); color: var(--yn-azul);">
+            <i class="fa-solid fa-hourglass-half"></i>
+          </div>
+          <div><div class="kpi-valor" id="mPendientes">—</div><div class="kpi-label">Solicitudes pendientes</div></div>
+        </div>
       </div>
     </div>
 
-    <div class="app-content">
-      <div class="container-fluid">
-
-        <!-- Aviso de estado de validación de la organización -->
-        <div id="avisoValidacion"></div>
-
-        <div class="row g-3 mb-4">
-          <div class="col-md-4">
-            <div class="kpi-card">
-              <div class="kpi-icon" style="background: var(--yn-magenta-soft); color: var(--yn-magenta);">
-                <i class="fa-solid fa-rectangle-list"></i>
-              </div>
-              <div>
-                <div class="kpi-valor" id="mOportunidades">—</div>
-                <div class="kpi-label">Oportunidades activas</div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="kpi-card">
-              <div class="kpi-icon" style="background: var(--yn-morado-soft); color: var(--yn-morado);">
-                <i class="fa-solid fa-users"></i>
-              </div>
-              <div>
-                <div class="kpi-valor" id="mInscritos">—</div>
-                <div class="kpi-label">Voluntarios inscritos</div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="kpi-card">
-              <div class="kpi-icon" style="background: var(--yn-amarillo-soft); color: #B87E00;">
-                <i class="fa-regular fa-clock"></i>
-              </div>
-              <div>
-                <div class="kpi-valor" id="mHoras">—</div>
-                <div class="kpi-label">Horas generadas</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
+    <div class="row g-3 mb-4">
+      <!-- Próximas actividades -->
+      <div class="col-lg-4">
+        <div class="panel h-100">
           <div class="panel-head">
-            <h5>Próximas actividades publicadas</h5>
-            <a href="mis-oportunidades.html" class="btn btn-sm btn-brand-outline">Ver todas</a>
+            <h5>Próximas actividades</h5>
+            <a href="mis-oportunidades.html" class="small link-brand">Ver todas</a>
           </div>
           <div class="list-group list-group-flush" id="listaActividades"></div>
-          <div class="estado-vacio d-none" id="vacio">
+          <div class="estado-vacio d-none" id="vacioActividades">
             <i class="fa-regular fa-calendar-plus"></i>
-            <p class="mb-0">Aún no tienes oportunidades publicadas.</p>
+            <p class="mb-0 small">Aún no tienes oportunidades publicadas.</p>
           </div>
         </div>
+      </div>
 
+      <!-- Últimas solicitudes -->
+      <div class="col-lg-4">
+        <div class="panel h-100">
+          <div class="panel-head">
+            <h5>Últimas solicitudes</h5>
+            <a href="gestion.html" class="small link-brand">Ver todas</a>
+          </div>
+          <div class="list-group list-group-flush" id="listaSolicitudes"></div>
+          <div class="estado-vacio d-none" id="vacioSolicitudes">
+            <i class="fa-regular fa-paper-plane"></i>
+            <p class="mb-0 small">Sin solicitudes por revisar.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inscripciones por estado -->
+      <div class="col-lg-4">
+        <div class="panel h-100">
+          <div class="panel-head"><h5>Inscripciones por estado</h5></div>
+          <div class="panel-body">
+            <div class="org-donut mb-3" id="donut" style="background: conic-gradient(#E7E3F3 0 100%);">
+              <div class="centro">
+                <div class="v" id="donutTotal">0</div>
+                <div class="l">Total</div>
+              </div>
+            </div>
+            <div class="org-leyenda" id="leyenda"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accesos rápidos -->
+    <h2 class="h6 fw-bold mb-3">Accesos rápidos</h2>
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <a href="crear-oportunidad.html" class="org-acceso">
+          <span class="ico" style="background: var(--yn-morado-soft); color: var(--yn-morado);"><i class="fa-solid fa-circle-plus"></i></span>
+          Crear nueva oportunidad
+        </a>
+      </div>
+      <div class="col-6 col-md-3">
+        <a href="gestion.html?tab=inscritos" class="org-acceso">
+          <span class="ico" style="background: var(--yn-magenta-soft); color: var(--yn-magenta);"><i class="fa-solid fa-file-export"></i></span>
+          Exportar inscritos
+        </a>
+      </div>
+      <div class="col-6 col-md-3">
+        <a href="gestion.html?tab=evidencias" class="org-acceso">
+          <span class="ico" style="background: var(--yn-amarillo-soft); color: #B87E00;"><i class="fa-solid fa-camera"></i></span>
+          Cargar evidencias
+        </a>
+      </div>
+      <div class="col-6 col-md-3">
+        <a href="gestion.html?tab=asistencia" class="org-acceso">
+          <span class="ico" style="background: rgba(26,17,71,.08); color: var(--yn-azul);"><i class="fa-solid fa-clipboard-check"></i></span>
+          Registrar asistencia
+        </a>
       </div>
     </div>
 
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/auth-guard.js"
         data-rol="ORGANIZACION"
         data-login="../public-auth/login-organizacion.html"></script>
-<script src="../assets/js/shell.js" data-panel="organizacion" data-activo="dashboard"></script>
-<script src="https://cdn.jsdelivr.net/npm/admin-lte@4.1.0/dist/js/adminlte.min.js"></script>
+<script src="../assets/js/shell-org.js" data-activo="dashboard"></script>
 <script>
-async function cargarPerfil() {
-    const datos = await YN.api('/perfiles/organizacion/me');
-    if (!datos.ok) return;
+const COLORES = { confirmado: '#10794A', inscrito: '#6D28D9', completado: '#FF1478', cancelado: '#B3123A', rechazado: '#B87E00', no_asistio: '#8E88A8' };
 
-    const perfil = datos.perfil || datos.organizacion || datos.data || {};
-    const nombre = perfil.nombreOng || perfil.nombre_ong || perfil.razonSocial;
-    if (nombre) {
-        document.getElementById('saludo').textContent = `¡Hola, ${nombre}!`;
-        localStorage.setItem('organizacionNombre', nombre);
-    }
-
-    const estado = perfil.estadoValidacion || perfil.estado_validacion;
-    pintarAviso(estado);
-}
-
-// Este aviso es la respuesta directa al problema que reportaste:
-// creaste la oportunidad, quedó en borrador, y no había forma de saber
-// desde el panel que faltaba la aprobación de la organización.
 function pintarAviso(estado) {
     const cont = document.getElementById('avisoValidacion');
     if (estado === 'aprobado') {
-        cont.innerHTML = `
-          <div class="alert alert-success d-flex gap-3 small">
+        cont.innerHTML = `<div class="alert alert-success d-flex gap-3 small">
             <i class="fa-solid fa-circle-check mt-1"></i>
-            <div>Tu organización está <strong>aprobada</strong>. Puedes publicar oportunidades
-            y enviarlas a revisión.</div>
-          </div>`;
+            <div>Tu organización está <strong>aprobada</strong>. Puedes publicar oportunidades y enviarlas a revisión.</div></div>`;
     } else if (estado === 'rechazado') {
-        cont.innerHTML = `
-          <div class="alert alert-danger d-flex gap-3 small">
+        cont.innerHTML = `<div class="alert alert-danger d-flex gap-3 small">
             <i class="fa-solid fa-circle-xmark mt-1"></i>
-            <div>Tu registro fue <strong>rechazado</strong>. Revisa el correo que te enviamos
-            con el motivo y actualiza tus datos antes de volver a solicitar la validación.</div>
-          </div>`;
+            <div>Tu registro fue <strong>rechazado</strong>. Revisa el correo con el motivo y actualiza tus datos.</div></div>`;
     } else {
-        cont.innerHTML = `
-          <div class="alert alert-warning d-flex gap-3 small">
+        cont.innerHTML = `<div class="alert alert-warning d-flex gap-3 small">
             <i class="fa-solid fa-hourglass-half mt-1"></i>
-            <div>
-              Tu organización está <strong>pendiente de validación</strong>. Puedes crear
-              oportunidades y guardarlas como <em>borrador</em>, pero
-              <strong>no podrás enviarlas a revisión</strong> hasta que un administrador
-              apruebe tu registro. Te avisaremos por correo.
-            </div>
-          </div>`;
+            <div>Tu organización está <strong>pendiente de validación</strong>. Puedes crear oportunidades como
+            <em>borrador</em>, pero no enviarlas a revisión hasta que un administrador apruebe tu registro.</div></div>`;
     }
 }
 
 async function cargarMetricas() {
-    const datos = await YN.api('/oportunidades/me/metricas');
-    if (!datos.ok) return;
-    document.getElementById('mOportunidades').textContent = datos.oportunidadesActivas;
-    document.getElementById('mInscritos').textContent = datos.voluntariosInscritos;
-    document.getElementById('mHoras').textContent = datos.horasGeneradas;
+    const d = await YN.api('/oportunidades/me/metricas');
+    if (!d.ok) return;
+    document.getElementById('mOportunidades').textContent = d.oportunidadesActivas;
+    document.getElementById('mInscritos').textContent = d.voluntariosInscritos;
+    document.getElementById('mHoras').textContent = d.horasGeneradas;
 }
 
-async function cargarActividades() {
-    const datos = await YN.api('/oportunidades/me/mias');
-    if (!datos.ok) return;
+async function cargarActividadesYSolicitudes() {
+    const d = await YN.api('/oportunidades/me/mias');
+    if (!d.ok) return;
 
-    const proximas = datos.oportunidades.filter((o) => o.estado === 'publicado');
+    const publicadas = d.oportunidades.filter((o) => o.estado === 'publicado');
     const cont = document.getElementById('listaActividades');
 
-    if (proximas.length === 0) {
-        document.getElementById('vacio').classList.remove('d-none');
+    if (publicadas.length === 0) {
+        document.getElementById('vacioActividades').classList.remove('d-none');
+    } else {
+        cont.innerHTML = publicadas.slice(0, 4).map((o) => `
+            <a href="gestion.html?oportunidad=${o.id}" class="list-group-item list-group-item-action">
+              <div class="fw-semibold small">${YN.esc(o.titulo)}</div>
+              <div class="text-muted" style="font-size:.78rem;">
+                ${YN.fecha(o.fechaInicio)} · ${YN.hora(o.fechaInicio)}
+              </div>
+              <div class="text-muted" style="font-size:.78rem;">
+                Inscritos: ${o.cuposTotales - o.cuposDisponibles}/${o.cuposTotales}
+              </div>
+            </a>`).join('');
+    }
+
+    // Se recorren las oportunidades publicadas pidiendo sus inscritos, porque
+    // el backend no expone un endpoint agregado del tipo
+    // "todas las solicitudes de mi organización".
+    const conteo = {};
+    let pendientes = 0;
+    const solicitudes = [];
+
+    for (const o of publicadas.slice(0, 8)) {
+        const r = await YN.api(`/inscripciones/oportunidad/${o.id}`);
+        const lista = (r && r.data) || [];
+        lista.forEach((i) => {
+            const e = (i.estado || 'inscrito').toLowerCase();
+            conteo[e] = (conteo[e] || 0) + 1;
+            if (e === 'inscrito') {
+                pendientes++;
+                solicitudes.push({ ...i, tituloOportunidad: o.titulo });
+            }
+        });
+    }
+
+    document.getElementById('mPendientes').textContent = pendientes;
+    pintarSolicitudes(solicitudes);
+    pintarDonut(conteo);
+}
+
+function pintarSolicitudes(lista) {
+    const cont = document.getElementById('listaSolicitudes');
+    if (lista.length === 0) {
+        document.getElementById('vacioSolicitudes').classList.remove('d-none');
+        return;
+    }
+    cont.innerHTML = lista.slice(0, 4).map((s) => {
+        const nombre = s.nombre_voluntario || s.nombreVoluntario || 'Voluntario';
+        return `
+        <div class="list-group-item d-flex align-items-center gap-3">
+          <span class="org-avatar">${YN.esc(nombre.charAt(0).toUpperCase())}</span>
+          <div class="flex-grow-1 min-w-0">
+            <div class="fw-semibold small text-truncate">${YN.esc(nombre)}</div>
+            <div class="text-muted text-truncate" style="font-size:.78rem;">${YN.esc(s.tituloOportunidad)}</div>
+          </div>
+          <span class="badge-estado pendiente_aprobacion">Pendiente</span>
+        </div>`;
+    }).join('');
+}
+
+function pintarDonut(conteo) {
+    const total = Object.values(conteo).reduce((a, b) => a + b, 0);
+    document.getElementById('donutTotal').textContent = total;
+
+    if (total === 0) {
+        document.getElementById('leyenda').innerHTML =
+            '<p class="text-muted small mb-0">Todavía no hay inscripciones registradas.</p>';
         return;
     }
 
-    cont.innerHTML = proximas.map((o) => `
-        <div class="list-group-item d-flex justify-content-between align-items-center gap-3">
-          <div>
-            <div class="fw-semibold">${YN.esc(o.titulo)}</div>
-            <div class="text-muted small">
-              ${YN.fecha(o.fechaInicio)} · ${YN.esc(o.modalidad)} · ${o.horasAcreditadas} h
-            </div>
-          </div>
-          <span class="badge text-bg-light border">
-            ${o.cuposTotales - o.cuposDisponibles}/${o.cuposTotales} inscritos
-          </span>
-        </div>`).join('');
+    // conic-gradient acumulando porcentajes: un gráfico de anillo sin
+    // depender de Chart.js solo para esto.
+    let acumulado = 0;
+    const tramos = [];
+    const filas = [];
+
+    Object.entries(conteo).sort((a, b) => b[1] - a[1]).forEach(([estado, n]) => {
+        const color = COLORES[estado] || '#8E88A8';
+        const pct = (n / total) * 100;
+        tramos.push(`${color} ${acumulado}% ${acumulado + pct}%`);
+        acumulado += pct;
+        filas.push(`
+            <div class="fila">
+              <span class="punto" style="background:${color}"></span>
+              <span class="text-capitalize flex-grow-1">${estado.replace(/_/g, ' ')}</span>
+              <strong>${n}</strong>
+              <span class="text-muted">(${Math.round(pct)}%)</span>
+            </div>`);
+    });
+
+    document.getElementById('donut').style.background = `conic-gradient(${tramos.join(', ')})`;
+    document.getElementById('leyenda').innerHTML = filas.join('');
 }
 
+document.addEventListener('yn:org-lista', (e) => {
+    const p = e.detail || {};
+    const nombre = p.nombre_ong || p.razon_social;
+    if (nombre) document.getElementById('saludo').textContent = `¡Hola, ${nombre}!`;
+    pintarAviso(p.estado_validacion);
+});
+
 document.addEventListener('yn:shell-listo', () => {
-    cargarPerfil();
     cargarMetricas();
-    cargarActividades();
+    cargarActividadesYSolicitudes();
 });
 </script>
 </body>

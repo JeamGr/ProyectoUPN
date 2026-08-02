@@ -9,6 +9,10 @@ export interface ActualizarPerfilVoluntarioDTO {
     disponibilidad?: string;
     foto_url?: string;
     intereses_ids?: number[];
+    // NUEVOS — antes no existían, por eso el <select> de carrera
+    // parecía "roto": el PUT los descartaba silenciosamente.
+    carrera?: string;
+    ciclo?: number;
 }
 
 export interface PerfilVoluntarioResponseDTO {

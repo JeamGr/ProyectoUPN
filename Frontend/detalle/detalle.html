@@ -5,298 +5,494 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YANANTIN - Detalle de Oportunidad</title>
 
-  <!-- Bootstrap 5 CSS e Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <!-- Sistema de diseño YANANTIN (va ANTES del CSS propio) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
-
-  <!-- CSS Exclusivo de Detalle -->
-  <link rel="stylesheet" href="./detalle.css">
 </head>
 <body>
 
-  <!-- Topbar con botón Volver -->
-  <header class="bg-white py-3 border-bottom mb-4">
-    <div class="container d-flex justify-content-between align-items-center">
-      <button class="yn-volver" onclick="YN.volver('../explorar/explorar.html')">
-        <i class="bi bi-arrow-left"></i> Volver a resultados
-      </button>
-      <div class="fw-bold text-primary">
-        <i class="bi bi-heart-pulse-fill text-danger"></i> YANANTIN
+<header class="lp-navbar">
+  <div class="container d-flex justify-content-between align-items-center">
+    <button class="yn-volver" onclick="YN.volver('../paginas/explorar.html')">
+      <i class="bi bi-arrow-left"></i> Volver a resultados
+    </button>
+    <a href="../index.html" class="brand-logo fs-6">
+      <span class="brand-mark"><i class="fa-solid fa-hands-holding-circle"></i></span>
+      YANANTIN
+    </a>
+  </div>
+</header>
+
+<main class="container my-4" style="max-width: 1080px;">
+
+  <div id="cargando" class="text-center py-5">
+    <div class="spinner-border" style="color: var(--yn-magenta);"></div>
+    <p class="text-muted small mt-3 mb-0">Cargando oportunidad…</p>
+  </div>
+
+  <div id="noEncontrada" class="estado-vacio d-none">
+    <i class="fa-regular fa-face-frown"></i>
+    <p class="mb-3">No encontramos esta oportunidad. Puede que haya sido cerrada.</p>
+    <a href="../paginas/explorar.html" class="btn btn-brand-primary">Explorar otras</a>
+  </div>
+
+  <div id="contenido" class="d-none">
+
+    <!-- ================= CABECERA ================= -->
+    <div class="panel mb-4">
+      <div class="op-img" style="height: 260px;">
+        <img id="imgOportunidad" alt="" style="width:100%;height:100%;object-fit:cover;">
+        <span class="op-tag" id="badgeModalidad"></span>
       </div>
-    </div>
-  </header>
 
-  <main class="container mb-5">
-    <div class="row g-4">
-
-      <!-- Columna Principal: Información de la Actividad -->
-      <section class="col-lg-8">
-        <div class="card card-detail p-4">
-
-          <!-- Imagen Destacada -->
-          <img id="imgOportunidad" src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1000" class="banner-img mb-4" alt="Oportunidad">
-
-          <!-- Categoría y Modalidad -->
-          <div class="d-flex align-items-center gap-2 mb-2">
-            <span id="txtCategoria" class="badge badge-category">Cargando...</span>
-            <span id="txtModalidad" class="badge badge-presencial">Cargando...</span>
-          </div>
-
-          <h1 id="txtTitulo" class="fw-bold mb-3" style="color: #1A1147;">Cargando...</h1>
-
-          <!-- Organización y Rating -->
-          <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
-            <div class="d-flex align-items-center gap-2">
-              <i class="bi bi-building fs-5 text-muted"></i>
-              <span id="txtOrganizacion" class="fw-semibold">Cargando...</span>
-            </div>
-            <span class="text-muted">•</span>
-            <div class="text-warning small fw-bold">
-              <i class="bi bi-star-fill"></i> 4.8 <span class="text-muted fw-normal">(24 evaluaciones)</span>
-            </div>
-          </div>
-
-          <!-- Sobre la Actividad -->
-          <div class="mb-4">
-            <h5 class="fw-bold mb-2">Sobre la actividad</h5>
-            <p id="txtDescripcion" class="text-muted lh-base">
-              Cargando información de la actividad...
+      <div class="panel-body">
+        <div class="row g-4 align-items-start">
+          <div class="col-lg-7">
+            <span class="badge-estado publicado mb-2 d-inline-block" id="txtCategoria">—</span>
+            <h1 class="fw-bold mb-2" style="font-size: 1.75rem;" id="txtTitulo">—</h1>
+            <p class="mb-0 d-flex align-items-center gap-2" style="color: var(--yn-morado); font-weight: 600;">
+              <i class="fa-solid fa-building"></i>
+              <span id="txtOrganizacion">—</span>
+              <i class="fa-solid fa-circle-check" style="color: var(--yn-morado);" title="Organización validada"></i>
             </p>
           </div>
 
-          <!-- Lo que harás -->
-          <div class="mb-4">
-            <h5 class="fw-bold mb-2">Lo que harás</h5>
-            <ul id="listaActividades" class="custom-list text-muted">
-              <li>Cargando detalles...</li>
-            </ul>
+          <div class="col-lg-5">
+            <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+              <div>
+                <div class="kpi-valor" id="txtCuposNum">0</div>
+                <div class="kpi-label">cupos disponibles</div>
+              </div>
+              <button id="btnInscribirme" class="btn btn-brand-primary btn-lg px-4">
+                Inscribirme <i class="fa-solid fa-check ms-1"></i>
+              </button>
+            </div>
+            <div class="progress" style="height: 7px; border-radius: 999px;">
+              <div class="progress-bar" id="barraCupos" style="background: var(--grad-marca); width: 0%;"></div>
+            </div>
+            <p class="text-muted small mt-2 mb-0" id="txtOcupacion">—</p>
           </div>
-
-          <!-- Requisitos -->
-          <div>
-            <h5 class="fw-bold mb-2">Requisitos</h5>
-            <ul id="listaRequisitos" class="custom-list text-muted">
-              <li>Cargando requisitos...</li>
-            </ul>
-          </div>
-
         </div>
-      </section>
 
-      <!-- Columna Lateral: Ficha Resumen y Botón de Acción -->
-      <aside class="col-lg-4">
-        <div class="card card-detail p-4 sticky-top" style="top: 20px;">
-          
-          <h5 class="fw-bold mb-3">Detalles clave</h5>
-
-          <div class="d-flex flex-column gap-3 mb-4">
-            <div class="d-flex align-items-center gap-3 info-box">
-              <div class="info-icon"><i class="bi bi-calendar-event"></i></div>
-              <div>
-                <small class="text-muted d-block">Fecha</small>
-                <span id="txtFecha" class="fw-semibold small">Por confirmar</span>
-              </div>
-            </div>
-
-            <div class="d-flex align-items-center gap-3 info-box">
-              <div class="info-icon"><i class="bi bi-clock"></i></div>
-              <div>
-                <small class="text-muted d-block">Horario</small>
-                <span id="txtHorario" class="fw-semibold small">Por confirmar</span>
-              </div>
-            </div>
-
-            <div class="d-flex align-items-center gap-3 info-box">
-              <div class="info-icon"><i class="bi bi-geo-alt"></i></div>
-              <div>
-                <small class="text-muted d-block">Ubicación</small>
-                <span id="txtUbicacion" class="fw-semibold small">Por confirmar</span>
-              </div>
-            </div>
-
-            <div class="d-flex align-items-center gap-3 info-box">
-              <div class="info-icon"><i class="bi bi-people"></i></div>
-              <div>
-                <small class="text-muted d-block">Disponibilidad</small>
-                <span id="txtCupos" class="fw-semibold small text-success">0 cupos disponibles</span>
-              </div>
+        <!-- Datos clave -->
+        <div class="row g-2 mt-3">
+          <div class="col-6 col-lg-3">
+            <div class="yn-dato">
+              <div class="ico"><i class="fa-regular fa-calendar"></i></div>
+              <div><span class="et">Fecha</span><span class="va" id="txtFecha">—</span></div>
             </div>
           </div>
+          <div class="col-6 col-lg-3">
+            <div class="yn-dato">
+              <div class="ico"><i class="fa-regular fa-clock"></i></div>
+              <div><span class="et">Horario</span><span class="va" id="txtHorario">—</span></div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="yn-dato">
+              <div class="ico"><i class="fa-solid fa-location-dot"></i></div>
+              <div><span class="et">Ubicación</span><span class="va" id="txtUbicacion">—</span></div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="yn-dato">
+              <div class="ico"><i class="fa-solid fa-award"></i></div>
+              <div><span class="et">Certificables</span><span class="va" id="txtHoras">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-          <!-- Botón de Postulación -->
-          <div class="d-grid">
-            <button id="btnInscribirme" class="btn btn-yanantin-lg text-center">
-              Inscribirme <i class="bi bi-check-lg ms-1"></i>
+    <div class="row g-4">
+      <!-- ================= PESTAÑAS ================= -->
+      <div class="col-lg-8">
+        <div class="panel">
+          <div class="panel-body">
+
+            <nav class="yn-tabs" id="tabs">
+              <button class="yn-tab activa" data-tab="descripcion">Descripción</button>
+              <button class="yn-tab" data-tab="detalles">Detalles</button>
+              <button class="yn-tab" data-tab="requisitos">Requisitos</button>
+              <button class="yn-tab" data-tab="beneficios">Beneficios</button>
+              <button class="yn-tab" data-tab="organizacion">Sobre la organización</button>
+              <button class="yn-tab" data-tab="ubicacion">Ubicación</button>
+            </nav>
+
+            <!-- DESCRIPCIÓN -->
+            <section class="yn-panel-tab activo" data-panel="descripcion">
+              <h2 class="h6 fw-bold mb-2">Descripción</h2>
+              <p class="text-muted" id="txtDescripcion">—</p>
+
+              <h2 class="h6 fw-bold mt-4 mb-2">Actividades principales</h2>
+              <ul class="yn-lista" id="listaActividades"></ul>
+            </section>
+
+            <!-- DETALLES -->
+            <section class="yn-panel-tab" data-panel="detalles">
+              <h2 class="h6 fw-bold mb-3">Detalles de la convocatoria</h2>
+              <div class="row g-2" id="gridDetalles"></div>
+            </section>
+
+            <!-- REQUISITOS -->
+            <section class="yn-panel-tab" data-panel="requisitos">
+              <h2 class="h6 fw-bold mb-2">Requisitos</h2>
+              <ul class="yn-lista" id="listaRequisitos"></ul>
+              <div class="alert alert-info small mt-3 mb-0" id="avisoAprobacion" style="display:none;">
+                <i class="fa-solid fa-circle-info me-1"></i>
+                Esta oportunidad requiere que la organización apruebe manualmente cada
+                inscripción. Al postular quedarás en estado <strong>pendiente</strong>.
+              </div>
+            </section>
+
+            <!-- BENEFICIOS -->
+            <section class="yn-panel-tab" data-panel="beneficios">
+              <h2 class="h6 fw-bold mb-2">Lo que obtienes</h2>
+              <ul class="yn-lista">
+                <li><strong id="txtHorasBeneficio">0 horas</strong> certificables acreditadas en tu perfil.</li>
+                <li>Certificado digital verificable con código único al completar la actividad.</li>
+                <li>Experiencia práctica que suma a tu formación profesional.</li>
+                <li>Contribución directa a una causa de impacto social en tu comunidad.</li>
+              </ul>
+            </section>
+
+            <!-- ORGANIZACIÓN -->
+            <section class="yn-panel-tab" data-panel="organizacion">
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="kpi-icon" style="background: var(--yn-morado-soft); color: var(--yn-morado); width:54px; height:54px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.3rem;">
+                  <i class="fa-solid fa-building"></i>
+                </div>
+                <div>
+                  <h2 class="h6 fw-bold mb-0" id="txtOrgNombre">—</h2>
+                  <span class="small" style="color: var(--yn-morado);">
+                    <i class="fa-solid fa-circle-check me-1"></i>Organización validada por YANANTIN
+                  </span>
+                </div>
+              </div>
+              <p class="text-muted small">
+                Esta organización fue revisada y aprobada por el equipo administrador de
+                YANANTIN antes de poder publicar oportunidades en la plataforma.
+              </p>
+              <p class="text-muted small mb-0" id="notaOrg"></p>
+            </section>
+
+            <!-- UBICACIÓN -->
+            <section class="yn-panel-tab" data-panel="ubicacion">
+              <h2 class="h6 fw-bold mb-2">Dónde se realiza</h2>
+              <div class="yn-dato mb-3">
+                <div class="ico"><i class="fa-solid fa-location-dot"></i></div>
+                <div><span class="et">Sede</span><span class="va" id="txtUbicacionDetalle">—</span></div>
+              </div>
+              <p class="text-muted small mb-3" id="txtNotaModalidad"></p>
+              <a class="btn btn-brand-outline btn-sm" id="linkMapa" target="_blank" rel="noopener">
+                <i class="fa-solid fa-map me-1"></i>Ver en Google Maps
+              </a>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= LATERAL ================= -->
+      <aside class="col-lg-4">
+        <div class="panel mb-3 sticky-lg-top" style="top: 1rem;">
+          <div class="panel-head"><h5>Resumen</h5></div>
+          <div class="panel-body">
+            <div class="d-flex flex-column gap-2 mb-3">
+              <div class="yn-dato">
+                <div class="ico"><i class="fa-regular fa-calendar-xmark"></i></div>
+                <div><span class="et">Fecha límite para postular</span><span class="va" id="txtLimite">—</span></div>
+              </div>
+              <div class="yn-dato">
+                <div class="ico"><i class="fa-solid fa-shuffle"></i></div>
+                <div><span class="et">Modalidad</span><span class="va" id="txtModalidadLat">—</span></div>
+              </div>
+            </div>
+            <button class="btn btn-brand-primary w-100" onclick="document.getElementById('btnInscribirme').click()">
+              Inscribirme
             </button>
           </div>
+        </div>
 
+        <div class="panel">
+          <div class="panel-head"><h5>Comparte esta oportunidad</h5></div>
+          <div class="panel-body">
+            <div class="yn-share">
+              <a href="#" id="shWhats" target="_blank" rel="noopener" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+              <a href="#" id="shFace" target="_blank" rel="noopener" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+              <a href="#" id="shX" target="_blank" rel="noopener" title="X"><i class="fa-brands fa-x-twitter"></i></a>
+              <a href="#" id="shLinked" target="_blank" rel="noopener" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+              <a href="#" id="shCopiar" title="Copiar enlace"><i class="fa-solid fa-link"></i></a>
+            </div>
+          </div>
         </div>
       </aside>
-
     </div>
-  </main>
 
-  <!-- SCRIPT DE CONEXIÓN CON LA API -->
-  <script src="../assets/js/config.js"></script>
-  <!-- SIN auth-guard: esta pantalla es pública, la enlaza el catálogo abierto. -->
-  <script>
-    // API_BASE_URL vive ahora en config.js.
-    // Esta pantalla NO lleva auth-guard: debe ser visible para visitantes
-    // sin cuenta, porque el catálogo público enlaza aquí. Solo el botón
-    // "Inscribirme" exige sesión.
-    const token = YN.token();
+  </div>
+</main>
 
-    const headers = { 
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
+<footer class="lp-footer mt-5">
+  <div class="container text-center">
+    <div class="brand-logo brand-logo-light fs-6 mb-2 justify-content-center">
+      <span class="brand-mark"><i class="fa-solid fa-hands-holding-circle"></i></span>
+      YANANTIN
+    </div>
+    <p class="mb-0 small">© 2026 YANANTIN · Universidad Privada del Norte</p>
+  </div>
+</footer>
 
-    // 1. Obtener ID de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const oportunidadId = urlParams.get('id');
+<script src="../assets/js/config.js"></script>
+<!-- SIN auth-guard: pantalla pública. Solo "Inscribirme" exige sesión. -->
+<script>
+const PLACEHOLDER = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1000';
+const ICONO_MODALIDAD = { presencial: 'fa-location-dot', virtual: 'fa-laptop', mixta: 'fa-shuffle' };
 
-    if (!oportunidadId) {
-      window.location.href = '../explorar/explorar.html';
+const oportunidadId = new URLSearchParams(location.search).get('id');
+let mapaLineas = {};
+let mapaUbicaciones = {};
+let OP = null;
+
+if (!oportunidadId) location.replace('../paginas/explorar.html');
+
+async function cargarCatalogos() {
+    const pares = [
+        { ruta: '/administrador/catalogos/lineas-intervencion?soloActivos=true', destino: mapaLineas },
+        { ruta: '/administrador/catalogos/ubicaciones?soloActivos=true', destino: mapaUbicaciones },
+    ];
+    for (const p of pares) {
+        try {
+            const r = await fetch(`${API_BASE_URL}${p.ruta}`);
+            const d = await r.json();
+            (d.items || []).forEach((i) => { p.destino[i.id] = i.nombre; });
+        } catch (e) { console.warn('No se pudo cargar', p.ruta); }
+    }
+}
+
+// El backend guarda `requisitos` como un TEXTO libre. Se parte por saltos de
+// línea, punto y coma o guiones para poder mostrarlo como lista.
+function aLista(texto, porDefecto) {
+    if (!texto) return porDefecto;
+    const partes = String(texto)
+        .split(/\r?\n|;|(?:^|\s)[-•]\s+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+    return partes.length ? partes : porDefecto;
+}
+
+function pintarLista(idElemento, items) {
+    document.getElementById(idElemento).innerHTML =
+        items.map((t) => `<li>${YN.esc(t)}</li>`).join('');
+}
+
+function dato(etiqueta, valor, icono) {
+    return `
+      <div class="col-sm-6">
+        <div class="yn-dato">
+          <div class="ico"><i class="fa-solid ${icono}"></i></div>
+          <div><span class="et">${etiqueta}</span><span class="va">${YN.esc(valor)}</span></div>
+        </div>
+      </div>`;
+}
+
+function pintar(op) {
+    OP = op;
+    const modalidad = op.modalidad || 'presencial';
+    const modalidadTexto = modalidad.charAt(0).toUpperCase() + modalidad.slice(1);
+    const ubicacion = mapaUbicaciones[op.ubicacionId] || 'Por confirmar';
+
+    // ---- Imagen: YN.img() antepone API_BASE_URL a la ruta relativa.
+    // Sin esto el navegador la buscaba en el puerto del frontend y daba 404.
+    document.getElementById('imgOportunidad').src = YN.img(op.imagenUrl, PLACEHOLDER);
+
+    document.getElementById('badgeModalidad').innerHTML =
+        `<i class="fa-solid ${ICONO_MODALIDAD[modalidad] || 'fa-tag'} me-1"></i>${modalidadTexto}`;
+    document.getElementById('txtCategoria').textContent = mapaLineas[op.lineaIntervencionId] || 'General';
+    document.getElementById('txtTitulo').textContent = op.titulo || 'Sin título';
+    document.getElementById('txtOrganizacion').textContent = op.nombreOrganizacion || 'Organización';
+    document.getElementById('txtOrgNombre').textContent = op.nombreOrganizacion || 'Organización';
+
+    document.getElementById('txtFecha').textContent = YN.fecha(op.fechaInicio);
+    document.getElementById('txtHorario').textContent = `${YN.hora(op.fechaInicio)} - ${YN.hora(op.fechaFin)}`;
+    document.getElementById('txtUbicacion').textContent = ubicacion;
+    document.getElementById('txtUbicacionDetalle').textContent = ubicacion;
+    document.getElementById('txtHoras').textContent = `${op.horasAcreditadas} horas`;
+    document.getElementById('txtHorasBeneficio').textContent = `${op.horasAcreditadas} horas`;
+    document.getElementById('txtModalidadLat').textContent = modalidadTexto;
+    document.getElementById('txtDescripcion').textContent = op.descripcion || 'Sin descripción disponible.';
+
+    // Cupos
+    const ocupados = op.cuposTotales - op.cuposDisponibles;
+    const pct = op.cuposTotales > 0 ? Math.round((ocupados / op.cuposTotales) * 100) : 0;
+    document.getElementById('txtCuposNum').textContent = op.cuposDisponibles;
+    document.getElementById('barraCupos').style.width = `${pct}%`;
+    document.getElementById('txtOcupacion').textContent =
+        `${ocupados} de ${op.cuposTotales} plazas ocupadas`;
+
+    // Fecha límite: el backend no expone un campo propio, así que se usa el
+    // inicio de la actividad como tope real para postular.
+    document.getElementById('txtLimite').textContent = YN.fecha(op.fechaInicio);
+
+    pintarLista('listaActividades', aLista(op.descripcion, ['Apoyo directo en las actividades de la organización.']));
+    pintarLista('listaRequisitos', aLista(op.requisitos, ['Ser estudiante universitario activo.', 'Compromiso y puntualidad.']));
+
+    if (op.requiereAprobacion) document.getElementById('avisoAprobacion').style.display = 'block';
+
+    document.getElementById('gridDetalles').innerHTML =
+        dato('Modalidad', modalidadTexto, ICONO_MODALIDAD[modalidad] || 'fa-tag') +
+        dato('Línea de intervención', mapaLineas[op.lineaIntervencionId] || 'General', 'fa-diagram-project') +
+        dato('Inicio', `${YN.fecha(op.fechaInicio, true)}`, 'fa-calendar-day') +
+        dato('Fin', `${YN.fecha(op.fechaFin, true)}`, 'fa-calendar-check') +
+        dato('Horas certificables', `${op.horasAcreditadas} h`, 'fa-clock') +
+        dato('Cupos totales', `${op.cuposTotales}`, 'fa-users') +
+        dato('Aprobación de inscritos', op.requiereAprobacion ? 'Manual' : 'Automática', 'fa-user-check') +
+        dato('Ubicación', ubicacion, 'fa-location-dot');
+
+    document.getElementById('txtNotaModalidad').textContent = modalidad === 'virtual'
+        ? 'Actividad virtual: recibirás el enlace de conexión por correo tras confirmar tu inscripción.'
+        : 'Recibirás el punto exacto de encuentro por correo tras confirmar tu inscripción.';
+
+    const mapa = document.getElementById('linkMapa');
+    if (modalidad === 'virtual') mapa.style.display = 'none';
+    else mapa.href = `https://www.google.com/maps/search/${encodeURIComponent(ubicacion + ', Perú')}`;
+
+    // Compartir
+    const url = encodeURIComponent(location.href);
+    const txt = encodeURIComponent(`Voluntariado: ${op.titulo} — YANANTIN`);
+    document.getElementById('shWhats').href = `https://wa.me/?text=${txt}%20${url}`;
+    document.getElementById('shFace').href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+    document.getElementById('shX').href = `https://twitter.com/intent/tweet?text=${txt}&url=${url}`;
+    document.getElementById('shLinked').href = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+
+    // Estado del botón
+    const btn = document.getElementById('btnInscribirme');
+    if (op.estado !== 'publicado') {
+        btn.disabled = true;
+        btn.innerHTML = 'No disponible';
+    } else if (op.cuposDisponibles <= 0) {
+        btn.innerHTML = 'Unirme a lista de espera <i class="fa-solid fa-hourglass-half ms-1"></i>';
     }
 
-    let mapaLineas = {};
-    let mapaUbicaciones = {};
+    document.getElementById('cargando').classList.add('d-none');
+    document.getElementById('contenido').classList.remove('d-none');
+}
 
-    async function cargarCatalogos() {
-      try {
-        const respLineas = await fetch(`${API_BASE_URL}/administrador/catalogos/lineas-intervencion?soloActivos=true`);
-        const datosLineas = await respLineas.json();
-        (datosLineas.items || []).forEach(l => { mapaLineas[l.id] = l.nombre; });
-      } catch (error) {
-        console.error('Error al cargar líneas de intervención:', error);
-      }
-
-      try {
-        const respUbicaciones = await fetch(`${API_BASE_URL}/administrador/catalogos/ubicaciones?soloActivos=true`);
-        const datosUbicaciones = await respUbicaciones.json();
-        (datosUbicaciones.items || []).forEach(u => { mapaUbicaciones[u.id] = u.nombre; });
-      } catch (error) {
-        console.error('Error al cargar ubicaciones:', error);
-      }
-    }
-
-    async function cargarDetalle() {
-      try {
-        const resp = await fetch(`${API_BASE_URL}/oportunidades/${oportunidadId}`, { headers });
+async function cargarDetalle() {
+    try {
+        const resp = await fetch(`${API_BASE_URL}/oportunidades/${oportunidadId}`, { cache: 'no-store' });
         const datos = await resp.json();
-
-        if (!datos) return;
-        // El backend responde { ok: true, oportunidad } — no { data } ni el objeto plano
-        const op = datos.oportunidad || datos.data || datos;
-
-        // Pintar información principal
-        document.getElementById('txtTitulo').textContent = op.titulo || 'Sin título';
-        document.getElementById('txtCategoria').textContent = mapaLineas[op.lineaIntervencionId] || 'General';
-        
-        const badgeMod = document.getElementById('txtModalidad');
-        const modalidadTexto = op.modalidad ? op.modalidad.charAt(0).toUpperCase() + op.modalidad.slice(1) : 'Presencial';
-        badgeMod.textContent = modalidadTexto;
-        badgeMod.className = `badge ${op.modalidad === 'presencial' ? 'badge-presencial' : 'badge-virtual'}`;
-
-        // El endpoint GET /oportunidades/:id no trae el nombre de la organización
-        // (solo la búsqueda/listado lo incluye); placeholder hasta que el backend
-        // agregue ese join también aquí.
-        document.getElementById('txtOrganizacion').textContent = op.nombreOrganizacion || 'Organización';
-        document.getElementById('txtDescripcion').textContent = op.descripcion || 'Sin descripción disponible.';
-
-        const fechaInicio = op.fechaInicio ? new Date(op.fechaInicio) : null;
-        const fechaFin = op.fechaFin ? new Date(op.fechaFin) : null;
-        document.getElementById('txtFecha').textContent = fechaInicio
-          ? fechaInicio.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })
-          : 'Por confirmar';
-        document.getElementById('txtHorario').textContent = (fechaInicio && fechaFin)
-          ? `${fechaInicio.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })} - ${fechaFin.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`
-          : 'Por confirmar';
-        document.getElementById('txtUbicacion').textContent = mapaUbicaciones[op.ubicacionId] || 'Por confirmar';
-        document.getElementById('txtCupos').textContent = `${op.cuposDisponibles ?? 0} cupos disponibles`;
-
-        if (op.imagenUrl) {
-          document.getElementById('imgOportunidad').src = op.imagenUrl;
-        }
-
-        // Listas dinámicas (Actividades)
-        const ulActividades = document.getElementById('listaActividades');
-        ulActividades.innerHTML = '';
-        const actividades = Array.isArray(op.actividades) ? op.actividades : (op.actividades ? [op.actividades] : ['Apoyo directo en las actividades de la organización.']);
-        actividades.forEach(act => {
-          const li = document.createElement('li');
-          li.textContent = act;
-          ulActividades.appendChild(li);
-        });
-
-        // Listas dinámicas (Requisitos)
-        const ulRequisitos = document.getElementById('listaRequisitos');
-        ulRequisitos.innerHTML = '';
-        const requisitos = Array.isArray(op.requisitos) ? op.requisitos : (op.requisitos ? [op.requisitos] : ['Ser estudiante universitario activo.', 'Compromiso y puntualidad.']);
-        requisitos.forEach(req => {
-          const li = document.createElement('li');
-          li.textContent = req;
-          ulRequisitos.appendChild(li);
-        });
-
-      } catch (error) {
-        console.error('Error al obtener el detalle:', error);
-      }
+        if (!datos.ok || !datos.oportunidad) throw new Error('no encontrada');
+        pintar(datos.oportunidad);
+    } catch (e) {
+        document.getElementById('cargando').classList.add('d-none');
+        document.getElementById('noEncontrada').classList.remove('d-none');
     }
+}
 
-    // 2. Acción de inscripción
-document.getElementById('btnInscribirme').addEventListener('click', async () => {
-  // Puerta de sesión: un visitante sin cuenta va al login y vuelve aquí.
-  if (!YN.token() || (localStorage.getItem('rol') || '').toUpperCase() !== 'VOLUNTARIO') {
-    alert('Necesitas iniciar sesión como voluntario para inscribirte.');
-    location.href = `../public-auth/login-voluntario.html?motivo=sin-sesion`;
-    return;
-  }
-
-  try {
-    const resp = await fetch(`${API_BASE_URL}/inscripciones`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${YN.token()}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ oportunidad_id: oportunidadId })
+// ---- Pestañas ----
+document.getElementById('tabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.yn-tab');
+    if (!btn) return;
+    document.querySelectorAll('.yn-tab').forEach((t) => t.classList.remove('activa'));
+    btn.classList.add('activa');
+    document.querySelectorAll('.yn-panel-tab').forEach((p) => {
+        p.classList.toggle('activo', p.dataset.panel === btn.dataset.tab);
     });
-
-    const resData = await resp.json();
-
-    if (resp.ok && resData.status === 'success') {
-      const data = resData.data;
-
-      if (data.en_lista_espera) {
-        alert(`¡Cupos agotados! Has ingresado a la lista de espera en la posición #${data.posicion_lista_espera}.`);
-      } else {
-        alert('¡Inscripción realizada con éxito!');
-      }
-
-      window.location.href = '../mis-eventos/mis-eventos.html';
-
-    } else {
-      // Manejo inteligente de los errores del InscripcionService
-      const mensaje = resData.message || '';
-
-      if (mensaje.includes('completar tu perfil')) {
-        if (confirm(`${mensaje}\n\n¿Deseas ir a tu perfil ahora para completarlo?`)) {
-          window.location.href = '../onboarding voluntario/onboarding-voluntario.html';
-        }
-      } else {
-        alert(mensaje || 'No se pudo realizar la inscripción.');
-      }
-    }
-  } catch (error) {
-    console.error('Error al inscribirse:', error);
-  }
 });
 
-    // Carga inicial al abrir la pantalla
-    cargarCatalogos().then(cargarDetalle);
-  </script>
+// ---- Copiar enlace ----
+document.getElementById('shCopiar').addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+        await navigator.clipboard.writeText(location.href);
+        YN.toast('Enlace copiado al portapapeles.');
+    } catch (err) {
+        YN.toast('No se pudo copiar el enlace.', 'danger');
+    }
+});
+
+// ---- Inscripción ----
+document.getElementById('btnInscribirme').addEventListener('click', async () => {
+    if (!YN.token() || (localStorage.getItem('rol') || '').toUpperCase() !== 'VOLUNTARIO') {
+        const ir = await YN.modal({
+            tipo: 'aviso',
+            titulo: 'Inicia sesión para continuar',
+            mensaje: 'Necesitas una cuenta de voluntario para inscribirte en esta oportunidad.',
+            textoConfirmar: 'Iniciar sesión',
+            textoCancelar: 'Ahora no',
+        });
+        if (ir) location.href = '../public-auth/login-voluntario.html?motivo=sin-sesion';
+        return;
+    }
+
+    const seguro = await YN.confirmar(
+        '¿Confirmas tu inscripción?',
+        `Te inscribirás en "${OP.titulo}". Podrás cancelar desde Mis eventos si cambias de opinión.`,
+        'Sí, inscribirme',
+    );
+    if (!seguro) return;
+
+    const btn = document.getElementById('btnInscribirme');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Procesando…';
+
+    try {
+        const resp = await fetch(`${API_BASE_URL}/inscripciones`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${YN.token()}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oportunidad_id: Number(oportunidadId) }),
+        });
+        const resData = await resp.json();
+
+        if (resp.ok && resData.status === 'success') {
+            const d = resData.data || {};
+            const detalle = `
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <i class="fa-solid fa-hands-holding-circle" style="color: var(--yn-magenta);"></i>
+                  <strong>${YN.esc(OP.titulo)}</strong>
+                </div>
+                <div class="text-muted">
+                  <div><i class="fa-regular fa-calendar me-2"></i>${YN.fecha(OP.fechaInicio)}</div>
+                  <div><i class="fa-regular fa-clock me-2"></i>${YN.hora(OP.fechaInicio)} - ${YN.hora(OP.fechaFin)}</div>
+                  <div><i class="fa-solid fa-building me-2"></i>${YN.esc(OP.nombreOrganizacion || 'Organización')}</div>
+                </div>`;
+
+            await YN.modal({
+                tipo: d.en_lista_espera ? 'aviso' : 'exito',
+                titulo: d.en_lista_espera ? 'Estás en lista de espera' : '¡Te has inscrito con éxito!',
+                mensaje: d.en_lista_espera
+                    ? `Los cupos están agotados. Ocupas la posición #${d.posicion_lista_espera}; te avisaremos si se libera un lugar.`
+                    : 'Te enviamos los detalles y el punto de encuentro a tu correo.',
+                detalle,
+                textoConfirmar: 'Ver mis eventos',
+            });
+            location.href = '../mis-eventos/mis-eventos.html';
+            return;
+        }
+
+        const mensaje = resData.message || 'No se pudo realizar la inscripción.';
+        if (mensaje.includes('completar tu perfil')) {
+            const ir = await YN.modal({
+                tipo: 'aviso',
+                titulo: 'Completa tu perfil primero',
+                mensaje: 'Para inscribirte necesitas tener tu teléfono, distrito y foto registrados.',
+                textoConfirmar: 'Completar mi perfil',
+                textoCancelar: 'Ahora no',
+            });
+            if (ir) location.href = '../perfil/perfil-editar.html';
+        } else {
+            await YN.alerta('No pudimos inscribirte', mensaje, 'error');
+        }
+    } catch (error) {
+        await YN.alerta('Error de conexión', 'No se pudo contactar con el servidor. Intenta de nuevo.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Inscribirme <i class="fa-solid fa-check ms-1"></i>';
+    }
+});
+
+cargarCatalogos().then(cargarDetalle);
+</script>
 </body>
 </html>
